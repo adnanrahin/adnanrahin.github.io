@@ -32,7 +32,7 @@ LANG_COLORS = {
 LANGUAGE_QUERY = <<~GRAPHQL.freeze
   query($login: String!, $cursor: String) {
     user(login: $login) {
-      repositories(first: 100, after: $cursor, ownerAffiliation: OWNER, isFork: false, orderBy: {field: PUSHED_AT, direction: DESC}) {
+      repositories(first: 100, after: $cursor, ownerAffiliations: OWNER, isFork: false, orderBy: {field: PUSHED_AT, direction: DESC}) {
         pageInfo { hasNextPage endCursor }
         nodes {
           stargazerCount
