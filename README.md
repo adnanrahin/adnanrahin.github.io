@@ -13,6 +13,7 @@ Live site: [https://adnanrahin.github.io](https://adnanrahin.github.io)
 | `/system-design/`    | Distributed systems, scalability, architecture                 |
 | `/llm/`              | Generative AI, RAG, LangChain, Bedrock                         |
 | `/devops/`           | CI/CD, IaC, Kubernetes, cloud ops                              |
+| `/aws/`              | VPC, NLB, CloudFormation, EC2, AWS deployments                |
 | `/data-structures/`  | Algorithms and CS fundamentals                                 |
 | `/data-engineering/` | Spark, Airflow, Databricks, ETL                                |
 
@@ -26,6 +27,7 @@ Live site: [https://adnanrahin.github.io](https://adnanrahin.github.io)
    _system-design/my-new-post.md
    _llm/my-new-post.md
    _devops/my-new-post.md
+   _aws/my-new-post.md
    _data-structures/my-new-post.md
    _data-engineering/my-new-post.md
   ```

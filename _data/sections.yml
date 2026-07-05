@@ -14,6 +14,11 @@
   icon: "⬡"
   description: CI/CD, IaC, Kubernetes, Docker, Jenkins, and cloud operations.
 
+- name: AWS
+  slug: aws
+  icon: "☁"
+  description: VPC, load balancers, CloudFormation, EC2, and AWS deployment patterns.
+
 - name: Data Structures
   slug: data-structures
   icon: "▣"

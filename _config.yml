@@ -34,14 +34,18 @@ collections:
     output: true
     permalink: /devops/:name/
     order: 3
+  aws:
+    output: true
+    permalink: /aws/:name/
+    order: 4
   data-structures:
     output: true
     permalink: /data-structures/:name/
-    order: 4
+    order: 5
   data-engineering:
     output: true
     permalink: /data-engineering/:name/
-    order: 5
+    order: 6
 
 defaults:
   - scope:
@@ -62,6 +66,12 @@ defaults:
     values:
       layout: post
       category: DevOps
+  - scope:
+      path: ""
+      type: aws
+    values:
+      layout: post
+      category: AWS
   - scope:
       path: ""
       type: data-structures

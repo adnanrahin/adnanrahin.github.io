@@ -23,6 +23,7 @@ layout: default
   {% assign recent = site.system-design
     | concat: site.llm
     | concat: site.devops
+    | concat: site.aws
     | concat: site['data-structures']
     | concat: site['data-engineering']
     | sort: 'date'
