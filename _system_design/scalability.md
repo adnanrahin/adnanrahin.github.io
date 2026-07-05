@@ -1,389 +1,348 @@
 ---
 title: Scalability
 order: 1
-description: Scale from thousands to billions — metrics, vertical vs horizontal, and tier-by-tier patterns.
-tags: [fundamentals, scaling, netflix, meta]
+description: Handle growing load without breaking — metrics, scale-up vs scale-out, and tier-by-tier tactics.
+tags: [fundamentals, scaling]
 ---
 
 > **Goal:** Design systems that handle more load without falling apart.  
 > **Rule:** Measure the load first — scaling without metrics is guesswork.
 
-Real platforms do not scale in one leap. **Netflix** serves ~200M+ subscribers with peak streaming in the tens of millions of concurrent sessions. **Meta** handles billions of daily active users on News Feed, Messenger, and Instagram. Both evolved through repeated bottleneck fixes — not a single architecture diagram drawn on day one.
-
-This post covers how to think about that journey: what to measure, when to scale up vs out, and how each tier of a typical stack behaves under growth.
+Scalability is not a feature you bolt on at launch. It is a series of deliberate responses to real bottlenecks — each one visible only after you measure production behavior under stress.
 
 ---
 
 ## Before you scale: measure the load
 
-You cannot fix a bottleneck you have not identified. Before changing architecture, establish baselines and track trends as load grows.
+You cannot improve what you do not quantify. Baseline your system under normal traffic, then stress-test or observe peak events (product launches, holiday sales, viral posts) to see where latency and errors first appear.
 
-| Metric | What it measures | Example (large consumer app) |
-|--------|------------------|------------------------------|
-| **Requests per second (RPS)** | API calls the system handles | Netflix API gateway: **millions of RPS** globally at peak |
-| **Concurrent users** | Users active at the same time | Netflix: **~15M+ concurrent streams** during prime-time peaks |
-| **Data volume** | Storage or processing footprint | Meta: **petabytes** of photos/video in object storage |
-| **Throughput** | Data moved per unit time | Netflix CDN: **hundreds of Tb/s** aggregate during global peaks |
-| **Query rate (QPS)** | Database queries per second | Social feed services: **millions of QPS** on read paths |
-| **Message rate** | Queue/event throughput | Kafka at Meta/LinkedIn scale: **millions of events/sec** |
+| Metric | What it measures | Illustrative scale |
+|--------|------------------|-------------------|
+| **Requests per second (RPS)** | Incoming API or HTTP calls | Regional checkout API: **~3,000 RPS** sustained |
+| **Concurrent sessions** | Active users at one moment | Flash-sale event: **~80,000** simultaneous shoppers |
+| **Stored data** | Durable footprint over time | Order + catalog history: **~25 TB** after three years |
+| **Throughput** | Bytes moved per second | Image CDN during a campaign: **~400 MB/s** |
+| **Database QPS** | Queries hitting the data tier | Product browse path: **~18,000 QPS** on reads |
+| **Event rate** | Messages through async pipelines | Order-fulfillment stream: **~40,000 events/s** |
 
-**What good looks like:** Latency percentiles (p50, p95, p99) stay stable as load increases. Ideally you see **linear or sublinear degradation** — doubling traffic should not double response time. When p99 spikes, error rates climb, or queues back up, you have hit a scalability wall.
+**Healthy scaling behavior:** p95 and p99 latency grow slowly relative to traffic. **Unhealthy:** response times double when load increases 30%, timeouts appear, or queue depth climbs without bound — you have found the limiting component.
 
-**Interview line:** *"Before I scale anything, I identify the bottleneck with metrics — CPU, latency percentiles, QPS, queue depth, and error rate."*
+**In interviews, say something like:** *"I start with saturation signals — CPU, memory, connection pool usage, p99 latency, and error budget burn — before choosing scale-up or scale-out."*
 
 ---
 
 ## Two scaling approaches
 
-Every component scales in one of two ways. Mature teams use both — vertical for quick wins, horizontal for long-term headroom.
+Every layer of the stack can grow in one of two directions. Strong teams combine both.
 
 ### Vertical scaling (scale up)
 
-Add more power to existing machines: CPU, RAM, faster SSDs, better network. One bigger box instead of many small ones.
+**Meaning:** Upgrade a single machine — more cores, RAM, faster disks, better NIC — instead of adding nodes.
 
-| Action | When it helps |
-|--------|---------------|
-| Add CPU cores | Video transcoding, feed ranking, ML inference |
-| Increase RAM | Larger in-memory caches (Redis), DB buffer pools |
-| Faster SSDs / NVMe | Reduce I/O latency on primary databases |
-| Upgrade network | CDN origin pulls, cross-AZ replication |
+| Upgrade | Typical fit |
+|---------|-------------|
+| More CPU | Payment fraud scoring, PDF generation, ML batch jobs |
+| More RAM | In-process caches, larger DB buffer pools |
+| NVMe / faster disks | Write-heavy transactional DB under I/O pressure |
+| Higher network bandwidth | Bulk export, replication between regions |
 
-**When teams use it:**
+**When it makes sense:**
 
-- Early-stage products (pre-product-market fit) — simplest path, no distributed-system tax.
-- **MySQL/PostgreSQL primaries** before read replicas or sharding are justified.
-- Quick relief while you design horizontal changes — Netflix still vertically scales certain stateful analytics nodes before partitioning them.
+- Early products with modest traffic — avoids distributed-system overhead.
+- Database primaries before replication or partitioning is worth the ops cost.
+- After tuning: indexes, pool sizes, and query plans often unlock headroom cheaply.
 
-**Trade-off:** Simple, but capped. The largest single instance is still one failure domain. Meta outgrew vertical scaling on single MySQL shards years ago; that ceiling is why sharding and distributed stores exist.
+**Limitation:** One box has a maximum size and is a single point of failure. **Stripe** and **Shopify** ran large monoliths on powerful primaries long before sharding every table.
 
 ---
 
 ### Horizontal scaling (scale out)
 
-Add more machines and spread load across them. This is how Netflix, Meta, and Amazon handle global traffic.
+**Meaning:** Add more machines and spread work across them — the path from a single EC2 instance to a fleet behind a load balancer.
 
-**How to achieve it:**
+**Practical steps:**
 
-- **Load balancer** in front of identical app instances (AWS ALB, NGINX, Envoy).
-- **Stateless services** so any instance can serve any request.
-- **Auto-scaling** on CPU, RPS, or custom metrics (queue lag, cache hit ratio).
-- **Multi-AZ / multi-region** deployment for fault tolerance and lower latency.
+- Terminate TLS and route traffic through a **load balancer**.
+- Keep application nodes **interchangeable** — no hidden local state.
+- **Auto-scale** on RPS, CPU, or custom signals (queue lag, error rate).
+- Spread across **availability zones** so one datacenter loss does not take the service offline.
 
-**Trade-off:** More moving parts — service discovery, distributed tracing, idempotent APIs, and careful data placement. But horizontal scale has no practical upper bound if the data tier can keep up.
+**Limitation:** Coordination cost rises — discovery, observability, idempotent handlers, and data placement all matter. The upside is near-unlimited compute if the data layer can follow.
 
 ---
 
 ### Stateless vs stateful services
 
-Horizontal scaling works best when app servers do not hoard session state locally.
+Horizontal scale works cleanly when any node can serve any request.
 
 | | Stateless | Stateful |
 |---|-----------|----------|
-| **Session data** | Redis, DynamoDB, or JWT | Stored on the instance |
-| **Scaling** | Add/remove instances freely | Sticky sessions or state migration |
-| **Failure** | Any instance replaces another | Losing a node loses in-flight sessions |
+| **Where state lives** | Redis, Postgres, client token | Inside the process memory |
+| **Adding capacity** | Register new instances immediately | Sticky routing or state migration |
+| **Node failure** | Traffic shifts to peers | Sessions or jobs may be lost |
 
-**Real-world pattern:** Netflix microservices are stateless; playback state and profiles live in **Cassandra** and **EVCache** (Memcached). Meta's web tier is stateless; session and social graph data sit in **TAO**, **MySQL shards**, and **Memcached**.
-
-**How to get there:**
-
-- Move sessions to Redis or a distributed cache.
-- Pass auth tokens on each request instead of server-side session affinity.
-- Avoid load-balancer sticky sessions unless a legacy constraint forces them.
+**Practical moves:** Externalize carts and login sessions to Redis; pass bearer tokens instead of server affinity; treat sticky load balancing as a last resort.
 
 ---
 
 ## Scaling by component
 
-A production system is layered. Each tier has different limits and tools.
+Monolith diagrams hide reality: each tier fails differently and needs its own playbook.
 
 ---
 
 ### Application tier
 
-App servers run business logic — REST/GraphQL handlers, auth, feed assembly, playback orchestration. Under load they are usually **CPU- or thread-bound**.
+App servers execute business rules — auth checks, cart updates, search orchestration. They usually saturate on **CPU or thread pools** before anything else.
 
 ```mermaid
 flowchart TB
-    Clients([Mobile / Web clients]) --> LB[Load Balancer]
-    LB --> App1[App instance 1]
-    LB --> App2[App instance 2]
-    LB --> AppN[App instance N]
-    App1 --> Backend[(Cache / Database)]
-    App2 --> Backend
-    AppN --> Backend
+    Clients([Web & mobile clients]) --> LB[Load balancer]
+    LB --> A1[API node 1]
+    LB --> A2[API node 2]
+    LB --> AN[API node N]
+    A1 --> Shared[(Shared cache / DB)]
+    A2 --> Shared
+    AN --> Shared
 ```
 
-**How Netflix and Meta scale the app tier:**
+| Tactic | Effect |
+|--------|--------|
+| Stateless handlers | Scale out by adding identical pods |
+| Health-checked LB | Unhealthy nodes stop receiving traffic |
+| Auto-scaling groups | Capacity tracks diurnal or campaign spikes |
+| Multi-region active-passive | Lower latency for distant users; DR readiness |
 
-| Strategy | What it does |
-|----------|--------------|
-| **Stateless services** | Any node handles any request; scale pods/containers independently |
-| **Load balancing** | Spread traffic; drain unhealthy instances |
-| **Auto-scaling** | Netflix scales **microservices** on AWS based on RPS and CPU |
-| **Regional deployment** | Meta serves users from regional clusters to cut round-trip latency |
-
-**Interview line:** *"App tier is the easiest to scale horizontally — stateless services behind a load balancer with auto-scaling."*
+**Interview angle:** *"The compute tier is usually the cheapest to replicate — stateless APIs behind a load balancer and an autoscaler."*
 
 ---
 
 ### Database tier
 
-Databases are the **hardest tier to scale** because they own durable state. You cannot blindly put ten MySQL nodes behind a round-robin LB — writes need a single source of truth (or a carefully designed distributed protocol).
+Databases own **durable, consistent state** — you cannot round-robin writes across unrelated primaries without a partitioning story.
 
-Consumer apps are almost always **read-heavy**. Meta's News Feed read path vastly dominates writes to the social graph. Netflix read patterns (browse catalog, fetch metadata) dominate writes (new titles, account updates).
+Most production workloads skew **read-heavy** (often 8:1 to 50:1 reads vs writes). Writes funnel to an authoritative primary; reads can fan out.
 
-**Scaling strategies:**
+#### Read replicas
 
-#### 1. Read replicas
-
-Primary handles writes; replicas apply changes asynchronously and serve reads.
+One primary accepts mutations; replicas apply the log and answer read queries.
 
 ```mermaid
 flowchart TB
-    App[App servers]
-    App -->|Writes| Primary[(Primary DB)]
-    App -->|Reads| R1[(Read replica 1)]
-    App -->|Reads| R2[(Read replica 2)]
-    Primary -->|Replication| R1
-    Primary -->|Replication| R2
+    API[API tier]
+    API -->|INSERT/UPDATE| Primary[(Primary)]
+    API -->|SELECT| Rep1[(Replica A)]
+    API -->|SELECT| Rep2[(Replica B)]
+    Primary -->|async replication| Rep1
+    Primary -->|async replication| Rep2
 ```
 
-- **When to use:** Read:write ratio of **10:1 or higher** and the primary is not write-saturated.
-- **Real example:** Meta used **MySQL read replicas** heavily before and alongside sharding for profile and timeline data.
-- **Trade-off:** **Replication lag** — a post may not appear instantly on all replicas (eventual consistency on reads).
+- **Fit:** Read pressure dominates; write volume still fits one primary.
+- **Caveat:** **Replication lag** — a user may not see their own write on a replica for milliseconds (or longer under load).
 
-#### 2. Sharding (partitioning)
+#### Sharding (partitioning)
 
-Split data across multiple databases using a **shard key** — typically `user_id`.
+Split rows across multiple databases using a **shard key** — commonly `customer_id` or `tenant_id`.
 
 ```mermaid
 flowchart LR
-    App[App servers] --> Router[Shard router]
-    Router --> S1["Shard 1<br/>user_id 0–999K"]
-    Router --> S2["Shard 2<br/>user_id 1M–1.99M"]
-    Router --> S3["Shard 3<br/>user_id 2M+"]
+    API[API tier] --> SR[Shard router]
+    SR --> P1["Partition A<br/>tenants 0–499K"]
+    SR --> P2["Partition B<br/>tenants 500K–999K"]
+    SR --> P3["Partition C<br/>tenants 1M+"]
 ```
 
-| Strategy | How it works |
-|----------|--------------|
-| **Range-based** | User IDs 0–1M on shard A (simple; risk of hot ranges) |
-| **Hash-based** | `hash(user_id) % N` (even spread; re-sharding is painful) |
-| **Directory-based** | Lookup table maps keys → shards (flexible; metadata service required) |
+| Partition style | Idea |
+|-----------------|------|
+| Range | Keys grouped by ID bands — simple, risk of hot ranges |
+| Hash | `hash(key) mod N` — even spread, painful resharding |
+| Directory | Metadata service maps keys → shard — flexible ops |
 
-- **When to use:** Write QPS or storage exceeds one primary — Meta **sharded MySQL** for user data at billion-user scale.
-- **Trade-off:** Cross-shard queries (e.g. "friends of friends" globally) become expensive; uneven shards ("hot" celebrities) need rebalancing.
+- **Fit:** Write QPS or disk on one primary exceeds safe limits.
+- **Caveat:** Joins across shards are expensive; celebrity tenants create **hot partitions**.
 
-#### 3. Distributed / NoSQL stores
+#### Distributed SQL / wide-column stores
 
-**Cassandra** (Netflix), **DynamoDB**, **MongoDB sharded clusters** — built for partition tolerance and horizontal write scale.
+**CockroachDB**, **Spanner**, **Cassandra**, **DynamoDB** — partition data by design, often trading immediate global consistency for partition tolerance.
 
-- Automatic partitioning across nodes
-- Often **eventual consistency** by default
-- Data models favor **denormalization** over cross-partition joins
-
-**Interview line:** *"Start with read replicas for read pressure. Shard when writes or disk exceed one primary. Consider managed sharding (Vitess, CockroachDB) before building a custom router."*
+**Interview angle:** *"Replicas first for read pressure; partition when the primary becomes the write or storage choke point; prefer managed sharding before a custom router."*
 
 ---
 
 ### Caching tier
 
-Caches sit between apps and databases. A hit in **Redis** or **Memcached** is orders of magnitude faster than disk I/O. Netflix's **EVCache** and Meta's **Memcached** layers absorb enormous read volume so databases are not hammered on every request.
+Memory sits orders of magnitude closer to CPU than disk. A hit in **Redis** or **Memcached** can offload **90%+ of read QPS** from the database when access patterns are skewed (popular SKUs, session blobs, config flags).
 
-**Strategies:**
-
-| Strategy | What it does |
-|----------|--------------|
-| **Cache-aside** | App reads cache first; on miss, loads from DB and populates cache |
-| **Redis Cluster** | Partitions keys across nodes via hash slots |
-| **Consistent hashing** | Minimizes key movement when nodes are added or removed |
-| **TTL** | Evicts stale data; caps memory growth |
-
-**Typical impact:** With a well-tuned cache, **80–90% of reads** never reach the database. Netflix caches catalog metadata and personalized rows aggressively before hitting Cassandra.
+| Pattern | Behavior |
+|---------|----------|
+| Cache-aside | App reads cache → on miss, loads DB and fills cache |
+| Clustered Redis | Keys hashed across nodes |
+| Consistent hashing | Adding nodes moves minimal key space |
+| TTL | Automatic eviction; caps memory |
 
 ```mermaid
 flowchart LR
-    App[App server] --> Cache[(Redis / Memcached)]
-    App -->|cache miss| DB[(Database)]
-    Cache -->|cache miss| DB
+    API[API node] --> Cache[(In-memory cache)]
+    API -->|miss| DB[(Database)]
+    Cache -->|miss| DB
 ```
 
-**Interview line:** *"Cache-aside with TTL. The cache is not the source of truth — the app must behave correctly on cache miss."*
+**Interview angle:** *"Treat cache as acceleration, not truth — every code path must survive a cold cache or node loss."*
 
 ---
 
 ### Message queue tier
 
-Queues decouple producers from consumers. Spikes in one service do not instantly overwhelm downstream systems.
+Async pipelines **decouple** fast user-facing paths from slow background work: sending receipts, resizing photos, updating search indexes, syncing warehouses.
 
-**Where you see this:**
+Peak HTTP traffic no longer forces every downstream system to absorb the same spike synchronously.
 
-- **Netflix:** Video **encoding pipelines** — uploads trigger async transcoding jobs across worker fleets.
-- **Meta:** **News Feed fan-out** — publishing a post enqueues work to push updates to followers' feeds.
-- **Both:** Analytics, notifications, and audit logs flow through **Kafka**-style pipelines.
-
-| Strategy | What it does |
-|----------|--------------|
-| **Async decoupling** | Scale producers and consumers independently |
-| **Buffer spikes** | Queue absorbs bursts; consumers drain at sustainable rate |
-| **Partitioned topics** | Kafka partitions let multiple consumers parallelize |
-| **Dead-letter queues** | Isolate poison messages for retry or inspection |
+| Pattern | Behavior |
+|---------|----------|
+| Producer / consumer split | Scale workers without touching the API fleet |
+| Backpressure buffer | Queue depth absorbs bursts |
+| Partitioned logs (Kafka) | Parallel consumers per partition |
+| Dead-letter queue | Poison messages isolated for inspection |
 
 ```mermaid
 flowchart LR
-    Producer[API / Feed writer] --> Queue[Queue / Kafka]
-    Queue --> C1[Consumer 1]
-    Queue --> C2[Consumer 2]
-    Queue --> CN[Consumer N]
+    API[Order API] --> Q[Message broker]
+    Q --> W1[Fulfillment worker]
+    Q --> W2[Email worker]
+    Q --> W3[Analytics worker]
 ```
 
-**Interview line:** *"Use queues for async work — scale consumers independently, buffer spikes, and keep the synchronous API path fast."*
+**Interview angle:** *"Push slow or spiky work off the request path — scale consumers on queue depth, not user clicks."*
 
 ---
 
-## Walkthrough: scaling a Netflix-style streaming platform
+## Walkthrough: scaling a food-delivery marketplace
 
-Theory is easier with a concrete story. Imagine building a video streaming product — call it **StreamFlix** — from zero toward Netflix-scale. Each stage fixes the bottleneck the previous architecture could not survive.
+Imagine **QuickPlate** — users browse restaurants, place orders, and track couriers. Growth forces architectural changes in a predictable order. Numbers are illustrative, not prescriptions.
 
 ---
 
-### Stage 1: Single server (0–50K users)
+### Stage 1: Monolith on one host (0–5K daily orders)
 
-Everything on one box: Spring/Node API, MySQL, and static assets together — how many student projects and MVPs start.
+API, background jobs, and **PostgreSQL** share one VM. Fast to build, cheap to operate.
 
 ```mermaid
 flowchart LR
-    Users([Users]) --> Server["Single EC2<br/>App + MySQL + files"]
+    Diners([Diners & drivers]) --> Box["Single VM<br/>app + database"]
 ```
 
-**Bottleneck:** CPU and RAM contention — a transcode or heavy query stalls API responses.
+**First pain point:** CPU spikes during dinner rush; DB and app contend for the same RAM.
 
-**Scale move:** Split the database onto its own instance (same pattern Netflix used before the microservices era).
+**Next step:** Move PostgreSQL to a dedicated host.
 
 ---
 
-### Stage 2: Separate database (50K–500K users)
+### Stage 2: Split compute and database (5K–40K daily orders)
 
-App and MySQL run on dedicated hardware. You can tune each independently — `innodb_buffer_pool` on DB, thread pools on API.
+The API VM talks to a separate DB instance. Tune connection limits and `shared_buffers` independently.
 
 ```mermaid
 flowchart LR
-    Users([Users]) --> App[App server]
-    App --> MySQL[(MySQL)]
+    Diners([Users]) --> App[Application server]
+    App --> PG[(PostgreSQL)]
 ```
 
-**Bottleneck:** Every **browse** and **title lookup** hits MySQL. Catalog reads dominate (Netflix-style apps are extremely read-heavy).
+**First pain point:** Menu and restaurant listings hammer the DB on every page view.
 
-**Scale move:** Add **Redis** for catalog metadata, session tokens, and "continue watching" rows.
+**Next step:** Introduce **Redis** for hot keys (menus, open hours, session tokens).
 
 ---
 
-### Stage 3: Add caching (500K–2M users)
+### Stage 3: Cache hot reads (40K–200K daily orders)
 
-Hot keys — popular titles, homepage rows, user profiles — served from memory. MySQL handles cache misses only.
+Repeated catalog reads served from memory; DB sees mostly misses and writes (new orders, status updates).
 
 ```mermaid
 flowchart LR
-    Users([Users]) --> App[App server]
-    App --> Redis[(Redis cache)]
-    App -->|cache miss| MySQL[(MySQL)]
+    Diners([Users]) --> App[Application server]
+    App --> Redis[(Redis)]
+    App -->|cache miss| PG[(PostgreSQL)]
 ```
 
-**Bottleneck:** One app server cannot handle evening **prime-time** traffic (Netflix sees massive concurrent playback starts at 8–10 PM local time).
+**First pain point:** One app process cannot accept enough concurrent checkout requests.
 
-**Scale move:** Multiple stateless app instances behind a **load balancer**.
+**Next step:** Multiple app instances behind a **load balancer**.
 
 ---
 
-### Stage 4: Multiple app servers (2M–20M users)
+### Stage 4: Horizontally scaled API tier (200K–1M daily orders)
 
-ALB distributes requests. Redis holds shared session and catalog cache. Still one MySQL primary — writes (signup, billing, watch history) and cache misses land there.
+Stateless API nodes share Redis for sessions and cart drafts. PostgreSQL still single-primary.
 
 ```mermaid
 flowchart TB
-    Users([Users]) --> LB[Load Balancer]
-    LB --> App1[App 1]
-    LB --> App2[App 2]
-    LB --> AppN[App N]
+    Diners([Users]) --> LB[Load balancer]
+    LB --> App1[API 1]
+    LB --> App2[API 2]
+    LB --> AppN[API N]
     App1 --> Redis[(Redis)]
     App2 --> Redis
     AppN --> Redis
-    Redis --> MySQL[(MySQL primary)]
+    Redis --> PG[(PostgreSQL)]
 ```
 
-**Bottleneck:** Read QPS on MySQL — millions of users browsing catalogs and resuming playback.
+**First pain point:** Read QPS from browse + order tracking overwhelms the primary.
 
-**Scale move:** Add **read replicas**; route SELECTs to replicas, writes to primary.
+**Next step:** Add **read replicas** for reporting, history, and non-critical SELECTs.
 
 ---
 
-### Stage 5: Read replicas (20M–100M users)
+### Stage 5: Read replicas (1M–5M daily orders)
 
-Primary handles account creation, subscription changes, and watch-progress writes. Replicas serve browse and search reads.
+Writes (new orders, status transitions) stay on the primary; replica nodes serve driver earnings history and admin dashboards.
 
 ```mermaid
 flowchart TB
-    App[App servers]
-    App -->|Writes| Primary[(Primary MySQL)]
-    App -->|Reads| R1[(Replica 1)]
-    App -->|Reads| R2[(Replica 2)]
-    App --> Redis[(Redis)]
-    Primary -->|Replication| R1
-    Primary -->|Replication| R2
+    API[API fleet]
+    API -->|writes| Primary[(Primary PG)]
+    API -->|reads| R1[(Replica 1)]
+    API -->|reads| R2[(Replica 2)]
+    API --> Redis[(Redis)]
+    Primary --> R1
+    Primary --> R2
 ```
 
-**Bottleneck:** **Write throughput** — every "play" event, rating, and profile update hits one primary. At Netflix scale this is why **Cassandra** replaced one-size-fits-all RDBMS paths for high-volume write workloads.
+**First pain point:** Write rate on peak Friday nights exceeds single-primary ingest.
 
-**Scale move:** **Shard** by `user_id`, or migrate hot paths to a write-optimized store.
+**Next step:** **Shard** by city or merchant region, or migrate high-volume tables to a write-optimized store.
 
 ---
 
-### Stage 6: Sharding + CDN + async video pipeline (100M+ users)
+### Stage 6: Partitioned data + async fulfillment (5M+ daily orders)
 
-**User data** shards by `user_id`. **Video bytes** never touch app servers — **CDN** (Netflix Open Connect, CloudFront) serves segments from edge PoPs close to users. **Uploads** go to object storage; **encoding** runs as async workers fed by a queue.
+Orders partitioned by **metro area**. Courier assignment and receipt email run through **Kafka** workers. Static assets and menu photos served from a **CDN** — bytes never touch the API.
 
 ```mermaid
 flowchart TB
-    Users([Users worldwide]) --> CDN[CDN edge]
-    Users --> LB[API load balancer]
-    CDN --> Origin[Origin / object storage]
-    LB --> App[App cluster]
-    App --> Router[Shard router]
-    Router --> S1[User shard 1]
-    Router --> S2[User shard 2]
-    App --> Redis[(Redis)]
-    Upload[Video upload] --> Queue[Encoding queue]
-    Queue --> Workers[Transcode workers]
-    Workers --> Origin
+    Diners([Users]) --> CDN[CDN]
+    Diners --> LB[Load balancer]
+    CDN --> Object[(Object storage)]
+    LB --> API[API fleet]
+    API --> Router[Partition router]
+    Router --> DB1[(Metro shard East)]
+    Router --> DB2[(Metro shard West)]
+    API --> Redis[(Redis)]
+    API --> Kafka[Event log]
+    Kafka --> Workers[Dispatch & notify workers]
 ```
 
-This mirrors how Netflix actually separates concerns: **API microservices**, **Cassandra** for high-volume data, **EVCache**, **CDN for video**, and **async pipelines** for encoding — not one giant monolith.
-
----
-
-## Meta angle: what changes for a social feed?
-
-A **Facebook-style News Feed** hits different bottlenecks at similar scale:
-
-| Challenge | Scaling response |
-|-----------|------------------|
-| Fan-out on write (popular user posts) | Hybrid fan-out: async queue for normal users, precomputed feeds for celebrities |
-| Graph reads (friends, groups) | **TAO**-style graph cache; denormalized feed stores |
-| Real-time notifications | WebSockets + pub/sub; separate notification tier |
-| Hot keys (viral post) | Aggressive caching; read replicas; sometimes application-level replication |
-
-The tier-by-tier playbook is the same — cache, scale app servers, replicate reads, shard writes — but **feed fan-out** and **social graph traversal** drive queue and cache design more than raw video bandwidth.
+**Ongoing cost:** Cross-metro analytics need federated queries; uneven city growth requires rebalancing shards.
 
 ---
 
 ## Summary
 
-| Principle | Takeaway |
-|-----------|----------|
-| **Measure first** | Use RPS, p99 latency, QPS, and queue depth to find the real limit |
-| **Vertical scaling** | Fast wins; hits a ceiling; one failure domain |
-| **Horizontal scaling** | Requires stateless apps and thoughtful data design |
-| **Tier-specific tactics** | Apps scale easily; databases and hot keys are hard |
-| **Growth is sequential** | Netflix and Meta scaled in stages — each fix exposed the next bottleneck |
+| Idea | Remember |
+|------|----------|
+| **Measure first** | Metrics expose the real bottleneck — not the diagram you wish you had |
+| **Scale up** | Quick relief, hard ceiling, single failure domain |
+| **Scale out** | Needs stateless apps and a data strategy that can keep up |
+| **Per-tier tactics** | Compute scales easily; stateful stores need replicas, caches, partitions |
+| **Recurring tools** | Load balancers, caches, queues, replicas, and shards show up everywhere |
 
-**Interview line:** *"Scalability is not one decision — it is a sequence of bottleneck fixes. Scale the component that metrics prove is limiting you, not the one that is easiest to diagram."*
+**Closing thought:** Scalability is a **sequence of constraint removals**. Each growth phase reveals the next weakest link — scale that component, re-measure, repeat.

@@ -6,7 +6,7 @@
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
   </div>
-  <p class="sd-sidebar__hint">{{ sd_docs.size }} design{% if sd_docs.size != 1 %}s{% endif %} — read in order</p>
+  <p class="sd-sidebar__hint">Topics appear here as you add them.</p>
   <ol class="sd-nav">
     {% for doc in sd_docs %}
       <li class="sd-nav__item{% if page.url == doc.url %} sd-nav__item--active{% endif %}">
