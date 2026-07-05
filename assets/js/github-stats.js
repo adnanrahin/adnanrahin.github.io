@@ -1,4 +1,12 @@
 (function () {
+  const EXCLUDED_LANGS = new Set(['HTML', 'CSS', 'TypeScript']);
+  const LANG_ALIASES = {
+    HCL: 'CloudFormation Stack',
+    YAML: 'CloudFormation Stack',
+    CloudFormation: 'CloudFormation Stack',
+  };
+  const FEATURED_LANGS = ['Java', 'Scala', 'Python', 'C++', 'Shell', 'CloudFormation Stack'];
+
   const LANG_COLORS = {
     JavaScript: '#f1e05a',
     TypeScript: '#3178c6',
@@ -12,6 +20,8 @@
     HTML: '#e34c26',
     CSS: '#563d7c',
     Shell: '#89e051',
+    'CloudFormation Stack': '#ff9900',
+    CloudFormation: '#ff9900',
     Dockerfile: '#384d54',
     Jupyter: '#DA5B0B',
     Kotlin: '#A97BFF',
@@ -31,18 +41,88 @@
     return LANG_COLORS[name] || LANG_COLORS.default;
   }
 
+  function normalizeLangTotals(langTotals) {
+    const normalized = {};
+    Object.entries(langTotals).forEach(([name, bytes]) => {
+      if (EXCLUDED_LANGS.has(name)) return;
+      const label = LANG_ALIASES[name] || name;
+      normalized[label] = (normalized[label] || 0) + bytes;
+    });
+    return normalized;
+  }
+
+  function buildLangBreakdown(langTotals) {
+    const normalized = normalizeLangTotals(langTotals);
+    const featured = FEATURED_LANGS.map((name) => ({
+      name,
+      bytes: normalized[name] || 0,
+      color: langColor(name),
+    }));
+    const featuredTotal = featured.reduce((sum, lang) => sum + lang.bytes, 0);
+
+    return {
+      languages: FEATURED_LANGS.length,
+      langBreakdown: featured.map((lang) => ({
+        name: lang.name,
+        bytes: lang.bytes,
+        pct: featuredTotal ? Math.round((lang.bytes / featuredTotal) * 100) : 0,
+        color: lang.color,
+      })),
+    };
+  }
+
+  function buildLangBreakdownFromCached(cached) {
+    if (!cached?.lang_breakdown?.length) return buildLangBreakdown({});
+
+    const byName = Object.fromEntries(
+      cached.lang_breakdown.map((lang) => [lang.name, lang.pct || 0])
+    );
+
+    return {
+      languages: FEATURED_LANGS.length,
+      langBreakdown: FEATURED_LANGS.map((name) => ({
+        name,
+        pct: byName[name] || 0,
+        color: langColor(name),
+      })),
+    };
+  }
+
+  function readCachedStats() {
+    const el = document.getElementById('github-stats-data');
+    if (!el) return null;
+    try {
+      return JSON.parse(el.textContent);
+    } catch {
+      return null;
+    }
+  }
+
   async function fetchJson(url) {
-    const res = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } });
+    const res = await fetch(url, {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    });
     if (!res.ok) throw new Error(`GitHub API ${res.status}`);
     return res.json();
+  }
+
+  async function fetchLifetimeCommits(username) {
+    const query = encodeURIComponent(`author:${username} committer-date:>2008-01-01`);
+    const result = await fetchJson(
+      `https://api.github.com/search/commits?q=${query}&per_page=1`
+    );
+    return result.total_count || 0;
   }
 
   async function fetchAllRepos(username) {
     const repos = [];
     let page = 1;
-    while (page <= 5) {
+    while (page <= 10) {
       const batch = await fetchJson(
-        `https://api.github.com/users/${username}/repos?per_page=100&page=${page}&type=owner&sort=updated`
+        `https://api.github.com/users/${username}/repos?per_page=100&page=${page}&type=owner&sort=pushed`
       );
       if (!Array.isArray(batch) || batch.length === 0) break;
       repos.push(...batch.filter((r) => !r.fork));
@@ -52,55 +132,71 @@
     return repos;
   }
 
-  async function fetchGitHubStats(username) {
-    const [user, repos] = await Promise.all([
-      fetchJson(`https://api.github.com/users/${username}`),
-      fetchAllRepos(username),
-    ]);
-
+  async function fetchLiveLanguageStats(username, user) {
+    const repos = await fetchAllRepos(username);
     const langTotals = {};
-    let totalCommits = 0;
     let totalStars = 0;
 
-    const chunkSize = 8;
+    const chunkSize = 6;
     for (let i = 0; i < repos.length; i += chunkSize) {
       const chunk = repos.slice(i, i + chunkSize);
       await Promise.all(
         chunk.map(async (repo) => {
           totalStars += repo.stargazers_count || 0;
           try {
-            const [langs, contributors] = await Promise.all([
-              fetchJson(repo.languages_url),
-              fetchJson(`${repo.url}/contributors?per_page=100&anon=true`),
-            ]);
+            const langs = await fetchJson(repo.languages_url);
             Object.entries(langs).forEach(([lang, bytes]) => {
               langTotals[lang] = (langTotals[lang] || 0) + bytes;
             });
-            const mine = contributors.find(
-              (c) => c.login === username || c.login === user.login
-            );
-            if (mine) totalCommits += mine.contributions || 0;
           } catch {
-            /* skip inaccessible repos */
+            /* skip */
           }
         })
       );
     }
 
-    const langEntries = Object.entries(langTotals).sort((a, b) => b[1] - a[1]);
-    const totalBytes = langEntries.reduce((sum, [, b]) => sum + b, 0);
+    const { languages, langBreakdown } = buildLangBreakdown(langTotals);
 
     return {
       repos: user.public_repos ?? repos.length,
-      commits: totalCommits,
-      languages: langEntries.length,
+      languages,
       stars: totalStars,
-      langBreakdown: langEntries.slice(0, 8).map(([name, bytes]) => ({
-        name,
-        bytes,
-        pct: totalBytes ? Math.round((bytes / totalBytes) * 100) : 0,
-        color: langColor(name),
-      })),
+      langBreakdown,
+    };
+  }
+
+  async function fetchGitHubStats(username, cached) {
+    const user = await fetchJson(`https://api.github.com/users/${username}`);
+
+    let commits = cached?.commits;
+    if (!commits) {
+      try {
+        commits = await fetchLifetimeCommits(username);
+      } catch {
+        commits = 0;
+      }
+    }
+
+    let langBreakdown = buildLangBreakdownFromCached(cached).langBreakdown;
+    let repos = cached?.repos ?? user.public_repos;
+    let languages = FEATURED_LANGS.length;
+    let stars = cached?.stars;
+
+    try {
+      const live = await fetchLiveLanguageStats(username, user);
+      repos = live.repos;
+      stars = live.stars;
+      langBreakdown = live.langBreakdown;
+    } catch {
+      /* use cached fallback */
+    }
+
+    return {
+      repos,
+      commits,
+      languages,
+      stars,
+      langBreakdown,
     };
   }
 
@@ -151,12 +247,6 @@
     });
   }
 
-  function showStatsError(container) {
-    container.querySelectorAll('[data-stat]').forEach((el) => {
-      el.textContent = '—';
-    });
-  }
-
   document.addEventListener('DOMContentLoaded', () => {
     const statsEl = document.getElementById('github-stats');
     const chartEl = document.getElementById('lang-chart');
@@ -165,15 +255,24 @@
     const username = statsEl.dataset.username;
     if (!username) return;
 
-    statsEl.classList.add('profile-stats--loading');
+    const cached = readCachedStats();
+    const hasCachedStats = cached && cached.commits;
 
-    fetchGitHubStats(username)
+    if (!hasCachedStats) {
+      statsEl.classList.add('profile-stats--loading');
+    }
+
+    fetchGitHubStats(username, cached)
       .then((stats) => {
         renderStats(statsEl, stats);
         renderLangChart(chartEl, stats.langBreakdown);
       })
       .catch(() => {
-        showStatsError(statsEl);
+        if (!hasCachedStats) {
+          statsEl.querySelectorAll('[data-stat]').forEach((el) => {
+            el.textContent = '—';
+          });
+        }
         chartEl.innerHTML = '<p class="lang-chart__empty">Could not load GitHub stats right now.</p>';
       })
       .finally(() => {

@@ -333,6 +333,14 @@ code {
   letter-spacing: 0.04em;
   font-weight: 500;
 }
+.profile-stat__hint {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.85;
+  margin-top: 0.1rem;
+}
 
 .profile__body {
   display: grid;
@@ -628,6 +636,12 @@ code {
 
 .skill-group { margin-bottom: 0.75rem; }
 .skill-group:last-child { margin-bottom: 0; }
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem 1.5rem;
+}
+.skills-grid .skill-group { margin-bottom: 0; }
 .skill-group__label {
   display: block;
   font-size: 0.75rem;

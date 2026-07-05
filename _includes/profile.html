@@ -1,5 +1,6 @@
 {% assign p = site.data.profile %}
 {% assign gh = p.github_username | default: site.author.github %}
+{% assign gs = site.data.github_stats %}
 <section class="profile" id="profile">
   <div class="profile-banner" aria-hidden="true">
     <div class="profile-banner__gradient"></div>
@@ -42,25 +43,29 @@
       </div>
     </div>
 
-    <div class="profile-stats" id="github-stats" data-username="{{ gh }}">
+    <div class="profile-stats" id="github-stats" data-username="{{ gh }}"{% if gs %} data-cached="true"{% endif %}>
       <div class="profile-stat">
-        <span class="profile-stat__value" data-stat="repos">—</span>
+        <span class="profile-stat__value{% if gs.repos %} profile-stat__value--loaded{% endif %}" data-stat="repos">{% if gs.repos %}{{ gs.repos }}{% else %}—{% endif %}</span>
         <span class="profile-stat__label">Repositories</span>
       </div>
       <div class="profile-stat">
-        <span class="profile-stat__value" data-stat="commits">—</span>
-        <span class="profile-stat__label">Commits</span>
+        <span class="profile-stat__value{% if gs.commits %} profile-stat__value--loaded{% endif %}" data-stat="commits">{% if gs.commits %}{{ gs.commits }}{% else %}—{% endif %}</span>
+        <span class="profile-stat__label">Lifetime commits{% if gs.member_since %} <span class="profile-stat__hint">since {{ gs.member_since }}</span>{% endif %}</span>
       </div>
       <div class="profile-stat">
-        <span class="profile-stat__value" data-stat="languages">—</span>
+        <span class="profile-stat__value{% if gs.languages %} profile-stat__value--loaded{% endif %}" data-stat="languages">{% if gs.languages %}{{ gs.languages }}{% else %}6{% endif %}</span>
         <span class="profile-stat__label">Languages</span>
       </div>
       <div class="profile-stat">
-        <span class="profile-stat__value" data-stat="stars">—</span>
+        <span class="profile-stat__value{% if gs.stars %} profile-stat__value--loaded{% endif %}" data-stat="stars">{% if gs.stars %}{{ gs.stars }}{% else %}—{% endif %}</span>
         <span class="profile-stat__label">Stars earned</span>
       </div>
     </div>
   </div>
+
+  {% if gs %}
+  <script type="application/json" id="github-stats-data">{{ gs | jsonify }}</script>
+  {% endif %}
 
   <div class="profile__body">
     <div class="profile__main">
@@ -85,11 +90,52 @@
 
       <article class="profile-card profile-card--github" id="github-languages" data-username="{{ gh }}">
         <h2 class="profile-card__heading">Code footprint</h2>
-        <p class="profile-card__sub">Language mix across public repositories — pulled live from GitHub.</p>
+        <p class="profile-card__sub">Java · Scala · Python · C++ · Shell · CloudFormation Stack across public repositories.</p>
         <div class="lang-chart" id="lang-chart">
-          <div class="lang-chart__loading">Loading language breakdown…</div>
+          {% assign lang_ready = false %}
+          {% if gs.lang_breakdown.size > 0 %}
+            {% for lang in gs.lang_breakdown %}
+              {% if lang.pct > 0 %}{% assign lang_ready = true %}{% endif %}
+            {% endfor %}
+          {% endif %}
+          {% if lang_ready %}
+            {% for lang in gs.lang_breakdown %}
+            <div class="lang-row">
+              <div class="lang-row__header">
+                <span class="lang-row__name">
+                  <span class="lang-row__dot" style="background:{{ lang.color | default: '#6c9eff' }}"></span>
+                  {{ lang.name }}
+                </span>
+                <span class="lang-row__pct">{{ lang.pct }}%</span>
+              </div>
+              <div class="lang-row__track">
+                <div class="lang-row__bar" style="width:{{ lang.pct }}%;background:{{ lang.color | default: '#6c9eff' }}"></div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="lang-chart__loading">Loading Java, Scala, Python, C++, Shell, CloudFormation Stack…</div>
+          {% endif %}
         </div>
       </article>
+
+      {% if p.skills %}
+      <article class="profile-card">
+        <h2 class="profile-card__heading">Skills</h2>
+        <div class="skills-grid">
+          {% for group in p.skills %}
+            <div class="skill-group">
+              <span class="skill-group__label">{{ group.label }}</span>
+              <div class="skill-pills">
+                {% for skill in group.items %}
+                  <span class="skill-pill">{{ skill }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </article>
+      {% endif %}
 
       <article class="profile-card">
         <h2 class="profile-card__heading">Experience</h2>
@@ -167,20 +213,6 @@
     </div>
 
     <aside class="profile__sidebar">
-      <article class="profile-card">
-        <h3 class="profile-card__heading profile-card__heading--sm">Top skills</h3>
-        {% for group in p.skills limit: 3 %}
-          <div class="skill-group">
-            <span class="skill-group__label">{{ group.label }}</span>
-            <div class="skill-pills">
-              {% for skill in group.items limit: 6 %}
-                <span class="skill-pill">{{ skill }}</span>
-              {% endfor %}
-            </div>
-          </div>
-        {% endfor %}
-      </article>
-
       <article class="profile-card">
         <h3 class="profile-card__heading profile-card__heading--sm">Education</h3>
         <ul class="timeline">

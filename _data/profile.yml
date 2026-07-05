@@ -26,24 +26,32 @@ about: >
 startup:
   headline: Startup mindset · Open to collaborate
   text: >
-    I bring a builder's mentality — I move fast, ship end-to-end, and think in products, not just
+    I bring a builder's mentality - I move fast, ship end-to-end, and think in products, not just
     tickets. I am actively looking for opportunities to join and contribute to the startup community,
     and I am currently working on a startup application idea that combines generative AI with
     real-world data platforms.
 
 skills:
-  - label: Languages
+  - label: Programming Languages
     items: [Java, Scala, Python, C++, C, JavaScript, TypeScript]
-  - label: Cloud & Data
-    items: [AWS, Databricks, EMR, S3, EC2, Athena, RDS, DynamoDB, Aurora, VPC, CloudFormation, Spark, PySpark, Airflow, Snowflake, PostgreSQL, HDFS, Hadoop]
-  - label: Frameworks
-    items: [Spring Boot, REST API, Angular, Hibernate, Scikit-Learn, Pandas, NumPy]
-  - label: DevOps & Tools
-    items: [Docker, Kubernetes, Ansible, Jenkins, Terraform, HashiCorp Vault, Git, Maven]
+  - label: Databases
+    items: [Oracle PL/SQL, MySQL, SQL, HQL, PandaSQL, Microsoft SQL Server, PostgreSQL, Snowflake]
+  - label: Machine Learning
+    items: [Classification, Clustering, Regression, Fraud Detection, Image Processing, Natural Language Processing]
+  - label: Libraries and Frameworks
+    items: [Spring Boot, REST API, Angular, Hibernate, Scikit-Learn, Pandas, NumPy, Apache Spark, PySpark, Databricks]
+  - label: Design Pattern and Core Java
+    items: [Singleton, Builder, Collections API, Thread, Generics]
+  - label: Mathematics and Statistics
+    items: [Linear Algebra, Calculus, Probability Distribution, Hypothesis Testing, Time Series Analysis]
+  - label: Orchestration Tools
+    items: [Ansible, Jenkins, Docker, Kubernetes, AWS CloudFormation Templates, Apache Airflow]
+  - label: Others
+    items: [Git, Maven, HTML, CSS, HDFS, JUnit, Mockito, HashiCorp Vault, Hadoop]
+  - label: Cloud
+    items: [AWS, Amazon EMR, Amazon S3, Amazon EC2, Amazon Athena, EMR Notebooks, Amazon RDS, CloudFormation Stack, AWS VPC, Amazon DynamoDB, Amazon Aurora, Databricks]
   - label: Generative AI
-    items: [Amazon Bedrock, LangChain, Llama Index, OpenAI, Google AI Studio, Ollama, Llama 3, Mistral]
-  - label: ML
-    items: [Classification, Clustering, Regression, NLP, Image Processing, Fraud Detection]
+    items: [Amazon Bedrock, LangChain, Google AI Studio, OpenAI, Llama Index]
 
 experience:
   - role: Senior Software Engineer
@@ -92,7 +100,7 @@ projects:
   - name: Genelytics-AI
     github: https://github.com/adnanrahin/genelytics-ai
     description: Generative AI data analytics engine that connects to any database and turns natural-language prompts into SQL — built as a startup-ready product prototype.
-    tech: Python, LangChain, Flask, HTML, LLM, SQL Generation
+    tech: Python, LangChain, Flask, LLM, SQL Generation
   - name: Movie Store Application
     github: https://github.com/adnanrahin/Movie-Application
     description: Full-stack movie store with Spring Boot REST APIs, Angular UI, MySQL, and production-ready Docker, Kubernetes, and Jenkins deployment pipelines.

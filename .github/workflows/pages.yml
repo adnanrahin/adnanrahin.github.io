@@ -31,6 +31,12 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
+      - name: Fetch GitHub stats
+        run: ruby scripts/fetch_github_stats.rb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: adnanrahin
+
       - name: Build with Jekyll
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
