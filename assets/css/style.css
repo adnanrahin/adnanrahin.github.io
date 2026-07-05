@@ -28,7 +28,9 @@
   --radius-sm: 8px;
   --font: "DM Sans", system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
-  --max-width: 1080px;
+  --max-width: 1320px;
+  --page-gutter: 1.25rem;
+  --sidebar-width: 320px;
   --header-h: 64px;
 }
 
@@ -64,6 +66,7 @@
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 body {
@@ -106,8 +109,9 @@ code {
 
 .site-header__inner {
   max-width: var(--max-width);
+  width: 100%;
   margin: 0 auto;
-  padding: 0 1.25rem;
+  padding: 0 var(--page-gutter);
   height: var(--header-h);
   display: flex;
   align-items: center;
@@ -190,13 +194,18 @@ code {
   max-width: var(--max-width);
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+  padding: 2rem var(--page-gutter) 4rem;
+}
+
+.home {
+  width: 100%;
 }
 
 /* --- Profile (LinkedIn-style) --- */
 .profile {
   position: relative;
-  margin: -2rem -1.25rem 0;
+  margin: -2rem calc(var(--page-gutter) * -1) 0;
+  width: calc(100% + var(--page-gutter) * 2);
 }
 
 .profile-banner {
@@ -227,7 +236,7 @@ code {
 }
 .profile-card--hero {
   position: relative;
-  margin: -72px 1.25rem 1.5rem;
+  margin: -72px var(--page-gutter) 1.5rem;
   padding: 0;
   overflow: hidden;
 }
@@ -406,10 +415,10 @@ code {
 
 .profile__body {
   display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+  gap: 1.5rem;
   align-items: start;
-  padding: 0 1.25rem;
+  padding: 0 var(--page-gutter);
 }
 
 .profile__about-text {
@@ -569,8 +578,8 @@ code {
 /* Projects grid */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
 }
 .project-card {
   background: var(--bg);
@@ -701,7 +710,7 @@ code {
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.25rem 1.5rem;
+  gap: 1.25rem 1.75rem;
 }
 .skills-grid .skill-group { margin-bottom: 0; }
 .skill-group__label {
@@ -768,8 +777,8 @@ code {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
 }
 
 .section-card {
@@ -994,11 +1003,12 @@ code {
 /* --- Footer --- */
 .site-footer {
   border-top: 1px solid var(--border);
-  padding: 1.5rem 1.25rem;
+  padding: 1.5rem var(--page-gutter);
   margin-top: auto;
 }
 .site-footer__inner {
   max-width: var(--max-width);
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
@@ -1014,7 +1024,73 @@ code {
 }
 
 /* --- Responsive --- */
+@media (min-width: 1024px) {
+  :root {
+    --page-gutter: 2rem;
+    --sidebar-width: 340px;
+  }
+
+  .profile-banner {
+    height: 220px;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    border-radius: 0;
+  }
+
+  .profile-card__top {
+    gap: 2rem;
+    padding: 0 2.25rem 1.5rem;
+  }
+
+  .profile__body {
+    gap: 2rem;
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.15rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --max-width: 1440px;
+    --page-gutter: 2.5rem;
+    --sidebar-width: 360px;
+  }
+
+  .profile-banner {
+    height: 260px;
+  }
+
+  .profile-card--hero {
+    margin-bottom: 2rem;
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem 2rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
 @media (max-width: 860px) {
+  .profile {
+    width: auto;
+  }
+
   .profile__body {
     grid-template-columns: 1fr;
   }
@@ -1054,7 +1130,7 @@ code {
 
   .site-header__inner { position: relative; }
 
-  .profile-banner { height: 140px; }
+  .profile-banner { height: 140px; width: auto; margin-left: 0; border-radius: 0 0 var(--radius) var(--radius); }
   .profile-card--hero { margin-top: -48px; }
   .profile-card__top {
     flex-direction: column;
