@@ -7,20 +7,20 @@ languages: 6
 stars: 14
 lang_breakdown:
   - name: Java
-    pct: 0
+    pct: 36
     color: "#b07219"
   - name: Scala
-    pct: 0
+    pct: 34
     color: "#c22d40"
   - name: Python
-    pct: 0
+    pct: 22
     color: "#3572A5"
   - name: C++
-    pct: 0
+    pct: 2
     color: "#f34b7d"
   - name: Shell
-    pct: 0
+    pct: 4
     color: "#89e051"
   - name: CloudFormation Stack
-    pct: 0
+    pct: 2
     color: "#ff9900"

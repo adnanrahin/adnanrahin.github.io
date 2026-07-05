@@ -20,22 +20,33 @@ LANG_ALIASES = {
 FEATURED_LANGS = ["Java", "Scala", "Python", "C++", "Shell", "CloudFormation Stack"].freeze
 
 LANG_COLORS = {
-  "JavaScript" => "#f1e05a",
-  "TypeScript" => "#3178c6",
-  "Python" => "#3572A5",
   "Java" => "#b07219",
   "Scala" => "#c22d40",
+  "Python" => "#3572A5",
   "C++" => "#f34b7d",
-  "C" => "#555555",
-  "Go" => "#00ADD8",
-  "HTML" => "#e34c26",
-  "CSS" => "#563d7c",
   "Shell" => "#89e051",
   "CloudFormation Stack" => "#ff9900",
-  "CloudFormation" => "#ff9900",
-  "Dockerfile" => "#384d54",
   "default" => "#6c9eff"
 }.freeze
+
+LANGUAGE_QUERY = <<~GRAPHQL.freeze
+  query($login: String!, $cursor: String) {
+    user(login: $login) {
+      repositories(first: 100, after: $cursor, ownerAffiliation: OWNER, isFork: false, orderBy: {field: PUSHED_AT, direction: DESC}) {
+        pageInfo { hasNextPage endCursor }
+        nodes {
+          stargazerCount
+          languages(first: 20, orderBy: {field: SIZE, direction: DESC}) {
+            edges {
+              size
+              node { name }
+            }
+          }
+        }
+      }
+    }
+  }
+GRAPHQL
 
 def normalize_lang_totals(lang_totals)
   normalized = {}
@@ -48,7 +59,21 @@ def normalize_lang_totals(lang_totals)
   normalized
 end
 
-def github_request(url)
+def build_breakdown(lang_totals)
+  filtered = normalize_lang_totals(lang_totals)
+  featured_total = FEATURED_LANGS.sum { |name| filtered[name].to_i }
+
+  FEATURED_LANGS.map do |name|
+    bytes = filtered[name].to_i
+    {
+      "name" => name,
+      "pct" => featured_total.positive? ? (bytes * 100.0 / featured_total).round : 0,
+      "color" => LANG_COLORS[name] || LANG_COLORS["default"]
+    }
+  end
+end
+
+def github_get(url)
   uri = URI(url)
   request = Net::HTTP::Get.new(uri)
   request["Accept"] = "application/vnd.github+json"
@@ -62,88 +87,91 @@ def github_request(url)
   JSON.parse(response.body)
 end
 
+def github_graphql(query, variables = {})
+  raise "GITHUB_TOKEN is required for language stats" if TOKEN.nil? || TOKEN.empty?
+
+  uri = URI("https://api.github.com/graphql")
+  request = Net::HTTP::Post.new(uri)
+  request["Authorization"] = "Bearer #{TOKEN}"
+  request["Content-Type"] = "application/json"
+  request["User-Agent"] = "adnanrahin-github-stats"
+  request.body = JSON.generate({ query: query, variables: variables })
+
+  response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(request) }
+  body = JSON.parse(response.body)
+  raise "GraphQL error: #{body["errors"]}" if body["errors"]
+
+  body["data"]
+end
+
+def fetch_language_stats(username)
+  lang_totals = {}
+  total_stars = 0
+  cursor = nil
+  pages = 0
+
+  loop do
+    data = github_graphql(LANGUAGE_QUERY, { "login" => username, "cursor" => cursor })
+    repos = data.dig("user", "repositories")
+    raise "No repository data returned" unless repos
+
+    repos["nodes"].each do |repo|
+      total_stars += repo["stargazerCount"].to_i
+      repo.dig("languages", "edges")&.each do |edge|
+        name = edge.dig("node", "name")
+        size = edge["size"].to_i
+        lang_totals[name] = lang_totals[name].to_i + size
+      end
+    end
+
+    pages += 1
+    break unless repos.dig("pageInfo", "hasNextPage") && pages < 3
+
+    cursor = repos.dig("pageInfo", "endCursor")
+  end
+
+  { "lang_totals" => lang_totals, "stars" => total_stars }
+end
+
 def fetch_lifetime_commits(username)
   query = URI.encode_www_form_component("author:#{username} committer-date:>2008-01-01")
-  result = github_request("https://api.github.com/search/commits?q=#{query}&per_page=1")
+  result = github_get("https://api.github.com/search/commits?q=#{query}&per_page=1")
   result["total_count"] || 0
 end
 
-def fetch_all_repos(username)
-  repos = []
-  page = 1
-
-  loop do
-    url = "https://api.github.com/users/#{username}/repos?per_page=100&page=#{page}&type=owner&sort=pushed"
-    batch = github_request(url)
-    break if !batch.is_a?(Array) || batch.empty?
-
-    repos.concat(batch.reject { |repo| repo["fork"] })
-    break if batch.length < 100
-
-    page += 1
-    break if page > 10
-  end
-
-  repos
-end
-
-def aggregate_repo_stats(repos)
-  lang_totals = {}
-  total_stars = repos.sum { |repo| repo["stargazers_count"].to_i }
-  sample = repos.first(40)
-
-  sample.each do |repo|
-    langs = github_request(repo["languages_url"])
-    langs.each { |lang, bytes| lang_totals[lang] = lang_totals[lang].to_i + bytes.to_i }
-  rescue StandardError => e
-    warn "Skipping #{repo['name']}: #{e.message}"
-    next
-  end
-
-  filtered = normalize_lang_totals(lang_totals)
-  featured_total = FEATURED_LANGS.sum { |name| filtered[name].to_i }
-
-  breakdown = FEATURED_LANGS.map do |name|
-    bytes = filtered[name].to_i
-    {
-      "name" => name,
-      "pct" => featured_total.positive? ? (bytes * 100.0 / featured_total).round : 0,
-      "color" => LANG_COLORS[name] || LANG_COLORS["default"]
-    }
-  end
-
-  { "languages" => FEATURED_LANGS.length, "stars" => total_stars, "lang_breakdown" => breakdown }
-end
-
 def main
-  user = github_request("https://api.github.com/users/#{USERNAME}")
-  repos = fetch_all_repos(USERNAME)
-  repo_stats = aggregate_repo_stats(repos)
+  user = github_get("https://api.github.com/users/#{USERNAME}")
+  language_data = fetch_language_stats(USERNAME)
+  breakdown = build_breakdown(language_data["lang_totals"])
+
+  if breakdown.sum { |lang| lang["pct"] }.zero?
+    warn "Warning: featured language breakdown is empty — check GITHUB_TOKEN permissions"
+  end
+
   commits = begin
     fetch_lifetime_commits(USERNAME)
   rescue StandardError => e
     warn "Commit search failed: #{e.message}"
     0
   end
-  member_since = user["created_at"]&.slice(0, 4)
 
   stats = {
     "username" => USERNAME,
     "updated_at" => Time.now.utc.iso8601,
-    "member_since" => member_since,
-    "repos" => user["public_repos"] || repos.length,
+    "member_since" => user["created_at"]&.slice(0, 4),
+    "repos" => user["public_repos"],
     "commits" => commits,
-    "languages" => repo_stats["languages"],
-    "stars" => repo_stats["stars"],
-    "lang_breakdown" => repo_stats["lang_breakdown"]
+    "languages" => FEATURED_LANGS.length,
+    "stars" => language_data["stars"],
+    "lang_breakdown" => breakdown
   }
 
   File.write(OUTPUT, stats.to_yaml(line_width: -1))
   puts "Wrote #{OUTPUT}"
-  puts "  commits: #{commits} (lifetime, all public repos)"
+  puts "  commits: #{commits}"
   puts "  repos:   #{stats['repos']}"
   puts "  stars:   #{stats['stars']}"
-  stats["lang_breakdown"].each { |lang| puts "  #{lang['name']}: #{lang['pct']}%" }
+  breakdown.each { |lang| puts "  #{lang['name']}: #{lang['pct']}%" }
 end
 
 main if $PROGRAM_NAME == __FILE__
