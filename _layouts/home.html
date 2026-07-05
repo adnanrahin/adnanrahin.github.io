@@ -1,0 +1,50 @@
+---
+layout: default
+---
+<div class="home">
+  {% include profile.html %}
+
+  <section class="sections-grid" id="blog-sections">
+    <h2 class="section-heading">Writing</h2>
+    <p class="section-subheading">Notes and deep dives by topic — interview prep, production lessons, and experiments.</p>
+    <div class="grid">
+      {% for section in site.data.sections %}
+        {% assign posts = site[section.slug] | sort: 'date' | reverse %}
+        <a href="{{ section.slug | relative_url }}/" class="section-card">
+          <span class="section-card__icon">{{ section.icon }}</span>
+          <h3 class="section-card__title">{{ section.name }}</h3>
+          <p class="section-card__desc">{{ section.description }}</p>
+          <span class="section-card__count">{{ posts.size }} post{% if posts.size != 1 %}s{% endif %}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% assign recent = site.system-design
+    | concat: site.llm
+    | concat: site.devops
+    | concat: site['data-structures']
+    | concat: site['data-engineering']
+    | sort: 'date'
+    | reverse
+    | slice: 0, 5 %}
+
+  {% if recent.size > 0 %}
+  <section class="recent-posts">
+    <h2 class="section-heading">Recent posts</h2>
+    <ul class="post-list">
+      {% for post in recent %}
+        <li class="post-list__item">
+          <a href="{{ post.url | relative_url }}" class="post-list__link">
+            <span class="post-list__title">{{ post.title }}</span>
+            <span class="post-list__meta">
+              <span class="badge">{{ post.category }}</span>
+              {% if post.date %}<time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %d, %Y" }}</time>{% endif %}
+            </span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</div>

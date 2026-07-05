@@ -1,0 +1,74 @@
+name: Adnan Habib Rahin
+title: Senior Software Engineer
+tagline: Data platforms, distributed systems, and applied AI
+location: New York, NY
+email: adnan.rahin@outlook.com
+phone: "914-297-8252"
+avatar: https://github.com/adnanrahin.png
+
+social:
+  github: https://github.com/adnanrahin
+  linkedin: https://linkedin.com/in/adnanrahin
+  leetcode: https://leetcode.com/iron_hide
+  email: mailto:adnan.rahin@outlook.com
+
+about: >
+  Senior Software Engineer with 5+ years building data platforms at scale.
+  I design ETL pipelines, cloud infrastructure, and developer tooling —
+  from Spark on Databricks to VPC IaC on AWS. Currently targeting Staff-level
+  roles where platform impact and technical leadership matter.
+
+highlights:
+  - Databricks CI/CD & Asset Bundles for analytics teams
+  - Scala/Spark/PySpark ETL at scale (HDFS → data marts)
+  - AWS migrations with CloudFormation, VPC, and multi-AZ HA
+  - GenAI projects with LangChain, Bedrock, and Llama 3
+
+skills:
+  - label: Languages
+    items: [Java, Scala, Python, TypeScript]
+  - label: Platforms
+    items: [AWS, Databricks, Kubernetes, Docker]
+  - label: Data
+    items: [Apache Spark, Airflow, Snowflake, PostgreSQL]
+  - label: AI
+    items: [LangChain, Amazon Bedrock, OpenAI, Llama 3]
+
+experience:
+  - role: Senior Software Engineer
+    company: Epsilon
+    period: Jan 2023 – Present
+    location: New York, NY
+  - role: Data Engineer
+    company: Integral Ad Science
+    period: Jan 2022 – Jan 2023
+    location: New York, NY
+  - role: Software Engineer I
+    company: Epsilon
+    period: Oct 2020 – Jan 2022
+    location: Colorado
+
+education:
+  - school: CUNY Queens College
+    degree: B.S. Computer Science
+    period: Aug 2017 – May 2020
+  - school: LaGuardia Community College
+    degree: A.S. Computer Science
+    period: Aug 2015 – Jul 2017
+
+certifications:
+  - Functional Programming Principles in Scala (EPFL)
+  - Machine Learning with Python (IBM)
+  - Python for Data Science, AI & Development (IBM)
+  - Full Stack — Angular and Java Spring Boot (Udemy)
+
+projects:
+  - name: Genelytics-AI
+    tech: Python, LangChain, Bedrock, Ollama, Llama 3
+    url: https://github.com/adnanrahin
+  - name: Movie-Store-Application
+    tech: Java, Spring Boot, Angular, Kubernetes
+    url: https://github.com/adnanrahin
+  - name: NFL Big Data Bowl 2022
+    tech: Spark, Scala, EMR, Airflow
+    url: https://github.com/adnanrahin

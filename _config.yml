@@ -1,0 +1,82 @@
+title: Adnan Habib Rahin
+description: Senior Software Engineer — System Design, Data Engineering, LLM, DevOps
+url: https://adnanrahin.github.io
+baseurl: ""
+
+author:
+  name: Adnan Habib Rahin
+  email: adnan.rahin@outlook.com
+  github: adnanrahin
+  linkedin: adnanrahin
+  leetcode: iron_hide
+
+theme: null
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+collections:
+  system-design:
+    output: true
+    permalink: /system-design/:name/
+    order: 1
+  llm:
+    output: true
+    permalink: /llm/:name/
+    order: 2
+  devops:
+    output: true
+    permalink: /devops/:name/
+    order: 3
+  data-structures:
+    output: true
+    permalink: /data-structures/:name/
+    order: 4
+  data-engineering:
+    output: true
+    permalink: /data-engineering/:name/
+    order: 5
+
+defaults:
+  - scope:
+      path: ""
+      type: system-design
+    values:
+      layout: post
+      category: System Design
+  - scope:
+      path: ""
+      type: llm
+    values:
+      layout: post
+      category: LLM
+  - scope:
+      path: ""
+      type: devops
+    values:
+      layout: post
+      category: DevOps
+  - scope:
+      path: ""
+      type: data-structures
+    values:
+      layout: post
+      category: Data Structures
+  - scope:
+      path: ""
+      type: data-engineering
+    values:
+      layout: post
+      category: Data Engineering
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - .gitignore

@@ -1,0 +1,40 @@
+---
+layout: default
+---
+<div class="category-page">
+  <header class="category-header">
+    <p class="post-breadcrumb">
+      <a href="{{ '/' | relative_url }}">Home</a>
+      <span aria-hidden="true"> / </span>
+      <span>{{ page.section_name }}</span>
+    </p>
+    <h1 class="category-title">{{ page.section_name }}</h1>
+    {% if page.section_description %}
+    <p class="category-description">{{ page.section_description }}</p>
+    {% endif %}
+  </header>
+
+  {% assign posts = site[page.section_slug] | sort: 'date' | reverse %}
+
+  {% if posts.size > 0 %}
+  <ul class="post-list post-list--category">
+    {% for post in posts %}
+      <li class="post-list__item">
+        <a href="{{ post.url | relative_url }}" class="post-list__link">
+          <span class="post-list__title">{{ post.title }}</span>
+          {% if post.description %}
+          <span class="post-list__excerpt">{{ post.description }}</span>
+          {% endif %}
+          <span class="post-list__meta">
+            {% if post.date %}<time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %d, %Y" }}</time>{% endif %}
+          </span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="empty-state">
+    <p>No posts yet in this section. Add a Markdown file to <code>_{{ page.section_slug }}/</code> to publish here.</p>
+  </div>
+  {% endif %}
+</div>

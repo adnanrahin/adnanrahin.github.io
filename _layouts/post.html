@@ -1,0 +1,32 @@
+---
+layout: default
+---
+<article class="post">
+  <header class="post-header">
+    <p class="post-breadcrumb">
+      <a href="{{ '/' | relative_url }}">Home</a>
+      <span aria-hidden="true"> / </span>
+      <a href="{{ page.collection | relative_url }}/">{{ page.category }}</a>
+    </p>
+    <h1 class="post-title">{{ page.title }}</h1>
+    {% if page.date %}
+    <p class="post-meta">
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+      {% if page.tags %}
+        {% for tag in page.tags %}
+          <span class="tag">{{ tag }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+    {% endif %}
+    {% if page.description %}
+    <p class="post-description">{{ page.description }}</p>
+    {% endif %}
+  </header>
+  <div class="post-content">
+    {{ content }}
+  </div>
+  <footer class="post-footer">
+    <a href="{{ page.collection | relative_url }}/" class="back-link">← Back to {{ page.category }}</a>
+  </footer>
+</article>

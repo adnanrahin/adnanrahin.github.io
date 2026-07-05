@@ -1,0 +1,78 @@
+{% assign p = site.data.profile %}
+<section class="profile" id="profile">
+  <div class="profile__hero">
+    <img
+      class="profile__avatar"
+      src="{{ p.avatar }}"
+      alt="{{ p.name }}"
+      width="120"
+      height="120"
+      loading="eager"
+    >
+    <div class="profile__intro">
+      <h1 class="profile__name">{{ p.name }}</h1>
+      <p class="profile__title">{{ p.title }}</p>
+      <p class="profile__tagline">{{ p.tagline }}</p>
+      <div class="profile__social">
+        <a href="{{ p.social.github }}" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+        <a href="{{ p.social.linkedin }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
+        <a href="{{ p.social.leetcode }}" target="_blank" rel="noopener noreferrer" aria-label="LeetCode">LeetCode</a>
+        <a href="{{ p.social.email }}" aria-label="Email">Email</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile__body">
+    <div class="profile__about">
+      <h2>About</h2>
+      <p>{{ p.about }}</p>
+      {% if p.highlights %}
+      <ul class="profile__highlights">
+        {% for item in p.highlights %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
+    <aside class="profile__sidebar">
+      <div class="profile-card">
+        <h3>Skills</h3>
+        {% for group in p.skills %}
+          <div class="skill-group">
+            <span class="skill-group__label">{{ group.label }}</span>
+            <div class="skill-pills">
+              {% for skill in group.items %}
+                <span class="skill-pill">{{ skill }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="profile-card">
+        <h3>Experience</h3>
+        <ul class="timeline">
+          {% for job in p.experience %}
+            <li class="timeline__item">
+              <strong>{{ job.role }}</strong>
+              <span>{{ job.company }} · {{ job.period }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="profile-card">
+        <h3>Education</h3>
+        <ul class="timeline">
+          {% for edu in p.education %}
+            <li class="timeline__item">
+              <strong>{{ edu.degree }}</strong>
+              <span>{{ edu.school }} · {{ edu.period }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
