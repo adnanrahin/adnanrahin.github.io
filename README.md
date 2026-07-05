@@ -59,4 +59,15 @@ Open [http://localhost:4000](http://localhost:4000)
 
 ## Deploy
 
-Push to `main`. Enable **Settings → Pages → Deploy from branch → main / (root)**.
+1. Push to `main`
+2. **Settings → Pages → Build and deployment → Source:** set to **GitHub Actions** (not “Deploy from a branch”)
+3. **Settings → Actions → General → Workflow permissions:** choose **Read and write permissions**
+4. The workflow in `.github/workflows/pages.yml` builds and deploys automatically
+
+If deploy fails with *“Deployment failed, try again later”*:
+
+- Confirm Pages source is **GitHub Actions** only (disable branch deploy if both are active)
+- Re-run the workflow from the **Actions** tab
+- First deploy may take a few minutes after enabling Pages
+
+Site URL: [https://adnanrahin.github.io](https://adnanrahin.github.io)
