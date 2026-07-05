@@ -1,5 +1,38 @@
-/* --- Variables --- */
+/* --- Variables (light default) --- */
 :root {
+  --bg: #f3f5f9;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
+  --border: #dce1ea;
+  --text: #151922;
+  --text-muted: #5f6778;
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.1);
+  --accent-hover: #1d4ed8;
+  --header-bg: rgba(255, 255, 255, 0.92);
+  --shadow-sm: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 24px rgba(15, 23, 42, 0.1);
+  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12);
+  --btn-primary-text: #ffffff;
+  --profile-stats-bg: rgba(243, 245, 249, 0.85);
+  --banner-gradient:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.22) 0%, transparent 50%),
+    linear-gradient(225deg, rgba(124, 58, 237, 0.15) 0%, transparent 45%),
+    linear-gradient(180deg, #c7d9ff 0%, #e8eeff 100%);
+  --banner-pattern:
+    radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.18) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.12) 0%, transparent 35%);
+  --startup-bg: linear-gradient(135deg, rgba(37, 99, 235, 0.07) 0%, rgba(124, 58, 237, 0.05) 100%);
+  --startup-border: rgba(37, 99, 235, 0.25);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font: "DM Sans", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --max-width: 1080px;
+  --header-h: 64px;
+}
+
+[data-theme="dark"] {
   --bg: #0f1117;
   --bg-elevated: #161922;
   --bg-card: #1c2030;
@@ -9,12 +42,21 @@
   --accent: #6c9eff;
   --accent-soft: rgba(108, 158, 255, 0.12);
   --accent-hover: #8ab4ff;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --font: "DM Sans", system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
-  --max-width: 1080px;
-  --header-h: 64px;
+  --header-bg: rgba(15, 17, 23, 0.85);
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.25);
+  --btn-primary-text: #0f1117;
+  --profile-stats-bg: rgba(0, 0, 0, 0.15);
+  --banner-gradient:
+    linear-gradient(135deg, rgba(108, 158, 255, 0.35) 0%, transparent 50%),
+    linear-gradient(225deg, rgba(139, 92, 246, 0.25) 0%, transparent 45%),
+    linear-gradient(180deg, #1a2744 0%, #12182a 100%);
+  --banner-pattern:
+    radial-gradient(circle at 20% 80%, rgba(108, 158, 255, 0.3) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.2) 0%, transparent 35%);
+  --startup-bg: linear-gradient(135deg, rgba(108, 158, 255, 0.08) 0%, rgba(139, 92, 246, 0.06) 100%);
+  --startup-border: rgba(108, 158, 255, 0.35);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -57,7 +99,7 @@ code {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(15, 17, 23, 0.85);
+  background: var(--header-bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
@@ -117,6 +159,31 @@ code {
   border-radius: 1px;
 }
 
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin-left: 0.5rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.theme-toggle__icon { display: none; }
+.theme-toggle__icon--sun,
+[data-theme="dark"] .theme-toggle__icon--moon { display: block; }
+[data-theme="dark"] .theme-toggle__icon--sun { display: none; }
+
 /* --- Main --- */
 .site-main {
   flex: 1;
@@ -141,18 +208,13 @@ code {
 .profile-banner__gradient {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(135deg, rgba(108, 158, 255, 0.35) 0%, transparent 50%),
-    linear-gradient(225deg, rgba(139, 92, 246, 0.25) 0%, transparent 45%),
-    linear-gradient(180deg, #1a2744 0%, #12182a 100%);
+  background: var(--banner-gradient);
 }
 .profile-banner__pattern {
   position: absolute;
   inset: 0;
   opacity: 0.4;
-  background-image:
-    radial-gradient(circle at 20% 80%, rgba(108, 158, 255, 0.3) 0%, transparent 40%),
-    radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.2) 0%, transparent 35%);
+  background-image: var(--banner-pattern);
 }
 
 .profile-card {
@@ -161,7 +223,7 @@ code {
   border-radius: var(--radius);
   padding: 1.5rem;
   margin-bottom: 1rem;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 .profile-card--hero {
   position: relative;
@@ -204,7 +266,7 @@ code {
   object-fit: cover;
   flex-shrink: 0;
   margin-top: -76px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 .profile__headline { flex: 1; min-width: 0; padding-bottom: 0.25rem; }
@@ -268,13 +330,13 @@ code {
 }
 .btn--primary {
   background: var(--accent);
-  color: #0f1117;
+  color: var(--btn-primary-text);
   border-color: var(--accent);
 }
 .btn--primary:hover {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
-  color: #0f1117;
+  color: var(--btn-primary-text);
 }
 .btn--ghost {
   background: transparent;
@@ -291,7 +353,7 @@ code {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border-top: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--profile-stats-bg);
 }
 .profile-stats--loading [data-stat] {
   opacity: 0.4;
@@ -358,8 +420,8 @@ code {
 }
 
 .profile-card--startup {
-  background: linear-gradient(135deg, rgba(108, 158, 255, 0.08) 0%, rgba(139, 92, 246, 0.06) 100%);
-  border-color: rgba(108, 158, 255, 0.35);
+  background: var(--startup-bg);
+  border-color: var(--startup-border);
 }
 .startup-callout {
   display: flex;
@@ -529,7 +591,7 @@ code {
 .project-card--link:hover {
   border-color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 .project-card__icon {
   width: 40px;
@@ -722,7 +784,7 @@ code {
 .section-card:hover {
   border-color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-lg);
   color: inherit;
 }
 
