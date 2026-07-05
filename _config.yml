@@ -40,7 +40,4 @@ exclude:
   - Gemfile.lock
   - README.md
   - .gitignore
-  - docker-compose.yml
-  - serve.ps1
-  - serve.sh
   - vendor

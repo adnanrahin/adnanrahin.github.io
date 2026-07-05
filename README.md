@@ -1,73 +1,50 @@
-# adnanrahin.github.io
+# Personal site & blog
 
-Personal site and technical blog for **Adnan Habib Rahin** — Senior Software Engineer.
+Jekyll site deployed to GitHub Pages.
 
-Live site: [https://adnanrahin.github.io](https://adnanrahin.github.io)
+**Live site:** [adnanrahin.github.io](https://adnanrahin.github.io)
 
-## Structure
+## Site structure
 
 | Path | Purpose |
 |------|---------|
-| `/` | Profile (landing page) + recent AWS posts |
-| `/aws/` | AWS deployment guides and cloud architecture notes |
-
-More sections (System Design, LLM, DevOps, etc.) can be added later — see **Add a new blog section** below.
+| `/` | Profile landing page + recent posts |
+| `/aws/` | AWS deployment guides and architecture notes |
 
 ## Add an AWS post
 
-1. Create a Markdown file in `_aws/`:
+Create `_aws/my-new-post.md`:
 
-   ```
-   _aws/my-new-post.md
-   ```
+```yaml
+---
+title: My Post Title
+date: 2026-03-15
+description: One-line summary for listings.
+tags: [aws, cloudformation]
+---
 
-2. Add front matter:
+Your content here...
+```
 
-   ```yaml
-   ---
-   title: My Post Title
-   date: 2026-03-15
-   description: One-line summary for listings.
-   tags: [aws, cloudformation]
-   ---
-   ```
+Commit and push to `main` — GitHub Actions builds and deploys automatically.
 
-3. Write content in Markdown below the front matter.
-4. Commit and push — GitHub Pages builds automatically.
+## Update profile
 
-## Update your profile
+Edit `_data/profile.yml`.
 
-Edit `_data/profile.yml` — name, bio, skills, experience, projects, and social links.
-
-## Add a new blog section (later)
+## Add a new section (later)
 
 1. Add a collection in `_config.yml`
 2. Add an entry in `_data/sections.yml`
-3. Create `{section-slug}/index.html` (copy from `aws/index.html`)
-4. Create `_{section-slug}/` folder for posts
-
-## Local development
-
-Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) running.
-
-```powershell
-cd C:\Users\rahin\source-code\github.io\adnanrahin.github.io
-.\serve.ps1
-```
-
-Open [http://localhost:4000](http://localhost:4000)
+3. Copy `aws/index.html` for the new section page
+4. Create `_{section-slug}/` for posts
 
 ## Deploy
 
 1. Push to `main`
-2. **Settings → Pages → Build and deployment → Source:** set to **GitHub Actions** (not “Deploy from a branch”)
-3. **Settings → Actions → General → Workflow permissions:** choose **Read and write permissions**
-4. The workflow in `.github/workflows/pages.yml` builds and deploys automatically
+2. **Settings → Pages → Source:** GitHub Actions
+3. **Settings → Actions → Workflow permissions:** Read and write
 
-If deploy fails with *“Deployment failed, try again later”*:
+Workflow: `.github/workflows/pages.yml`
 
-- Confirm Pages source is **GitHub Actions** only (disable branch deploy if both are active)
-- Re-run the workflow from the **Actions** tab
-- First deploy may take a few minutes after enabling Pages
-
-Site URL: [https://adnanrahin.github.io](https://adnanrahin.github.io)
+If deploy fails with *"Deployment failed, try again later"*, confirm Pages source is **GitHub Actions** (not branch deploy) and re-run the workflow.
