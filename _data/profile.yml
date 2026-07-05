@@ -1,7 +1,8 @@
 name: Adnan Habib Rahin
 title: Senior Software Engineer
-tagline: Data platforms · Cloud infrastructure · Generative AI
+tagline: Data platforms · Cloud infrastructure · Generative AI · Startup builder
 location: New York, NY
+github_username: adnanrahin
 email: adnan.rahin@outlook.com
 phone: "914-297-8252"
 avatar: https://github.com/adnanrahin.png
@@ -21,6 +22,14 @@ about: >
   OpenAI GPT, Claude, Codex, Cursor, Amazon Bedrock, and LangChain. Strong analytical and
   problem-solving mindset with expertise in scalable architecture, system optimization, and
   cross-functional technical leadership.
+
+startup:
+  headline: Startup mindset · Open to collaborate
+  text: >
+    I bring a builder's mentality — I move fast, ship end-to-end, and think in products, not just
+    tickets. I am actively looking for opportunities to join and contribute to the startup community,
+    and I am currently working on a startup application idea that combines generative AI with
+    real-world data platforms.
 
 skills:
   - label: Languages
@@ -81,20 +90,37 @@ experience:
 
 projects:
   - name: Genelytics-AI
-    description: Generative AI software that connects to any database and auto-generates complex user queries from schema and table metadata.
-    tech: Python, LangChain, Amazon Bedrock, Ollama, Meta Llama 3, Mistral AI, OpenLLM
-  - name: Movie-Store-Application
-    description: Full-stack movie store transaction management application.
-    tech: Java, Spring Boot, Hibernate, MySQL, Angular, REST API, Docker, Kubernetes
+    github: https://github.com/adnanrahin/genelytics-ai
+    description: Generative AI data analytics engine that connects to any database and turns natural-language prompts into SQL — built as a startup-ready product prototype.
+    tech: Python, LangChain, Flask, HTML, LLM, SQL Generation
+  - name: Movie Store Application
+    github: https://github.com/adnanrahin/Movie-Application
+    description: Full-stack movie store with Spring Boot REST APIs, Angular UI, MySQL, and production-ready Docker, Kubernetes, and Jenkins deployment pipelines.
+    tech: Java, Spring Boot, Angular, MySQL, Docker, Kubernetes, Jenkins
+  - name: Airflow Application Manager
+    github: https://github.com/adnanrahin/airflow-application-manager
+    description: Microservices platform to manage Airflow clusters via REST and Kafka — set variables, trigger DAGs, and coordinate async workflow operations at scale.
+    tech: Java, Spring Boot, Kafka, REST API, Airflow
   - name: NFL Big Data Bowl 2022
-    description: Large-scale sports analytics pipelines using NFL tracking data for player movement and special teams metrics.
-    tech: Spark, Scala, Python, Airflow, AWS EMR, ETL
+    github: https://github.com/adnanrahin/NFL-Big-Data-Bowl-2022
+    description: Spark pipelines processing NFL Next Gen Stats player tracking, play, game, and PFF scouting data for 2018–2020 special teams analytics.
+    tech: Scala, Apache Spark, Spark SQL, Big Data, ETL
+  - name: Microsoft News Recommendation System
+    github: https://github.com/adnanrahin/Microsoft-News-Recommendation-System
+    description: Distributed Spark data-extraction engine built on the Microsoft MIND news dataset for large-scale news recommendation and click-behavior analysis.
+    tech: Scala, Apache Spark, Maven, Big Data Processing
   - name: DOT Flight Delays Analysis
-    description: Analyzed historical flight data to identify optimal airlines by time window to avoid delays.
-    tech: Scala, Apache Spark, HDFS, RDD, DataFrame
+    github: https://github.com/adnanrahin/Spark-Flights-Data-Analysis
+    description: Spark analytics on 2015 U.S. DOT flight data — cancellations, delays by airline, airport traffic, and distance metrics with Dockerized Spark cluster support.
+    tech: Scala, Apache Spark, Spark SQL, Docker, Maven
+  - name: IMDB Sentiment Classifier
+    github: https://github.com/adnanrahin/IMDB-Movie-Review-Naive-Bayes-Classifier
+    description: Naive Bayes classifier with bag-of-words features and add-one smoothing for IMDB movie review sentiment analysis — 79% overall accuracy.
+    tech: Python, Naive Bayes, NLP, Machine Learning
   - name: Self-Avoiding Random Walk
-    description: Experiments on random walk asymptotic behavior in large-scale financial data.
-    tech: Java, Multi-Threading, Parallel Programming, Distributed Algorithms
+    github: https://github.com/adnanrahin/Self-Avoiding-Random-Walk-Data-Analysis
+    description: Multi-dimensional self-avoiding random walk simulations in 2D, 3D, and 4D — analyzing end-to-end squared distance and asymptotic behavior.
+    tech: Java, Multi-Threading, Parallel Programming, Stochastic Processes
 
 education:
   - school: The City University of New York, Queens College
