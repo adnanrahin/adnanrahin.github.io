@@ -1238,6 +1238,16 @@ code {
 }
 .sd-article__body td { color: var(--text-muted); }
 
+.mermaid {
+  margin: 0 0 1.5rem;
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  text-align: center;
+}
+
 .sd-pager {
   display: grid;
   grid-template-columns: 1fr 1fr;

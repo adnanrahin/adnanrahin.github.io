@@ -387,7 +387,3 @@ The tier-by-tier playbook is the same — cache, scale app servers, replicate re
 | **Growth is sequential** | Netflix and Meta scaled in stages — each fix exposed the next bottleneck |
 
 **Interview line:** *"Scalability is not one decision — it is a sequence of bottleneck fixes. Scale the component that metrics prove is limiting you, not the one that is easiest to diagram."*
-
----
-
-**Next:** [URL Shortener]({{ '/system-design/url-shortener/' | relative_url }}) — apply these patterns to a concrete API design.

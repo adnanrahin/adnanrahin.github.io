@@ -37,7 +37,7 @@ defaults:
       type: aws
     values:
       layout: post
-      category: AWS
+      category: Blog
   - scope:
       path: ""
       type: system_design
