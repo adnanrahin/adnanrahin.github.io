@@ -6,15 +6,32 @@ layout: default
 
   <section class="sections-grid" id="blog-sections">
     <h2 class="section-heading">Writing</h2>
-    <p class="section-subheading">Technical notes and deployment guides — starting with AWS.</p>
+    <p class="section-subheading">Technical notes, deployment guides, and system design walkthroughs.</p>
     <div class="grid">
       {% for section in site.data.sections %}
-        {% assign posts = site[section.slug] | sort: 'date' | reverse %}
-        <a href="{{ section.slug | relative_url }}/" class="section-card">
+        {% assign coll = section.collection | default: section.slug %}
+        {% assign posts = site[coll] %}
+        {% if section.collection == 'system_design' %}
+          {% assign posts = posts | sort: 'order' %}
+        {% else %}
+          {% assign posts = posts | sort: 'date' | reverse %}
+        {% endif %}
+        {% if section.path %}
+          {% assign section_href = section.path | relative_url %}
+        {% else %}
+          {% assign section_href = section.slug | append: '/' | relative_url %}
+        {% endif %}
+        <a href="{{ section_href }}" class="section-card">
           <span class="section-card__icon">{{ section.icon }}</span>
           <h3 class="section-card__title">{{ section.name }}</h3>
           <p class="section-card__desc">{{ section.description }}</p>
-          <span class="section-card__count">{{ posts.size }} post{% if posts.size != 1 %}s{% endif %}</span>
+          <span class="section-card__count">
+            {% if section.collection == 'system_design' %}
+              {{ posts.size }} design{% if posts.size != 1 %}s{% endif %}
+            {% else %}
+              {{ posts.size }} post{% if posts.size != 1 %}s{% endif %}
+            {% endif %}
+          </span>
         </a>
       {% endfor %}
     </div>

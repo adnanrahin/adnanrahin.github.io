@@ -1,5 +1,11 @@
-# Blog sections — slug must match collection name in _config.yml
+# Blog sections — slug must match collection name in _config.yml (unless collection is set)
 - name: AWS
   slug: aws
   icon: "☁"
   description: VPC, load balancers, CloudFormation, EC2, and AWS deployment patterns.
+- name: System Design
+  slug: system-design
+  collection: system_design
+  path: /system-design/
+  icon: "◈"
+  description: Scalable architecture walkthroughs — read step by step with diagrams and trade-offs.

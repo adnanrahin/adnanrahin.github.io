@@ -1,0 +1,46 @@
+---
+layout: system-design
+title: System Design
+section_slug: system-design
+section_name: System Design
+permalink: /system-design/
+sd_index: true
+---
+
+<header class="sd-index-header">
+  <p class="post-breadcrumb">
+    <a href="{{ '/' | relative_url }}">Home</a>
+    <span aria-hidden="true"> / </span>
+    <span>System Design</span>
+  </p>
+  <h1 class="sd-index-header__title">System Design</h1>
+  <p class="sd-index-header__desc">
+    Scalable architecture walkthroughs — requirements, diagrams, trade-offs, and deep dives.
+    Use the sidebar to read each design from start to finish.
+  </p>
+</header>
+
+{% assign sd_docs = site.system_design | sort: 'order' %}
+{% if sd_docs.size > 0 %}
+<p class="sd-index-start">
+  <a href="{{ sd_docs.first.url | relative_url }}" class="btn btn--primary">Start reading → {{ sd_docs.first.title }}</a>
+</p>
+
+<ul class="sd-index-list">
+  {% for doc in sd_docs %}
+  <li class="sd-index-list__item">
+    <a href="{{ doc.url | relative_url }}" class="sd-index-list__link">
+      <span class="sd-index-list__num">{{ doc.order | default: forloop.index }}</span>
+      <span class="sd-index-list__body">
+        <strong>{{ doc.title }}</strong>
+        {% if doc.description %}<span>{{ doc.description }}</span>{% endif %}
+      </span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="empty-state">
+  <p>Add a Markdown file to <code>_system_design/</code> with an <code>order</code> field to publish here.</p>
+</div>
+{% endif %}

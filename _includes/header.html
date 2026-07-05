@@ -6,7 +6,12 @@
     <nav class="site-nav" aria-label="Main">
       <a href="{{ '/' | relative_url }}" class="site-nav__link{% if page.layout == 'home' %} site-nav__link--active{% endif %}">Profile</a>
       {% for section in site.data.sections %}
-        <a href="{{ section.slug | relative_url }}/" class="site-nav__link{% if page.section_slug == section.slug %} site-nav__link--active{% endif %}">{{ section.name }}</a>
+        {% if section.path %}
+          {% assign section_href = section.path | relative_url %}
+        {% else %}
+          {% assign section_href = section.slug | append: '/' | relative_url %}
+        {% endif %}
+        <a href="{{ section_href }}" class="site-nav__link{% if page.section_slug == section.slug %} site-nav__link--active{% endif %}">{{ section.name }}</a>
       {% endfor %}
     </nav>
     <button class="theme-toggle" type="button" aria-label="Switch to dark theme" data-theme-toggle>
