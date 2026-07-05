@@ -1,10 +1,10 @@
 ---
+layout: system-design-page
 title: Scalability
-order: 1
-description: Handle growing load without breaking — metrics, scale-up vs scale-out, and tier-by-tier tactics.
-tags: [fundamentals, scaling]
+section_slug: system-design
+description: Handle growing load without breaking � metrics, scale-up vs scale-out, and tier-by-tier tactics.
+permalink: /system-design/
 ---
-
 > **Goal:** Design systems that handle more load without falling apart.  
 > **Rule:** Measure the load first — scaling without metrics is guesswork.
 
@@ -95,7 +95,7 @@ Monolith diagrams hide reality: each tier fails differently and needs its own pl
 
 App servers execute business rules — auth checks, cart updates, search orchestration. They usually saturate on **CPU or thread pools** before anything else.
 
-```mermaid
+<div class="mermaid">
 flowchart TB
     Clients([Web & mobile clients]) --> LB[Load balancer]
     LB --> A1[API node 1]
@@ -104,7 +104,7 @@ flowchart TB
     A1 --> Shared[(Shared cache / DB)]
     A2 --> Shared
     AN --> Shared
-```
+</div>
 
 | Tactic | Effect |
 |--------|--------|
@@ -127,7 +127,7 @@ Most production workloads skew **read-heavy** (often 8:1 to 50:1 reads vs writes
 
 One primary accepts mutations; replicas apply the log and answer read queries.
 
-```mermaid
+<div class="mermaid">
 flowchart TB
     API[API tier]
     API -->|INSERT/UPDATE| Primary[(Primary)]
@@ -135,7 +135,7 @@ flowchart TB
     API -->|SELECT| Rep2[(Replica B)]
     Primary -->|async replication| Rep1
     Primary -->|async replication| Rep2
-```
+</div>
 
 - **Fit:** Read pressure dominates; write volume still fits one primary.
 - **Caveat:** **Replication lag** — a user may not see their own write on a replica for milliseconds (or longer under load).
@@ -144,13 +144,13 @@ flowchart TB
 
 Split rows across multiple databases using a **shard key** — commonly `customer_id` or `tenant_id`.
 
-```mermaid
+<div class="mermaid">
 flowchart LR
     API[API tier] --> SR[Shard router]
     SR --> P1["Partition A<br/>tenants 0–499K"]
     SR --> P2["Partition B<br/>tenants 500K–999K"]
     SR --> P3["Partition C<br/>tenants 1M+"]
-```
+</div>
 
 | Partition style | Idea |
 |-----------------|------|
@@ -180,12 +180,12 @@ Memory sits orders of magnitude closer to CPU than disk. A hit in **Redis** or *
 | Consistent hashing | Adding nodes moves minimal key space |
 | TTL | Automatic eviction; caps memory |
 
-```mermaid
+<div class="mermaid">
 flowchart LR
     API[API node] --> Cache[(In-memory cache)]
     API -->|miss| DB[(Database)]
     Cache -->|miss| DB
-```
+</div>
 
 **Interview angle:** *"Treat cache as acceleration, not truth — every code path must survive a cold cache or node loss."*
 
@@ -204,13 +204,13 @@ Peak HTTP traffic no longer forces every downstream system to absorb the same sp
 | Partitioned logs (Kafka) | Parallel consumers per partition |
 | Dead-letter queue | Poison messages isolated for inspection |
 
-```mermaid
+<div class="mermaid">
 flowchart LR
     API[Order API] --> Q[Message broker]
     Q --> W1[Fulfillment worker]
     Q --> W2[Email worker]
     Q --> W3[Analytics worker]
-```
+</div>
 
 **Interview angle:** *"Push slow or spiky work off the request path — scale consumers on queue depth, not user clicks."*
 
@@ -226,10 +226,10 @@ Imagine **QuickPlate** — users browse restaurants, place orders, and track cou
 
 API, background jobs, and **PostgreSQL** share one VM. Fast to build, cheap to operate.
 
-```mermaid
+<div class="mermaid">
 flowchart LR
     Diners([Diners & drivers]) --> Box["Single VM<br/>app + database"]
-```
+</div>
 
 **First pain point:** CPU spikes during dinner rush; DB and app contend for the same RAM.
 
@@ -241,11 +241,11 @@ flowchart LR
 
 The API VM talks to a separate DB instance. Tune connection limits and `shared_buffers` independently.
 
-```mermaid
+<div class="mermaid">
 flowchart LR
     Diners([Users]) --> App[Application server]
     App --> PG[(PostgreSQL)]
-```
+</div>
 
 **First pain point:** Menu and restaurant listings hammer the DB on every page view.
 
@@ -257,12 +257,12 @@ flowchart LR
 
 Repeated catalog reads served from memory; DB sees mostly misses and writes (new orders, status updates).
 
-```mermaid
+<div class="mermaid">
 flowchart LR
     Diners([Users]) --> App[Application server]
     App --> Redis[(Redis)]
     App -->|cache miss| PG[(PostgreSQL)]
-```
+</div>
 
 **First pain point:** One app process cannot accept enough concurrent checkout requests.
 
@@ -274,7 +274,7 @@ flowchart LR
 
 Stateless API nodes share Redis for sessions and cart drafts. PostgreSQL still single-primary.
 
-```mermaid
+<div class="mermaid">
 flowchart TB
     Diners([Users]) --> LB[Load balancer]
     LB --> App1[API 1]
@@ -284,7 +284,7 @@ flowchart TB
     App2 --> Redis
     AppN --> Redis
     Redis --> PG[(PostgreSQL)]
-```
+</div>
 
 **First pain point:** Read QPS from browse + order tracking overwhelms the primary.
 
@@ -296,7 +296,7 @@ flowchart TB
 
 Writes (new orders, status transitions) stay on the primary; replica nodes serve driver earnings history and admin dashboards.
 
-```mermaid
+<div class="mermaid">
 flowchart TB
     API[API fleet]
     API -->|writes| Primary[(Primary PG)]
@@ -305,7 +305,7 @@ flowchart TB
     API --> Redis[(Redis)]
     Primary --> R1
     Primary --> R2
-```
+</div>
 
 **First pain point:** Write rate on peak Friday nights exceeds single-primary ingest.
 
@@ -317,7 +317,7 @@ flowchart TB
 
 Orders partitioned by **metro area**. Courier assignment and receipt email run through **Kafka** workers. Static assets and menu photos served from a **CDN** — bytes never touch the API.
 
-```mermaid
+<div class="mermaid">
 flowchart TB
     Diners([Users]) --> CDN[CDN]
     Diners --> LB[Load balancer]
@@ -329,7 +329,7 @@ flowchart TB
     API --> Redis[(Redis)]
     API --> Kafka[Event log]
     Kafka --> Workers[Dispatch & notify workers]
-```
+</div>
 
 **Ongoing cost:** Cross-metro analytics need federated queries; uneven city growth requires rebalancing shards.
 

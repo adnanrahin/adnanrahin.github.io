@@ -5,7 +5,7 @@
   description: Technical posts on cloud, infrastructure, deployment, and engineering practice.
 - name: System Design
   slug: system-design
-  collection: system_design
   path: /system-design/
   icon: "◈"
-  description: System design notes — scalability, architecture patterns, and trade-offs.
+  description: Scalability — metrics, scaling strategies, and growth walkthroughs.
+  label: Scalability

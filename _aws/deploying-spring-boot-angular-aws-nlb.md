@@ -23,7 +23,7 @@ The app is built with **Java**, **Spring Boot**, **Angular**, and **MySQL**:
 
 ## Architecture overview
 
-```mermaid
+<div class="mermaid">
 flowchart TB
     Users([Users]) --> NLB[Network Load Balancer]
     NLB --> ASG[Auto Scaling Group]
@@ -35,7 +35,7 @@ flowchart TB
     EC2B --> Spring2[Spring Boot :8080]
     EC2B --> Angular2[Angular / Nginx :80]
     EC2B --> MySQL2[(MySQL)]
-```
+</div>
 
 Each EC2 instance runs three Docker containers via `docker-compose`:
 

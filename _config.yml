@@ -26,10 +26,6 @@ collections:
     output: true
     permalink: /aws/:name/
     order: 1
-  system_design:
-    output: true
-    permalink: /system-design/:name/
-    order: 2
 
 defaults:
   - scope:
@@ -38,13 +34,6 @@ defaults:
     values:
       layout: post
       category: Blog
-  - scope:
-      path: ""
-      type: system_design
-    values:
-      layout: system-design
-      category: System Design
-      section_slug: system-design
 
 exclude:
   - Gemfile

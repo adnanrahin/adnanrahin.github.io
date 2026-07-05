@@ -10,11 +10,10 @@ layout: default
     <div class="grid">
       {% for section in site.data.sections %}
         {% assign coll = section.collection | default: section.slug %}
-        {% assign posts = site[coll] %}
-        {% if section.collection == 'system_design' %}
-          {% assign posts = posts | sort: 'order' %}
+        {% if section.collection %}
+          {% assign posts = site[coll] | sort: 'date' | reverse %}
         {% else %}
-          {% assign posts = posts | sort: 'date' | reverse %}
+          {% assign posts = nil %}
         {% endif %}
         {% if section.path %}
           {% assign section_href = section.path | relative_url %}
@@ -26,7 +25,9 @@ layout: default
           <h3 class="section-card__title">{{ section.name }}</h3>
           <p class="section-card__desc">{{ section.description }}</p>
           <span class="section-card__count">
-            {% if section.collection == 'system_design' %}
+            {% if section.label %}
+              {{ section.label }}
+            {% elsif section.collection == 'system_design' %}
               {{ posts.size }} design{% if posts.size != 1 %}s{% endif %}
             {% else %}
               {{ posts.size }} post{% if posts.size != 1 %}s{% endif %}
