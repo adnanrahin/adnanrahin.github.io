@@ -158,10 +158,21 @@ code {
 }
 
 .profile__tagline {
-  margin: 0 0 1rem;
+  margin: 0 0 0.75rem;
   color: var(--text-muted);
   font-size: 1rem;
 }
+
+.profile__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+.profile__contact a { color: var(--text-muted); }
+.profile__contact a:hover { color: var(--accent); }
 
 .profile__social {
   display: flex;
@@ -192,6 +203,84 @@ code {
   margin: 0 0 1rem;
   color: var(--text-muted);
 }
+
+.profile__main h2 {
+  margin: 2rem 0 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.profile__main h2:first-child { margin-top: 0; }
+
+.job {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.job:last-child { border-bottom: none; padding-bottom: 0; }
+
+.job__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+.job__role {
+  margin: 0 0 0.2rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.job__company {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--accent);
+}
+.job__period {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.job__highlights {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.job__highlights li { margin-bottom: 0.4rem; }
+
+.project {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.project:last-child { border-bottom: none; }
+.project__name {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.project__desc {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.project__tech {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.project__tech strong { color: var(--text); font-weight: 600; }
+
+.profile__list {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.profile__list li { margin-bottom: 0.35rem; }
 
 .profile__highlights {
   margin: 0;

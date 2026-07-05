@@ -6,7 +6,7 @@ layout: default
 
   <section class="sections-grid" id="blog-sections">
     <h2 class="section-heading">Writing</h2>
-    <p class="section-subheading">Notes and deep dives by topic — interview prep, production lessons, and experiments.</p>
+    <p class="section-subheading">Technical notes and deployment guides — starting with AWS.</p>
     <div class="grid">
       {% for section in site.data.sections %}
         {% assign posts = site[section.slug] | sort: 'date' | reverse %}
@@ -20,15 +20,7 @@ layout: default
     </div>
   </section>
 
-  {% assign recent = site.system-design
-    | concat: site.llm
-    | concat: site.devops
-    | concat: site.aws
-    | concat: site['data-structures']
-    | concat: site['data-engineering']
-    | sort: 'date'
-    | reverse
-    | slice: 0, 5 %}
+  {% assign recent = site.aws | sort: 'date' | reverse | slice: 0, 5 %}
 
   {% if recent.size > 0 %}
   <section class="recent-posts">

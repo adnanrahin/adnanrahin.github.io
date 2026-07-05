@@ -1,6 +1,6 @@
 name: Adnan Habib Rahin
 title: Senior Software Engineer
-tagline: Data platforms, distributed systems, and applied AI
+tagline: Data platforms · Cloud infrastructure · Generative AI
 location: New York, NY
 email: adnan.rahin@outlook.com
 phone: "914-297-8252"
@@ -13,62 +13,105 @@ social:
   email: mailto:adnan.rahin@outlook.com
 
 about: >
-  Senior Software Engineer with 5+ years building data platforms at scale.
-  I design ETL pipelines, cloud infrastructure, and developer tooling —
-  from Spark on Databricks to VPC IaC on AWS. Currently targeting Staff-level
-  roles where platform impact and technical leadership matter.
-
-highlights:
-  - Databricks CI/CD & Asset Bundles for analytics teams
-  - Scala/Spark/PySpark ETL at scale (HDFS → data marts)
-  - AWS migrations with CloudFormation, VPC, and multi-AZ HA
-  - GenAI projects with LangChain, Bedrock, and Llama 3
+  Skilled in building reusable engineering frameworks, optimizing large-scale data workloads,
+  designing resilient cloud infrastructure, and leading enterprise migration initiatives from
+  on-premises systems to modern cloud-native platforms. Passionate about Artificial Intelligence,
+  Large Language Models (LLMs), Generative AI, and GPT-based systems, with hands-on experience
+  developing AI-driven applications using foundation models and orchestration frameworks including
+  OpenAI GPT, Claude, Codex, Cursor, Amazon Bedrock, and LangChain. Strong analytical and
+  problem-solving mindset with expertise in scalable architecture, system optimization, and
+  cross-functional technical leadership.
 
 skills:
   - label: Languages
-    items: [Java, Scala, Python, TypeScript]
-  - label: Platforms
-    items: [AWS, Databricks, Kubernetes, Docker]
-  - label: Data
-    items: [Apache Spark, Airflow, Snowflake, PostgreSQL]
-  - label: AI
-    items: [LangChain, Amazon Bedrock, OpenAI, Llama 3]
+    items: [Java, Scala, Python, C++, C, JavaScript, TypeScript]
+  - label: Cloud & Data
+    items: [AWS, Databricks, EMR, S3, EC2, Athena, RDS, DynamoDB, Aurora, VPC, CloudFormation, Spark, PySpark, Airflow, Snowflake, PostgreSQL, HDFS, Hadoop]
+  - label: Frameworks
+    items: [Spring Boot, REST API, Angular, Hibernate, Scikit-Learn, Pandas, NumPy]
+  - label: DevOps & Tools
+    items: [Docker, Kubernetes, Ansible, Jenkins, Terraform, HashiCorp Vault, Git, Maven]
+  - label: Generative AI
+    items: [Amazon Bedrock, LangChain, Llama Index, OpenAI, Google AI Studio, Ollama, Llama 3, Mistral]
+  - label: ML
+    items: [Classification, Clustering, Regression, NLP, Image Processing, Fraud Detection]
 
 experience:
   - role: Senior Software Engineer
-    company: Epsilon
+    company: Epsilon Data Management
+    location: New York, New York
     period: Jan 2023 – Present
-    location: New York, NY
+    highlights:
+      - Architected and migrated enterprise-scale Spark and PySpark workloads from legacy on-premises Hadoop to AWS Databricks with Delta Lake and Unity Catalog.
+      - Led decomposition of a monolithic data platform into independently deployable services and pipeline repositories.
+      - Defined organization-wide standards for Python packaging, CI/CD, Databricks deployments, artifact management, and infrastructure integration.
+      - Built enterprise CI/CD pipelines integrating Jenkins, Maven, Python packaging, Docker, Terraform, and Databricks with automated testing and environment promotion.
+      - Architected workflow orchestration using AWS MWAA, ECS Fargate, Docker, EFS, and Terraform for distributed data processing.
+      - Designed reusable IaC modules for AWS workflow orchestration, container orchestration, IAM, logging, networking, and storage.
+      - Engineered CloudFormation templates for secure VPC infrastructure — public/private subnets, NAT gateways, route tables, and VPC endpoints.
+      - Designed large-scale audience data processing and partner distribution pipelines with compliance filtering and audit tracking.
+
   - role: Data Engineer
     company: Integral Ad Science
+    location: New York, New York
     period: Jan 2022 – Jan 2023
-    location: New York, NY
+    highlights:
+      - Migrated Pig and Hive data aggregation logic to Spark, optimizing runtime and reducing AWS EMR costs.
+      - Worked with Solutions Architect and Ops to migrate on-prem data pipelines to AWS-based solutions.
+      - Developed REST APIs using Java and Spring Boot to load scoring data to Snowflake for BI and analytics teams.
+      - Utilized Airflow to automate end-to-end ETL — spin up EMR, load from S3, deploy artifacts, submit Spark jobs, and shut down clusters.
+
   - role: Software Engineer I
-    company: Epsilon
+    company: Epsilon Data Management
+    location: Westminster, Colorado
     period: Oct 2020 – Jan 2022
-    location: Colorado
+    highlights:
+      - Built a generic Spark ETL framework using RDD APIs, eliminating manual steps from the ETL process.
+      - Improved deployment using Ansible, Jenkins, and CI/CD; migrated J2EE backend to Spring Boot and Hibernate.
+      - Designed REST APIs with Spring Boot and Angular; created AWS S3 management APIs with Java and AWS SDK.
+      - Designed file retention policy algorithm for HDFS using Spark and Scala; re-engineered production installs with Docker and Ansible.
+
+  - role: Software Developer Intern
+    company: Clear SkAI (Platinum HRM)
+    location: Brooklyn, NY
+    period: Jun 2018 – Aug 2018
+    highlights:
+      - Developed software to automate and standardize repeatable business processes using Python and SQL.
+      - Utilized Airflow DAGs and RPA tools to automate business workflows.
+
+projects:
+  - name: Genelytics-AI
+    description: Generative AI software that connects to any database and auto-generates complex user queries from schema and table metadata.
+    tech: Python, LangChain, Amazon Bedrock, Ollama, Meta Llama 3, Mistral AI, OpenLLM
+  - name: Movie-Store-Application
+    description: Full-stack movie store transaction management application.
+    tech: Java, Spring Boot, Hibernate, MySQL, Angular, REST API, Docker, Kubernetes
+  - name: NFL Big Data Bowl 2022
+    description: Large-scale sports analytics pipelines using NFL tracking data for player movement and special teams metrics.
+    tech: Spark, Scala, Python, Airflow, AWS EMR, ETL
+  - name: DOT Flight Delays Analysis
+    description: Analyzed historical flight data to identify optimal airlines by time window to avoid delays.
+    tech: Scala, Apache Spark, HDFS, RDD, DataFrame
+  - name: Self-Avoiding Random Walk
+    description: Experiments on random walk asymptotic behavior in large-scale financial data.
+    tech: Java, Multi-Threading, Parallel Programming, Distributed Algorithms
 
 education:
-  - school: CUNY Queens College
-    degree: B.S. Computer Science
+  - school: The City University of New York, Queens College
+    degree: Bachelor of Science in Computer Science
     period: Aug 2017 – May 2020
   - school: LaGuardia Community College
-    degree: A.S. Computer Science
+    degree: Associate Degree in Computer Science
     period: Aug 2015 – Jul 2017
+
+coursework:
+  - Data Structures and Algorithms
+  - Machine Learning and Data Analytics
+  - Natural Language Processing with Machine Learning
+  - Image Processing with Neural Networks
 
 certifications:
   - Functional Programming Principles in Scala (EPFL)
   - Machine Learning with Python (IBM)
   - Python for Data Science, AI & Development (IBM)
   - Full Stack — Angular and Java Spring Boot (Udemy)
-
-projects:
-  - name: Genelytics-AI
-    tech: Python, LangChain, Bedrock, Ollama, Llama 3
-    url: https://github.com/adnanrahin
-  - name: Movie-Store-Application
-    tech: Java, Spring Boot, Angular, Kubernetes
-    url: https://github.com/adnanrahin
-  - name: NFL Big Data Bowl 2022
-    tech: Spark, Scala, EMR, Airflow
-    url: https://github.com/adnanrahin

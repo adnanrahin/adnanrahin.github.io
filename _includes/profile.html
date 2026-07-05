@@ -13,25 +13,59 @@
       <h1 class="profile__name">{{ p.name }}</h1>
       <p class="profile__title">{{ p.title }}</p>
       <p class="profile__tagline">{{ p.tagline }}</p>
+      <div class="profile__contact">
+        {% if p.email %}<a href="mailto:{{ p.email }}">{{ p.email }}</a>{% endif %}
+        {% if p.phone %}<span>{{ p.phone }}</span>{% endif %}
+        {% if p.location %}<span>{{ p.location }}</span>{% endif %}
+      </div>
       <div class="profile__social">
-        <a href="{{ p.social.github }}" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
-        <a href="{{ p.social.linkedin }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
-        <a href="{{ p.social.leetcode }}" target="_blank" rel="noopener noreferrer" aria-label="LeetCode">LeetCode</a>
-        <a href="{{ p.social.email }}" aria-label="Email">Email</a>
+        <a href="{{ p.social.linkedin }}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="{{ p.social.github }}" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="{{ p.social.leetcode }}" target="_blank" rel="noopener noreferrer">LeetCode</a>
       </div>
     </div>
   </div>
 
   <div class="profile__body">
-    <div class="profile__about">
-      <h2>About</h2>
-      <p>{{ p.about }}</p>
-      {% if p.highlights %}
-      <ul class="profile__highlights">
-        {% for item in p.highlights %}
-          <li>{{ item }}</li>
+    <div class="profile__main">
+      <div class="profile__about">
+        <h2>Profile</h2>
+        <p>{{ p.about }}</p>
+      </div>
+
+      <div class="profile__experience">
+        <h2>Experience</h2>
+        {% for job in p.experience %}
+          <article class="job">
+            <header class="job__header">
+              <div>
+                <h3 class="job__role">{{ job.role }}</h3>
+                <p class="job__company">{{ job.company }} · {{ job.location }}</p>
+              </div>
+              <time class="job__period">{{ job.period }}</time>
+            </header>
+            {% if job.highlights %}
+            <ul class="job__highlights">
+              {% for item in job.highlights %}
+                <li>{{ item }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </article>
         {% endfor %}
-      </ul>
+      </div>
+
+      {% if p.projects %}
+      <div class="profile__projects">
+        <h2>Projects</h2>
+        {% for project in p.projects %}
+          <article class="project">
+            <h3 class="project__name">{{ project.name }}</h3>
+            {% if project.description %}<p class="project__desc">{{ project.description }}</p>{% endif %}
+            {% if project.tech %}<p class="project__tech"><strong>Tech:</strong> {{ project.tech }}</p>{% endif %}
+          </article>
+        {% endfor %}
+      </div>
       {% endif %}
     </div>
 
@@ -51,25 +85,34 @@
       </div>
 
       <div class="profile-card">
-        <h3>Experience</h3>
-        <ul class="timeline">
-          {% for job in p.experience %}
-            <li class="timeline__item">
-              <strong>{{ job.role }}</strong>
-              <span>{{ job.company }} · {{ job.period }}</span>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-
-      <div class="profile-card">
         <h3>Education</h3>
         <ul class="timeline">
           {% for edu in p.education %}
             <li class="timeline__item">
               <strong>{{ edu.degree }}</strong>
-              <span>{{ edu.school }} · {{ edu.period }}</span>
+              <span>{{ edu.school }}</span>
+              <span>{{ edu.period }}</span>
             </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% if p.coursework %}
+      <div class="profile-card">
+        <h3>Coursework</h3>
+        <ul class="profile__list">
+          {% for item in p.coursework %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <div class="profile-card">
+        <h3>Certifications</h3>
+        <ul class="profile__list">
+          {% for cert in p.certifications %}
+            <li>{{ cert }}</li>
           {% endfor %}
         </ul>
       </div>

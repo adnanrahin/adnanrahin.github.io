@@ -1,30 +1,5 @@
 # Blog sections — slug must match collection name in _config.yml
-- name: System Design
-  slug: system-design
-  icon: "◈"
-  description: Scalability, distributed systems, and architecture patterns for interviews and production.
-
-- name: LLM
-  slug: llm
-  icon: "◎"
-  description: Generative AI, RAG, LangChain, Bedrock, and applied LLM engineering.
-
-- name: DevOps
-  slug: devops
-  icon: "⬡"
-  description: CI/CD, IaC, Kubernetes, Docker, Jenkins, and cloud operations.
-
 - name: AWS
   slug: aws
   icon: "☁"
   description: VPC, load balancers, CloudFormation, EC2, and AWS deployment patterns.
-
-- name: Data Structures
-  slug: data-structures
-  icon: "▣"
-  description: Algorithms, problem patterns, and core CS fundamentals.
-
-- name: Data Engineering
-  slug: data-engineering
-  icon: "◫"
-  description: Spark, Airflow, Databricks, ETL pipelines, and lakehouse patterns.
