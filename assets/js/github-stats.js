@@ -8,31 +8,17 @@
   const FEATURED_LANGS = ['Java', 'Scala', 'Python', 'C++', 'Shell', 'CloudFormation Stack'];
 
   const LANG_COLORS = {
-    JavaScript: '#f1e05a',
-    TypeScript: '#3178c6',
-    Python: '#3572A5',
     Java: '#b07219',
     Scala: '#c22d40',
+    Python: '#3572A5',
     'C++': '#f34b7d',
-    C: '#555555',
-    Go: '#00ADD8',
-    Rust: '#dea584',
-    HTML: '#e34c26',
-    CSS: '#563d7c',
     Shell: '#89e051',
     'CloudFormation Stack': '#ff9900',
-    CloudFormation: '#ff9900',
-    Dockerfile: '#384d54',
-    Jupyter: '#DA5B0B',
-    Kotlin: '#A97BFF',
-    Ruby: '#701516',
-    Swift: '#F05138',
-    PHP: '#4F5D95',
-    Vue: '#41b883',
     default: '#6c9eff',
   };
 
   function formatNumber(n) {
+    if (n == null || Number.isNaN(n)) return '—';
     if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
     return String(n);
   }
@@ -60,32 +46,24 @@
     }));
     const featuredTotal = featured.reduce((sum, lang) => sum + lang.bytes, 0);
 
-    return {
-      languages: FEATURED_LANGS.length,
-      langBreakdown: featured.map((lang) => ({
-        name: lang.name,
-        bytes: lang.bytes,
-        pct: featuredTotal ? Math.round((lang.bytes / featuredTotal) * 100) : 0,
-        color: lang.color,
-      })),
-    };
+    return featured.map((lang) => ({
+      name: lang.name,
+      bytes: lang.bytes,
+      pct: featuredTotal ? Math.round((lang.bytes / featuredTotal) * 100) : 0,
+      color: lang.color,
+    }));
   }
 
   function buildLangBreakdownFromCached(cached) {
-    if (!cached?.lang_breakdown?.length) return buildLangBreakdown({});
-
     const byName = Object.fromEntries(
-      cached.lang_breakdown.map((lang) => [lang.name, lang.pct || 0])
+      (cached?.lang_breakdown || []).map((lang) => [lang.name, lang])
     );
 
-    return {
-      languages: FEATURED_LANGS.length,
-      langBreakdown: FEATURED_LANGS.map((name) => ({
-        name,
-        pct: byName[name] || 0,
-        color: langColor(name),
-      })),
-    };
+    return FEATURED_LANGS.map((name) => ({
+      name,
+      pct: byName[name]?.pct || 0,
+      color: byName[name]?.color || langColor(name),
+    }));
   }
 
   function readCachedStats() {
@@ -96,6 +74,10 @@
     } catch {
       return null;
     }
+  }
+
+  function chartHasData(breakdown) {
+    return breakdown.some((lang) => lang.pct > 0);
   }
 
   async function fetchJson(url) {
@@ -117,84 +99,67 @@
     return result.total_count || 0;
   }
 
-  async function fetchAllRepos(username) {
+  async function fetchLiveLanguageStats(username) {
     const repos = [];
-    let page = 1;
-    while (page <= 10) {
+    for (let page = 1; page <= 2; page += 1) {
       const batch = await fetchJson(
-        `https://api.github.com/users/${username}/repos?per_page=100&page=${page}&type=owner&sort=pushed`
+        `https://api.github.com/users/${username}/repos?per_page=50&page=${page}&type=owner&sort=pushed`
       );
       if (!Array.isArray(batch) || batch.length === 0) break;
       repos.push(...batch.filter((r) => !r.fork));
-      if (batch.length < 100) break;
-      page += 1;
+      if (batch.length < 50) break;
     }
-    return repos;
-  }
 
-  async function fetchLiveLanguageStats(username, user) {
-    const repos = await fetchAllRepos(username);
     const langTotals = {};
-    let totalStars = 0;
-
-    const chunkSize = 6;
-    for (let i = 0; i < repos.length; i += chunkSize) {
-      const chunk = repos.slice(i, i + chunkSize);
-      await Promise.all(
-        chunk.map(async (repo) => {
-          totalStars += repo.stargazers_count || 0;
-          try {
-            const langs = await fetchJson(repo.languages_url);
-            Object.entries(langs).forEach(([lang, bytes]) => {
-              langTotals[lang] = (langTotals[lang] || 0) + bytes;
-            });
-          } catch {
-            /* skip */
-          }
-        })
-      );
+    const sample = repos.slice(0, 30);
+    for (const repo of sample) {
+      try {
+        const langs = await fetchJson(repo.languages_url);
+        Object.entries(langs).forEach(([lang, bytes]) => {
+          langTotals[lang] = (langTotals[lang] || 0) + bytes;
+        });
+      } catch {
+        /* skip repo */
+      }
     }
 
-    const { languages, langBreakdown } = buildLangBreakdown(langTotals);
-
-    return {
-      repos: user.public_repos ?? repos.length,
-      languages,
-      stars: totalStars,
-      langBreakdown,
-    };
+    return buildLangBreakdown(langTotals);
   }
 
-  async function fetchGitHubStats(username, cached) {
-    const user = await fetchJson(`https://api.github.com/users/${username}`);
-
+  async function refreshStats(username, cached) {
+    let repos = cached?.repos;
     let commits = cached?.commits;
+    let stars = cached?.stars;
+    let langBreakdown = buildLangBreakdownFromCached(cached);
+
+    try {
+      const user = await fetchJson(`https://api.github.com/users/${username}`);
+      repos = user.public_repos ?? repos;
+    } catch {
+      /* keep cached repos */
+    }
+
     if (!commits) {
       try {
         commits = await fetchLifetimeCommits(username);
       } catch {
-        commits = 0;
+        commits = cached?.commits ?? 0;
       }
     }
 
-    let langBreakdown = buildLangBreakdownFromCached(cached).langBreakdown;
-    let repos = cached?.repos ?? user.public_repos;
-    let languages = FEATURED_LANGS.length;
-    let stars = cached?.stars;
-
     try {
-      const live = await fetchLiveLanguageStats(username, user);
-      repos = live.repos;
-      stars = live.stars;
-      langBreakdown = live.langBreakdown;
+      const liveBreakdown = await fetchLiveLanguageStats(username);
+      if (chartHasData(liveBreakdown)) {
+        langBreakdown = liveBreakdown;
+      }
     } catch {
-      /* use cached fallback */
+      /* keep cached breakdown */
     }
 
     return {
       repos,
       commits,
-      languages,
+      languages: FEATURED_LANGS.length,
       stars,
       langBreakdown,
     };
@@ -204,12 +169,12 @@
     const map = {
       repos: formatNumber(stats.repos),
       commits: formatNumber(stats.commits),
-      languages: String(stats.languages),
+      languages: String(stats.languages ?? FEATURED_LANGS.length),
       stars: formatNumber(stats.stars),
     };
     Object.entries(map).forEach(([key, value]) => {
       const el = container.querySelector(`[data-stat="${key}"]`);
-      if (el) {
+      if (el && value !== '—') {
         el.textContent = value;
         el.classList.add('profile-stat__value--loaded');
       }
@@ -217,10 +182,7 @@
   }
 
   function renderLangChart(container, breakdown) {
-    if (!breakdown.length) {
-      container.innerHTML = '<p class="lang-chart__empty">No public language data available.</p>';
-      return;
-    }
+    if (!breakdown.length) return;
 
     container.innerHTML = breakdown
       .map(
@@ -256,24 +218,36 @@
     if (!username) return;
 
     const cached = readCachedStats();
-    const hasCachedStats = cached && cached.commits;
+    const cachedBreakdown = buildLangBreakdownFromCached(cached);
+    const serverRendered = chartEl.querySelector('.lang-row');
 
-    if (!hasCachedStats) {
-      statsEl.classList.add('profile-stats--loading');
+    if (cached?.commits || cached?.repos) {
+      renderStats(statsEl, {
+        repos: cached.repos,
+        commits: cached.commits,
+        languages: cached.languages ?? FEATURED_LANGS.length,
+        stars: cached.stars,
+      });
     }
 
-    fetchGitHubStats(username, cached)
+    if (!serverRendered) {
+      renderLangChart(chartEl, cachedBreakdown);
+    }
+
+    if (!chartHasData(cachedBreakdown) && !serverRendered) {
+      chartEl.innerHTML =
+        '<p class="lang-chart__empty">Language breakdown is generated during site deploy from your public GitHub repositories.</p>';
+    }
+
+    refreshStats(username, cached)
       .then((stats) => {
         renderStats(statsEl, stats);
-        renderLangChart(chartEl, stats.langBreakdown);
+        if (chartHasData(stats.langBreakdown)) {
+          renderLangChart(chartEl, stats.langBreakdown);
+        }
       })
       .catch(() => {
-        if (!hasCachedStats) {
-          statsEl.querySelectorAll('[data-stat]').forEach((el) => {
-            el.textContent = '—';
-          });
-        }
-        chartEl.innerHTML = '<p class="lang-chart__empty">Could not load GitHub stats right now.</p>';
+        /* keep server-rendered or cached chart */
       })
       .finally(() => {
         statsEl.classList.remove('profile-stats--loading');

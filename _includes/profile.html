@@ -1,6 +1,6 @@
 {% assign p = site.data.profile %}
 {% assign gh = p.github_username | default: site.author.github %}
-{% assign gs = site.data.github_stats %}
+{% assign gs = site.data.github_stats | default: site.data["github-stats"] %}
 <section class="profile" id="profile">
   <div class="profile-banner" aria-hidden="true">
     <div class="profile-banner__gradient"></div>
@@ -92,13 +92,7 @@
         <h2 class="profile-card__heading">Code footprint</h2>
         <p class="profile-card__sub">Java · Scala · Python · C++ · Shell · CloudFormation Stack across public repositories.</p>
         <div class="lang-chart" id="lang-chart">
-          {% assign lang_ready = false %}
           {% if gs.lang_breakdown.size > 0 %}
-            {% for lang in gs.lang_breakdown %}
-              {% if lang.pct > 0 %}{% assign lang_ready = true %}{% endif %}
-            {% endfor %}
-          {% endif %}
-          {% if lang_ready %}
             {% for lang in gs.lang_breakdown %}
             <div class="lang-row">
               <div class="lang-row__header">
@@ -114,7 +108,7 @@
             </div>
             {% endfor %}
           {% else %}
-            <div class="lang-chart__loading">Loading Java, Scala, Python, C++, Shell, CloudFormation Stack…</div>
+            <p class="lang-chart__empty">Language breakdown is generated during site deploy from your public GitHub repositories.</p>
           {% endif %}
         </div>
       </article>

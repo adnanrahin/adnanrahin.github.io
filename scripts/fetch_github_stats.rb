@@ -9,7 +9,7 @@ require "yaml"
 
 USERNAME = ENV.fetch("GITHUB_USERNAME", "adnanrahin")
 TOKEN = ENV["GITHUB_TOKEN"]
-OUTPUT = File.expand_path("../_data/github-stats.yml", __dir__)
+OUTPUT = File.expand_path("../_data/github_stats.yml", __dir__)
 
 EXCLUDED_LANGS = %w[HTML CSS TypeScript].freeze
 LANG_ALIASES = {
@@ -89,13 +89,14 @@ end
 
 def aggregate_repo_stats(repos)
   lang_totals = {}
-  total_stars = 0
+  total_stars = repos.sum { |repo| repo["stargazers_count"].to_i }
+  sample = repos.first(40)
 
-  repos.each do |repo|
-    total_stars += repo["stargazers_count"].to_i
+  sample.each do |repo|
     langs = github_request(repo["languages_url"])
     langs.each { |lang, bytes| lang_totals[lang] = lang_totals[lang].to_i + bytes.to_i }
-  rescue StandardError
+  rescue StandardError => e
+    warn "Skipping #{repo['name']}: #{e.message}"
     next
   end
 
@@ -118,7 +119,12 @@ def main
   user = github_request("https://api.github.com/users/#{USERNAME}")
   repos = fetch_all_repos(USERNAME)
   repo_stats = aggregate_repo_stats(repos)
-  commits = fetch_lifetime_commits(USERNAME)
+  commits = begin
+    fetch_lifetime_commits(USERNAME)
+  rescue StandardError => e
+    warn "Commit search failed: #{e.message}"
+    0
+  end
   member_since = user["created_at"]&.slice(0, 4)
 
   stats = {
@@ -137,6 +143,7 @@ def main
   puts "  commits: #{commits} (lifetime, all public repos)"
   puts "  repos:   #{stats['repos']}"
   puts "  stars:   #{stats['stars']}"
+  stats["lang_breakdown"].each { |lang| puts "  #{lang['name']}: #{lang['pct']}%" }
 end
 
 main if $PROGRAM_NAME == __FILE__

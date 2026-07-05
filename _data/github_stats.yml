@@ -1,0 +1,26 @@
+username: adnanrahin
+updated_at: "2026-07-05T00:00:00Z"
+member_since: "2014"
+repos: 238
+commits: 3601
+languages: 6
+stars: 14
+lang_breakdown:
+  - name: Java
+    pct: 0
+    color: "#b07219"
+  - name: Scala
+    pct: 0
+    color: "#c22d40"
+  - name: Python
+    pct: 0
+    color: "#3572A5"
+  - name: C++
+    pct: 0
+    color: "#f34b7d"
+  - name: Shell
+    pct: 0
+    color: "#89e051"
+  - name: CloudFormation Stack
+    pct: 0
+    color: "#ff9900"
