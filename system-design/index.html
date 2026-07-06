@@ -1,0 +1,39 @@
+---
+layout: default
+title: System Design
+section_slug: system-design
+permalink: /system-design/
+---
+
+<div class="category-page sd-hub">
+  <header class="category-header">
+    <p class="post-breadcrumb">
+      <a href="{{ '/' | relative_url }}">Home</a>
+      <span aria-hidden="true"> / </span>
+      <span>System Design</span>
+    </p>
+    <h1 class="category-title">System Design</h1>
+    <p class="category-description">
+      Architecture notes organized by topic. Start with Scalability; more topics will be added as I study.
+    </p>
+  </header>
+
+  <ul class="sd-topic-list">
+    {% for topic in site.data.system_design_topics %}
+    <li class="sd-topic-list__item">
+      {% if topic.published %}
+      <a href="{{ '/system-design/' | append: topic.slug | append: '/' | relative_url }}" class="sd-topic-list__link">
+        <span class="sd-topic-list__title">{{ topic.title }}</span>
+        <span class="sd-topic-list__desc">{{ topic.description }}</span>
+      </a>
+      {% else %}
+      <div class="sd-topic-list__link sd-topic-list__link--soon">
+        <span class="sd-topic-list__title">{{ topic.title }}</span>
+        <span class="sd-topic-list__desc">{{ topic.description }}</span>
+        <span class="sd-topic-list__badge">Coming soon</span>
+      </div>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</div>

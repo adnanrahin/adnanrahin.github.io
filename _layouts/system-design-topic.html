@@ -6,7 +6,9 @@ layout: default
     <p class="post-breadcrumb">
       <a href="{{ '/' | relative_url }}">Home</a>
       <span aria-hidden="true"> / </span>
-      <span>System Design</span>
+      <a href="{{ '/system-design/' | relative_url }}">System Design</a>
+      <span aria-hidden="true"> / </span>
+      <span>{{ page.title }}</span>
     </p>
     <h1 class="post-title">{{ page.title }}</h1>
     {% if page.description %}

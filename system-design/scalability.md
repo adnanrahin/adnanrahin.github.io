@@ -1,9 +1,9 @@
 ---
-layout: system-design-page
+layout: system-design-topic
 title: Scalability
 section_slug: system-design
-description: Handle growing load without breaking � metrics, scale-up vs scale-out, and tier-by-tier tactics.
-permalink: /system-design/
+description: Handle growing load without breaking — metrics, scale-up vs scale-out, and tier-by-tier tactics.
+permalink: /system-design/scalability/
 ---
 > **Goal:** Design systems that handle more load without falling apart.  
 > **Rule:** Measure the load first — scaling without metrics is guesswork.
@@ -16,6 +16,8 @@ Scalability is not a feature you bolt on at launch. It is a series of deliberate
 
 You cannot improve what you do not quantify. Baseline your system under normal traffic, then stress-test or observe peak events (product launches, holiday sales, viral posts) to see where latency and errors first appear.
 
+<div class="sd-metrics-box">
+
 | Metric | What it measures | Illustrative scale |
 |--------|------------------|-------------------|
 | **Requests per second (RPS)** | Incoming API or HTTP calls | Regional checkout API: **~3,000 RPS** sustained |
@@ -24,6 +26,8 @@ You cannot improve what you do not quantify. Baseline your system under normal t
 | **Throughput** | Bytes moved per second | Image CDN during a campaign: **~400 MB/s** |
 | **Database QPS** | Queries hitting the data tier | Product browse path: **~18,000 QPS** on reads |
 | **Event rate** | Messages through async pipelines | Order-fulfillment stream: **~40,000 events/s** |
+
+</div>
 
 **Healthy scaling behavior:** p95 and p99 latency grow slowly relative to traffic. **Unhealthy:** response times double when load increases 30%, timeouts appear, or queue depth climbs without bound — you have found the limiting component.
 
@@ -147,8 +151,8 @@ Split rows across multiple databases using a **shard key** — commonly `custome
 <div class="mermaid">
 flowchart LR
     API[API tier] --> SR[Shard router]
-    SR --> P1["Partition A<br/>tenants 0–499K"]
-    SR --> P2["Partition B<br/>tenants 500K–999K"]
+    SR --> P1["Partition A<br/>tenants 0—499K"]
+    SR --> P2["Partition B<br/>tenants 500K—999K"]
     SR --> P3["Partition C<br/>tenants 1M+"]
 </div>
 
@@ -156,7 +160,7 @@ flowchart LR
 |-----------------|------|
 | Range | Keys grouped by ID bands — simple, risk of hot ranges |
 | Hash | `hash(key) mod N` — even spread, painful resharding |
-| Directory | Metadata service maps keys → shard — flexible ops |
+| Directory | Metadata service maps keys ? shard — flexible ops |
 
 - **Fit:** Write QPS or disk on one primary exceeds safe limits.
 - **Caveat:** Joins across shards are expensive; celebrity tenants create **hot partitions**.
@@ -175,7 +179,7 @@ Memory sits orders of magnitude closer to CPU than disk. A hit in **Redis** or *
 
 | Pattern | Behavior |
 |---------|----------|
-| Cache-aside | App reads cache → on miss, loads DB and fills cache |
+| Cache-aside | App reads cache ? on miss, loads DB and fills cache |
 | Clustered Redis | Keys hashed across nodes |
 | Consistent hashing | Adding nodes moves minimal key space |
 | TTL | Automatic eviction; caps memory |
@@ -222,7 +226,7 @@ Imagine **QuickPlate** — users browse restaurants, place orders, and track cou
 
 ---
 
-### Stage 1: Monolith on one host (0–5K daily orders)
+### Stage 1: Monolith on one host (0—5K daily orders)
 
 API, background jobs, and **PostgreSQL** share one VM. Fast to build, cheap to operate.
 
@@ -237,7 +241,7 @@ flowchart LR
 
 ---
 
-### Stage 2: Split compute and database (5K–40K daily orders)
+### Stage 2: Split compute and database (5K—40K daily orders)
 
 The API VM talks to a separate DB instance. Tune connection limits and `shared_buffers` independently.
 
@@ -253,7 +257,7 @@ flowchart LR
 
 ---
 
-### Stage 3: Cache hot reads (40K–200K daily orders)
+### Stage 3: Cache hot reads (40K—200K daily orders)
 
 Repeated catalog reads served from memory; DB sees mostly misses and writes (new orders, status updates).
 
@@ -270,7 +274,7 @@ flowchart LR
 
 ---
 
-### Stage 4: Horizontally scaled API tier (200K–1M daily orders)
+### Stage 4: Horizontally scaled API tier (200K—1M daily orders)
 
 Stateless API nodes share Redis for sessions and cart drafts. PostgreSQL still single-primary.
 
@@ -292,7 +296,7 @@ flowchart TB
 
 ---
 
-### Stage 5: Read replicas (1M–5M daily orders)
+### Stage 5: Read replicas (1M—5M daily orders)
 
 Writes (new orders, status transitions) stay on the primary; replica nodes serve driver earnings history and admin dashboards.
 

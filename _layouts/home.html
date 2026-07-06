@@ -25,10 +25,9 @@ layout: default
           <h3 class="section-card__title">{{ section.name }}</h3>
           <p class="section-card__desc">{{ section.description }}</p>
           <span class="section-card__count">
-            {% if section.label %}
-              {{ section.label }}
-            {% elsif section.collection == 'system_design' %}
-              {{ posts.size }} design{% if posts.size != 1 %}s{% endif %}
+            {% if section.slug == 'system-design' %}
+              {% assign sd_topics = site.data.system_design_topics | size %}
+              {{ sd_topics }} topic{% if sd_topics != 1 %}s{% endif %}
             {% else %}
               {{ posts.size }} post{% if posts.size != 1 %}s{% endif %}
             {% endif %}

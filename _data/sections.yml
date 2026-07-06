@@ -7,5 +7,4 @@
   slug: system-design
   path: /system-design/
   icon: "◈"
-  description: Scalability — metrics, scaling strategies, and growth walkthroughs.
-  label: Scalability
+  description: Scalability, availability, load balancers, and architecture patterns.

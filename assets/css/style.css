@@ -1238,6 +1238,99 @@ code {
 }
 .sd-article__body td { color: var(--text-muted); }
 
+/* --- System design hub & topics --- */
+.sd-hub .sd-topic-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sd-topic-list__link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1.15rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: inherit;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.sd-topic-list__link:hover {
+  border-color: var(--accent);
+  color: inherit;
+  transform: translateX(4px);
+}
+.sd-topic-list__link--soon {
+  opacity: 0.65;
+  cursor: default;
+}
+.sd-topic-list__link--soon:hover {
+  transform: none;
+  border-color: var(--border);
+}
+
+.sd-topic-list__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.sd-topic-list__desc {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.sd-topic-list__badge {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.55rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+}
+
+.sd-metrics-box {
+  margin: 0 0 1.5rem;
+  padding: 1.25rem 1.35rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+.sd-metrics-box table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.sd-metrics-box th,
+.sd-metrics-box td {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+.sd-metrics-box th {
+  background: var(--accent-soft);
+  font-weight: 600;
+  color: var(--text);
+}
+.sd-metrics-box td {
+  color: var(--text-muted);
+}
+.sd-metrics-box tr:last-child td,
+.sd-metrics-box tr:last-child th {
+  border-bottom: 1px solid var(--border);
+}
+
 .post-content .mermaid,
 .system-design-page .mermaid {
   margin: 0 0 1.5rem;
