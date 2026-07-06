@@ -4,8 +4,7 @@ layout: default
 <div class="docs-shell">
   <aside class="docs-rail" id="docs-rail" aria-label="System Design">
     <div class="docs-rail__top">
-      <a href="{{ '/system-design/' | relative_url }}" class="docs-rail__brand{% if page.sd_slug == 'overview' %} docs-rail__brand--active{% endif %}">
-        <span class="docs-rail__brand-icon" aria-hidden="true">◈</span>
+      <a href="{{ '/system-design/' | relative_url }}" class="docs-rail__brand{% if page.sd_overview %} docs-rail__brand--active{% endif %}">
         <span class="docs-rail__brand-text">System Design</span>
       </a>
       <button type="button" class="docs-rail__close" aria-label="Close navigation" data-docs-close>
@@ -40,6 +39,11 @@ layout: default
       <div class="docs-content post-content">
         {{ content }}
       </div>
+      {% unless page.sd_overview %}
+      <p class="docs-back-list">
+        <a href="{{ '/system-design/' | relative_url }}">← All topics</a>
+      </p>
+      {% endunless %}
       {% include system-design-pager.html %}
     </article>
   </div>

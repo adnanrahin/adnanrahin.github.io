@@ -1,0 +1,41 @@
+{% assign sd_per_page = include.per_page | default: 6 %}
+<div class="docs-index" data-docs-index data-per-page="{{ sd_per_page }}">
+  <div class="docs-index__list">
+    {% assign topic_index = 0 %}
+    {% for group in site.data.system_design_nav %}
+      {% for item in group.items %}
+        {% assign topic_index = topic_index | plus: 1 %}
+        {% assign zero_idx = topic_index | minus: 1 %}
+        {% assign card_page = zero_idx | divided_by: sd_per_page | plus: 1 %}
+        {% assign item_href = '/system-design/' | append: item.slug | append: '/' | relative_url %}
+        <article
+          class="docs-index__card{% unless item.published %} docs-index__card--soon{% endunless %}"
+          data-index-card
+          data-page="{{ card_page }}"
+          {% if card_page != 1 %}hidden{% endif %}
+        >
+          <p class="docs-index__section">{{ group.section }}</p>
+          {% if item.published %}
+          <h2 class="docs-index__title">
+            <a href="{{ item_href }}">{{ item.title }}</a>
+          </h2>
+          {% else %}
+          <h2 class="docs-index__title">{{ item.title }}</h2>
+          {% endif %}
+          {% if item.description %}
+          <p class="docs-index__desc">{{ item.description }}</p>
+          {% endif %}
+          {% unless item.published %}
+          <span class="docs-index__badge">Coming soon</span>
+          {% endif %}
+        </article>
+      {% endfor %}
+    {% endfor %}
+  </div>
+
+  <nav class="docs-index__pagination" data-index-pagination aria-label="Topics pagination" hidden>
+    <button type="button" class="docs-index__page-btn" data-index-prev disabled>Previous</button>
+    <span class="docs-index__page-info" data-index-info>Page 1 of 1</span>
+    <button type="button" class="docs-index__page-btn" data-index-next>Next</button>
+  </nav>
+</div>

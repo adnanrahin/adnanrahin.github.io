@@ -1,7 +1,51 @@
-# Add a topic here when its page exists under system-design/
-# Only listed topics appear in the sidebar.
+# System Design docs navigation
+# published: true  → page exists at /system-design/{slug}/
+# published: false → listed as "Coming soon" (sidebar + index)
+
+- section: Get Started
+  items:
+    - title: Introduction
+      slug: introduction
+      description: How to read these notes and what to expect in each topic.
+      published: false
 
 - section: Core Concepts
   items:
     - title: Scalability
       slug: scalability
+      description: Metrics, scale-up vs scale-out, and tier-by-tier growth patterns.
+      published: true
+    - title: Availability
+      slug: availability
+      description: Uptime, redundancy, failover, and SLA trade-offs.
+      published: false
+    - title: Consistency
+      slug: consistency
+      description: CAP theorem, strong vs eventual consistency, and real-world picks.
+      published: false
+
+- section: Infrastructure
+  items:
+    - title: Load Balancers
+      slug: load-balancers
+      description: L4 vs L7 routing, health checks, and traffic distribution.
+      published: false
+    - title: Caching
+      slug: caching
+      description: Cache-aside, TTL, eviction, and invalidation strategies.
+      published: false
+    - title: Message Queues
+      slug: message-queues
+      description: Async decoupling, backpressure, and consumer scaling.
+      published: false
+
+- section: Data & Storage
+  items:
+    - title: Databases
+      slug: databases
+      description: SQL vs NoSQL, replication, and when to pick each.
+      published: false
+    - title: Sharding
+      slug: sharding
+      description: Partition keys, hot spots, and cross-shard queries.
+      published: false
