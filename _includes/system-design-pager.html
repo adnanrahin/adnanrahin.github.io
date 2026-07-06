@@ -1,0 +1,72 @@
+{% assign sd_next = nil %}
+{% assign sd_prev = nil %}
+{% assign sd_index = -1 %}
+{% assign sd_i = 0 %}
+{% assign sd_found = false %}
+
+{% if page.sd_slug == 'overview' %}
+  {% for group in site.data.system_design_nav %}
+    {% for item in group.items %}
+      {% unless sd_next %}
+        {% assign sd_next = item %}
+      {% endunless %}
+    {% endfor %}
+  {% endfor %}
+{% else %}
+  {% for group in site.data.system_design_nav %}
+    {% for item in group.items %}
+      {% if sd_found and sd_next == nil %}
+        {% assign sd_next = item %}
+      {% endif %}
+      {% if page.sd_slug == item.slug %}
+        {% assign sd_found = true %}
+        {% assign sd_index = sd_i %}
+      {% elsif sd_found == false %}
+        {% assign sd_prev = item %}
+      {% endif %}
+      {% assign sd_i = sd_i | plus: 1 %}
+    {% endfor %}
+  {% endfor %}
+{% endif %}
+
+{% assign sd_has_pager = false %}
+{% if page.sd_slug == 'overview' and sd_next %}
+  {% assign sd_has_pager = true %}
+{% elsif page.sd_slug != 'overview' %}
+  {% if sd_prev or sd_index == 0 or sd_next %}
+    {% assign sd_has_pager = true %}
+  {% endif %}
+{% endif %}
+
+{% if sd_has_pager %}
+<nav class="docs-pager" aria-label="Topic navigation">
+  <div class="docs-pager__item docs-pager__item--prev">
+    {% if page.sd_slug == 'overview' %}
+      <span class="docs-pager__placeholder"></span>
+    {% elsif sd_index == 0 %}
+      <a href="{{ '/system-design/' | relative_url }}" class="docs-pager__link">
+        <span class="docs-pager__label">Previous</span>
+        <span class="docs-pager__title">System Design</span>
+      </a>
+    {% elsif sd_prev %}
+      <a href="{{ '/system-design/' | append: sd_prev.slug | append: '/' | relative_url }}" class="docs-pager__link">
+        <span class="docs-pager__label">Previous</span>
+        <span class="docs-pager__title">{{ sd_prev.title }}</span>
+      </a>
+    {% else %}
+      <span class="docs-pager__placeholder"></span>
+    {% endif %}
+  </div>
+
+  <div class="docs-pager__item docs-pager__item--next">
+    {% if sd_next %}
+      <a href="{{ '/system-design/' | append: sd_next.slug | append: '/' | relative_url }}" class="docs-pager__link">
+        <span class="docs-pager__label">Next</span>
+        <span class="docs-pager__title">{{ sd_next.title }}</span>
+      </a>
+    {% else %}
+      <span class="docs-pager__placeholder"></span>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}
