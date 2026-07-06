@@ -4,39 +4,15 @@ title: System Design
 sd_slug: overview
 sd_overview: true
 section_slug: system-design
-description: Architecture patterns, trade-offs, and interview-ready walkthroughs — organized like a study guide.
+description: Architecture patterns, trade-offs, and interview-ready walkthroughs.
 permalink: /system-design/
 ---
 
-<div class="docs-hero">
-  <p class="docs-hero__label">Study guide</p>
-  <p class="docs-hero__text">
-    Notes on building reliable, scalable systems — one concept at a time.
-    Pick a topic from the left rail or start with <strong>Scalability</strong>.
-  </p>
-  <a href="{{ '/system-design/scalability/' | relative_url }}" class="btn btn--primary docs-hero__cta">Start with Scalability →</a>
-</div>
-
-<div class="docs-overview-grid">
-  {% for group in site.data.system_design_nav %}
-  <section class="docs-overview-card">
-    <h2 class="docs-overview-card__title">{{ group.section }}</h2>
-    <ul class="docs-overview-card__list">
-      {% for item in group.items %}
-        {% if item.slug == 'overview' %}
-          {% assign item_href = '/system-design/' | relative_url %}
-        {% else %}
-          {% assign item_href = '/system-design/' | append: item.slug | append: '/' | relative_url %}
-        {% endif %}
-        <li>
-          {% if item.published %}
-          <a href="{{ item_href }}">{{ item.title }}</a>
-          {% else %}
-          <span class="docs-overview-card__soon">{{ item.title }} <em>Soon</em></span>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-  </section>
-  {% endfor %}
-</div>
+<ul class="post-list post-list--category">
+  <li class="post-list__item">
+    <a href="{{ '/system-design/scalability/' | relative_url }}" class="post-list__link">
+      <span class="post-list__title">Scalability</span>
+      <span class="post-list__excerpt">Handle growing load without breaking — metrics, scale-up vs scale-out, and tier-by-tier tactics.</span>
+    </a>
+  </li>
+</ul>

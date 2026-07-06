@@ -1015,6 +1015,10 @@ code {
   align-items: start;
 }
 
+.docs-shell--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .docs-rail {
   position: sticky;
   top: var(--header-h);

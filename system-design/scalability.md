@@ -17,8 +17,6 @@ Scalability is not a feature you bolt on at launch. It is a series of deliberate
 
 You cannot improve what you do not quantify. Baseline your system under normal traffic, then stress-test or observe peak events (product launches, holiday sales, viral posts) to see where latency and errors first appear.
 
-<div class="sd-metrics-box">
-
 | Metric | What it measures | Illustrative scale |
 |--------|------------------|-------------------|
 | **Requests per second (RPS)** | Incoming API or HTTP calls | Regional checkout API: **~3,000 RPS** sustained |
@@ -27,8 +25,6 @@ You cannot improve what you do not quantify. Baseline your system under normal t
 | **Throughput** | Bytes moved per second | Image CDN during a campaign: **~400 MB/s** |
 | **Database QPS** | Queries hitting the data tier | Product browse path: **~18,000 QPS** on reads |
 | **Event rate** | Messages through async pipelines | Order-fulfillment stream: **~40,000 events/s** |
-
-</div>
 
 **Healthy scaling behavior:** p95 and p99 latency grow slowly relative to traffic. **Unhealthy:** response times double when load increases 30%, timeouts appear, or queue depth climbs without bound — you have found the limiting component.
 
