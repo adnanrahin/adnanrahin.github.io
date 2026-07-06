@@ -1015,10 +1015,6 @@ code {
   align-items: start;
 }
 
-.docs-shell--single {
-  grid-template-columns: minmax(0, 1fr);
-}
-
 .docs-rail {
   position: sticky;
   top: var(--header-h);
@@ -1060,6 +1056,10 @@ code {
   font-size: 1.05rem;
 }
 .docs-rail__brand:hover { color: var(--accent); }
+
+.docs-rail__brand--active {
+  color: var(--accent);
+}
 
 .docs-rail__brand-icon {
   display: flex;

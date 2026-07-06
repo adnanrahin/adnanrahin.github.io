@@ -1,0 +1,7 @@
+# Add a topic here when its page exists under system-design/
+# Only listed topics appear in the sidebar.
+
+- section: Core Concepts
+  items:
+    - title: Scalability
+      slug: scalability

@@ -1,0 +1,18 @@
+<nav class="docs-rail__nav" aria-label="System Design topics">
+  {% for group in site.data.system_design_nav %}
+  <div class="docs-rail__group">
+    <h2 class="docs-rail__heading">{{ group.section }}</h2>
+    <ul class="docs-rail__list">
+      {% for item in group.items %}
+        {% assign item_href = '/system-design/' | append: item.slug | append: '/' | relative_url %}
+        <li class="docs-rail__item{% if page.sd_slug == item.slug %} docs-rail__item--active{% endif %}">
+          <a href="{{ item_href }}" class="docs-rail__link">
+            <span class="docs-rail__dot" aria-hidden="true"></span>
+            <span>{{ item.title }}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</nav>
