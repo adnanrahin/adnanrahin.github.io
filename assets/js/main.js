@@ -43,27 +43,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const sdSidebar = document.getElementById('sd-sidebar');
-  const sdToggle = document.querySelector('[data-sd-sidebar-toggle]');
-  const sdCloseTargets = document.querySelectorAll('[data-sd-sidebar-close]');
+  const docsRail = document.getElementById('docs-rail');
+  const docsToggle = document.querySelector('[data-docs-toggle]');
+  const docsClose = document.querySelectorAll('[data-docs-close]');
 
-  function setSdSidebarOpen(open) {
-    if (!sdSidebar) return;
-    sdSidebar.classList.toggle('is-open', open);
-    document.querySelectorAll('.sd-backdrop').forEach((el) => {
+  function setDocsRailOpen(open) {
+    if (!docsRail) return;
+    docsRail.classList.toggle('is-open', open);
+    document.querySelectorAll('.docs-backdrop').forEach((el) => {
       el.classList.toggle('is-open', open);
     });
-    if (sdToggle) sdToggle.setAttribute('aria-expanded', open);
+    if (docsToggle) docsToggle.setAttribute('aria-expanded', open);
     document.body.style.overflow = open ? 'hidden' : '';
   }
 
-  if (sdToggle && sdSidebar) {
-    sdToggle.addEventListener('click', () => {
-      setSdSidebarOpen(!sdSidebar.classList.contains('is-open'));
+  if (docsToggle && docsRail) {
+    docsToggle.addEventListener('click', () => {
+      setDocsRailOpen(!docsRail.classList.contains('is-open'));
     });
   }
 
-  sdCloseTargets.forEach((el) => {
-    el.addEventListener('click', () => setSdSidebarOpen(false));
+  docsClose.forEach((el) => {
+    el.addEventListener('click', () => setDocsRailOpen(false));
   });
 });

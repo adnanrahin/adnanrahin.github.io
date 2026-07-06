@@ -1,6 +1,7 @@
 ---
-layout: system-design-topic
+layout: system-design-docs
 title: Scalability
+sd_slug: scalability
 section_slug: system-design
 description: Handle growing load without breaking — metrics, scale-up vs scale-out, and tier-by-tier tactics.
 permalink: /system-design/scalability/
