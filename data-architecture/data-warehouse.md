@@ -9,13 +9,10 @@ section_slug: data-architecture
 description: OLTP, OLAP, ETL/ELT, dimensional modeling, star/snowflake schema, SCD, and warehouse platforms.
 permalink: /data-architecture/data-warehouse/
 ---
-> **Scope:** This document is the **only** place for data warehouse topics — OLTP/OLAP, ETL/ELT, dimensional modeling, star/snowflake schema, SCD, Kimball/Inmon, columnar/MPP, and warehouse platforms (Snowflake, BigQuery, etc.).
->
-> For **data lakes** → [Data Lake](/data-architecture/data-lake/) · For **lakehouse** → [Data Lakehouse](/data-architecture/data-lakehouse/) · For a **three-way overview** → [Overview](/data-architecture/overview/)
 
-A **data warehouse** is a centralized system designed to store **structured, cleaned, business-ready data** and serve **fast analytics** — especially SQL queries, dashboards, and reports.
+A **data warehouse** holds structured, cleaned, business-ready data for fast analytics — SQL queries, dashboards, reports. It is usually the place the business trusts for revenue, orders, customers, and KPIs.
 
-Think of it as the **single source of truth for business metrics**: revenue, orders, customers, inventory, KPIs.
+See also: [Data Lake](/data-architecture/data-lake/) · [Data Lakehouse](/data-architecture/data-lakehouse/) · [Overview](/data-architecture/overview/)
 
 ---
 
@@ -39,7 +36,6 @@ Think of it as the **single source of truth for business metrics**: revenue, ord
 16. [Core characteristics](#core-characteristics)
 17. [Strengths & limitations](#strengths--limitations)
 18. [Warehouse technologies](#warehouse-technologies)
-19. [Review summary](#review-summary)
 
 ---
 
@@ -71,8 +67,8 @@ flowchart LR
     end
 
     subgraph DW["Data Warehouse"]
-        STG["Staging<br/><i>raw load</i>"]
-        CUR["Curated Tables<br/><i>dimensional model</i>"]
+        STG["Staging<br/>raw load"]
+        CUR["Curated Tables<br/>dimensional model"]
         STG --> CUR
     end
 
@@ -129,10 +125,10 @@ These are the two fundamental database workloads. A data warehouse is an **OLAP*
 
 ```mermaid
 flowchart LR
-    IN["<b>INPUT</b><br/>OLTP systems<br/><i>PostgreSQL, SAP, CRM</i>"]
-    PIPE["ETL / ELT<br/><i>extract + transform + load</i>"]
-    STORE["<b>THE WAREHOUSE</b><br/>= OLAP system<br/><i>Snowflake, BigQuery</i>"]
-    OUT["<b>OUTPUT</b><br/>BI dashboards<br/>SQL reports · KPIs"]
+    IN["Sources<br/>OLTP systems<br/>PostgreSQL, SAP, CRM"]
+    PIPE["ETL / ELT<br/>extract + transform + load"]
+    STORE["Warehouse<br/>OLAP system<br/>Snowflake, BigQuery"]
+    OUT["Consumers<br/>BI dashboards<br/>SQL reports"]
 
     IN --> PIPE --> STORE --> OUT
 
@@ -149,9 +145,9 @@ flowchart LR
 
 OLAP is not the output — the **warehouse is the OLAP system**. Dashboards, reports, and analyst queries are the output; they read *from* the warehouse.
 
-**One-line flow:** `OLTP (input) → ETL → Warehouse/OLAP (store) → BI (output)`
+Flow: `OLTP → ETL → Warehouse/OLAP → BI`
 
-### In plain English
+### OLTP vs OLAP — day to day
 
 | | OLTP | OLAP (the warehouse) |
 |---|------|----------------------|
@@ -188,7 +184,7 @@ Both are essential. OLTP keeps the business running; OLAP helps you decide where
 flowchart LR
     APP["Web / Mobile App"]
     API["API Server"]
-    OLTP[("OLTP Database<br/><i>PostgreSQL, SQL Server</i>")]
+    OLTP[("OLTP Database<br/>PostgreSQL, SQL Server")]
     USER["End User"]
 
     USER --> APP --> API --> OLTP
@@ -208,9 +204,9 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    OLTP[("OLTP<br/><i>source of truth for ops</i>")]
+    OLTP[("OLTP<br/>source of truth for ops")]
     ETL["ETL / ELT"]
-    OLAP[("Data Warehouse<br/><i>OLAP engine</i>")]
+    OLAP[("Data Warehouse<br/>OLAP engine")]
     BI["BI Dashboards"]
     ANALYST["SQL Analysts"]
 
@@ -232,9 +228,9 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    OLTP["OLTP Database<br/><i>live transactions</i>"]
+    OLTP["OLTP Database<br/>live transactions"]
     ETL["ETL / Replication"]
-    OLAP["Data Warehouse<br/><i>analytics optimized</i>"]
+    OLAP["Data Warehouse<br/>analytics optimized"]
     BI["Dashboards & Reports"]
 
     OLTP -->|"copy only"| ETL --> OLAP --> BI
@@ -262,7 +258,7 @@ Both move data from sources into the warehouse. The difference is **where transf
 flowchart LR
     subgraph ETL["ETL — Transform before Load"]
         direction LR
-        S1["Sources"] --> E1["Extract"] --> T1["Transform<br/><i>outside warehouse</i>"] --> L1["Load"] --> DW1["Warehouse"]
+        S1["Sources"] --> E1["Extract"] --> T1["Transform<br/>outside warehouse"] --> L1["Load"] --> DW1["Warehouse"]
     end
 ```
 
@@ -270,7 +266,7 @@ flowchart LR
 flowchart LR
     subgraph ELT["ELT — Load before Transform"]
         direction LR
-        S2["Sources"] --> E2["Extract"] --> L2["Load raw<br/><i>into warehouse</i>"] --> T2["Transform<br/><i>inside warehouse SQL</i>"] --> DW2["Curated tables"]
+        S2["Sources"] --> E2["Extract"] --> L2["Load raw<br/>into warehouse"] --> T2["Transform<br/>inside warehouse SQL"] --> DW2["Curated tables"]
     end
 ```
 
@@ -336,7 +332,7 @@ flowchart LR
 | **Analogy** | The **score** in a game log | The **player name, team, date** around that score |
 | **In a query** | `SUM(amount)`, `COUNT(*)` | `WHERE region = 'NYC'`, `GROUP BY category` |
 
-**One line:** Dimensions tell you **what you're looking at**; facts tell you **what happened and how much**.
+Dimensions tell you **what you're looking at**; facts tell you **what happened and how much**.
 
 ### iPhone example
 
@@ -358,7 +354,7 @@ The dimension stores **what types exist**, not yearly totals. Counts live in **`
 
 ```mermaid
 flowchart TD
-    FACT["<b>FACT TABLE</b><br/>Measures: amount, quantity, profit<br/>Keys: date_key, product_key, customer_key"]
+    FACT["Fact table<br/>amount, quantity, profit<br/>keys to dimensions"]
     DIM1["DIM: Date<br/>year, quarter, month, day"]
     DIM2["DIM: Product<br/>name, category, brand"]
     DIM3["DIM: Customer<br/>name, region, segment"]
@@ -458,9 +454,9 @@ Surrogate key: customer_key = 1042              (never changes)
 
 The simplest and most common dimensional model. One **fact table** in the center, **dimension tables** radiating out like a star.
 
-### In simple terms
+### Star schema — the idea
 
-Picture a **wheel**: the **fact table** is the hub; each **dimension** is a spoke.
+Picture a wheel: the **fact table** is the hub; each **dimension** is a spoke.
 
 ```
                     dim_date
@@ -582,9 +578,9 @@ flowchart TD
 
 A **normalized version of the star schema**. Dimension tables are split into **sub-dimensions** to reduce redundancy.
 
-### In simple terms
+### Snowflake schema — normalized dimensions
 
-**Both star and snowflake have a fact table.** The fact table is identical in role — it holds the numbers (amount, quantity). Only the **dimension layout** changes: flat in a star, split into sub-tables in a snowflake.
+The fact table is the same as in a star schema — it still holds amount, quantity, and the keys. Only the dimension layout changes: flat tables in a star, split sub-tables in a snowflake.
 
 Same fact table in the center — dimensions **branch out** like a snowflake ❄ instead of sitting flat.
 
@@ -704,9 +700,7 @@ flowchart TD
 
 ## Star vs Snowflake
 
-### In simple terms — one analogy
-
-Both layouts answer the same question: *"How do I connect sales numbers to product, customer, and date?"*
+Both layouts answer the same question: *how do I connect sales numbers to product, customer, and date?*
 
 | | Star ★ | Snowflake ❄ |
 |---|--------|---------------|
@@ -717,15 +711,15 @@ Both layouts answer the same question: *"How do I connect sales numbers to produ
 | **Storage** | "Electronics" repeated on every row | "Electronics" stored once |
 | **Used today** | Default choice (~90% of warehouses) | Rare — storage is cheap; simplicity wins |
 
-**Rule of thumb:** start with a **star**. Split into a **snowflake** only when a dimension is huge and repetition is costly.
+Start with a **star**. Split into a **snowflake** only when a dimension is huge and repetition actually costs you storage.
 
 ```mermaid
 flowchart LR
     subgraph STAR["Star Schema"]
         direction TD
         S_FACT["FACT"]
-        S_D1["DIM_PRODUCT<br/><i>flat — category inside</i>"]
-        S_D2["DIM_CUSTOMER<br/><i>flat — region inside</i>"]
+        S_D1["DIM_PRODUCT<br/>flat — category inside"]
+        S_D2["DIM_CUSTOMER<br/>flat — region inside"]
         S_D1 --> S_FACT
         S_D2 --> S_FACT
     end
@@ -780,7 +774,7 @@ Dimension attributes change over time (customer moves cities, product changes ca
 flowchart TD
     subgraph SCD1["SCD Type 1 — Overwrite"]
         B1["customer_key: 42<br/>region: NY"]
-        A1["customer_key: 42<br/>region: CA<br/><i>NY is gone</i>"]
+        A1["customer_key: 42<br/>region: CA<br/>NY is gone"]
         B1 -->|"UPDATE"| A1
     end
 
@@ -802,15 +796,15 @@ Two competing warehouse design philosophies:
 ```mermaid
 flowchart TD
     subgraph KIMBALL["Kimball — Bottom-up"]
-        K_SRC["Sources"] --> K_DM["Departmental Data Marts<br/><i>star schemas</i>"]
-        K_DM --> K_DW["Enterprise DW<br/><i>integrated marts</i>"]
+        K_SRC["Sources"] --> K_DM["Departmental Data Marts<br/>star schemas"]
+        K_DM --> K_DW["Enterprise DW<br/>integrated marts"]
         K_STYLE["Denormalized · Dimensional · Business-facing"]
     end
 
     subgraph INMON["Inmon — Top-down"]
         I_SRC["Sources"] --> I_STG["Staging"]
-        I_STG --> I_3NF["Enterprise DW<br/><i>3NF normalized</i>"]
-        I_3NF --> I_DM["Data Marts<br/><i>derived for departments</i>"]
+        I_STG --> I_3NF["Enterprise DW<br/>3NF normalized"]
+        I_3NF --> I_DM["Data Marts<br/>derived for departments"]
         I_STYLE["Normalized · Corporate hub · IT-driven"]
     end
 ```
@@ -904,7 +898,7 @@ Large warehouses split queries across many nodes:
 ```mermaid
 flowchart TD
     QUERY["SELECT region, SUM(revenue)<br/>GROUP BY region"]
-    COORD["Coordinator<br/><i>query planner</i>"]
+    COORD["Coordinator<br/>query planner"]
     N1["Node 1<br/>scans rows A–M"]
     N2["Node 2<br/>scans rows N–Z"]
     RESULT["Merged result"]
@@ -937,9 +931,9 @@ Data must match a defined schema **before** it is stored. Bad or unexpected data
 
 ```mermaid
 flowchart LR
-    SRC["Source row<br/><i>messy / varied</i>"]
-    ETL["Transform + Validate<br/><i>schema enforced</i>"]
-    TBL["Warehouse Table<br/><i>fixed columns</i>"]
+    SRC["Source row<br/>messy / varied"]
+    ETL["Transform + Validate<br/>schema enforced"]
+    TBL["Warehouse Table<br/>fixed columns"]
     SRC --> ETL --> TBL
 
     style ETL fill:#FFF3CD,stroke:#856404
@@ -998,9 +992,9 @@ The warehouse is always a **downstream copy** — never the system of record for
 ```mermaid
 flowchart TD
     subgraph SF["Snowflake Architecture"]
-        STORAGE["Cloud Storage<br/><i>S3 / ADLS / GCS</i><br/>micro-partitions, columnar"]
-        COMPUTE["Virtual Warehouses<br/><i>independent compute clusters</i>"]
-        SERVICES["Cloud Services<br/><i>auth, optimizer, metadata</i>"]
+        STORAGE["Cloud Storage<br/>S3 / ADLS / GCS<br/>micro-partitions, columnar"]
+        COMPUTE["Virtual Warehouses<br/>independent compute clusters"]
+        SERVICES["Cloud Services<br/>auth, optimizer, metadata"]
     end
 
     USERS["Users / BI Tools"] --> SERVICES
@@ -1044,168 +1038,15 @@ flowchart TD
 
 ---
 
-## Review summary
+## Related reading
 
-Quick reference for everything in this document.
+| Topic | Page |
+|-------|------|
+| Component wiring | [Architecture Map](/data-architecture/architecture-map/) |
+| Why lakes showed up | [Data Lake](/data-architecture/data-lake/) |
+| How lake + warehouse merged | [Data Lakehouse](/data-architecture/data-lakehouse/) |
+| Three-way comparison | [Overview](/data-architecture/overview/) |
 
-### The big picture
+Warehouses handle structured BI well. They struggle on cost and flexibility once you add logs, ML workloads, and messy semi-structured data — which is what pushed the industry toward lakes, and eventually lakehouses.
 
-```
-OLTP (input) → ETL/ELT → Warehouse/OLAP (store) → Facts + Dims (model) → BI (output)
-```
-
-A **data warehouse** is a governed analytics database for BI and SQL — fed by OLTP, organized as facts and dimensions, optimized for historical analysis.
-
----
-
-### Core concepts — cheat sheet
-
-| Term | Short definition |
-|------|------------------|
-| **Data warehouse** | Central store for cleaned, structured, business-ready analytics data |
-| **OLTP** | Live transaction systems — runs the business (orders, payments) |
-| **OLAP** | Analytical workload — the warehouse itself; trends, reports, KPIs |
-| **ETL** | Transform data **before** loading into the warehouse |
-| **ELT** | Load raw data first, transform **inside** the warehouse (modern default) |
-| **Fact table** | Numbers + events — *how much, how many* |
-| **Dimension table** | Labels + context — *who, what, where, when* |
-| **Star schema** | Fact in center, flat dimensions around it ★ — simple, most common |
-| **Snowflake schema** | Same fact, dimensions split into sub-tables ❄ — less duplication, more joins |
-| **Grain** | What one fact row represents (e.g. one row per order line) |
-| **SCD** | How dimension changes are tracked over time (Type 1 = overwrite, Type 2 = new row) |
-| **Data mart** | Department-focused subset (sales mart, finance mart) |
-| **Conformed dimension** | Same dim table shared across marts — consistent metrics |
-
----
-
-### OLTP vs OLAP — one glance
-
-| | OLTP | OLAP (warehouse) |
-|---|------|------------------|
-| **Purpose** | Run the business | Understand the business |
-| **Data** | Current transactions | Historical, modeled |
-| **Users** | Apps, staff | Analysts, executives |
-| **Queries** | Small, fast writes | Large aggregations |
-| **Schema** | Normalized (3NF) | Dimensional (star/snowflake) |
-
----
-
-### Fact vs dimension — one glance
-
-| | Fact | Dimension |
-|---|------|-----------|
-| **Holds** | Metrics (amount, qty) | Attributes (name, region, month) |
-| **Row =** | One event | One entity (product, customer, date) |
-| **In queries** | `SUM()`, `COUNT()` | `WHERE`, `GROUP BY` |
-
----
-
-### Star vs snowflake — one glance
-
-| | Star ★ | Snowflake ❄ |
-|---|--------|-------------|
-| **Fact table** | Yes | Yes |
-| **Dimensions** | Flat, one table each | Split into sub-tables |
-| **Joins** | Few | More |
-| **Used today** | Default (~90%) | Rare |
-
-**Pitch:** "Both have a fact table. Star = flat dimensions. Snowflake = split dimensions."
-
----
-
-### Kimball vs Inmon — one glance
-
-| | Kimball | Inmon |
-|---|---------|-------|
-| **Approach** | Bottom-up (marts first) | Top-down (enterprise hub first) |
-| **Schema** | Star/snowflake | Normalized 3NF |
-| **Speed to value** | Fast | Slow |
-| **Dominant today** | Yes | Less common |
-
----
-
-### Why warehouses are fast
-
-| Technique | Why it helps |
-|-----------|--------------|
-| **Columnar storage** | Read only the columns you aggregate |
-| **MPP** | Split query across many nodes in parallel |
-| **Compression** | Less disk I/O |
-| **Sorting / zone maps** | Skip irrelevant data blocks |
-
----
-
-### Strengths vs limitations
-
-| Strengths | Limitations |
-|-------------|-------------|
-| Trusted BI metrics | Expensive at scale |
-| Fast SQL / dashboards | Rigid schema |
-| Strong governance | Slow to onboard new data types |
-| Mature tooling | Not built for ML / unstructured data |
-
----
-
-### Key platforms
-
-| Platform | Type |
-|----------|------|
-| Snowflake, BigQuery, Redshift, Synapse | Cloud warehouse |
-| Databricks SQL | Lakehouse SQL on Delta tables |
-| Teradata, Exadata | Classic on-prem |
-
----
-
-### Short answers — interview ready
-
-**What is a data warehouse?**
-> A governed analytics database that stores historical structured data for BI and reporting.
-
-**OLTP vs OLAP?**
-> OLTP runs live transactions. OLAP analyzes history. Warehouse = OLAP. BI = output.
-
-**Fact vs dimension?**
-> Facts = numbers and events. Dimensions = who, what, where, when.
-
-**Star vs snowflake schema?**
-> Same fact table. Star = flat dimensions. Snowflake = split dimensions. Star wins most of the time.
-
-**ETL vs ELT?**
-> ETL transforms before load. ELT loads first, transforms with warehouse SQL.
-
----
-
-### Related docs
-
-| Topic | Document |
-|-------|----------|
-| Component diagrams | [Architecture Map](/data-architecture/architecture-map/) |
-| Data lake | [Data Lake](/data-architecture/data-lake/) |
-| Data lakehouse | [Data Lakehouse](/data-architecture/data-lakehouse/) |
-| Three-way overview | [Overview](/data-architecture/overview/) |
-
----
-
-## Where the warehouse fits (read elsewhere for the rest)
-
-The warehouse is **one of three** platform patterns — not the whole story:
-
-```mermaid
-flowchart LR
-    DW["Data Warehouse<br/><i>this document</i>"]
-    DL["Data Lake"]
-    LH["Data Lakehouse"]
-
-    DW -->|"too rigid at scale"| DL
-    DL -->|"weak governance"| LH
-
-    style DW fill:#4A90D9,color:#fff
-```
-
-| Question | Read this |
-|----------|-----------|
-| Why did **data lakes** appear? | [Data Lake](/data-architecture/data-lake/) — schema-on-read, object storage, data swamp |
-| How did **lake + warehouse** merge? | [Data Lakehouse](/data-architecture/data-lakehouse/) — Delta Lake, Unity Catalog, medallion |
-| Quick **three-way comparison**? | [Overview](/data-architecture/overview/) — evolution timeline and comparison table |
-
-**Next:** [Data Lake](/data-architecture/data-lake/) — why lakes emerged as a response to warehouse limitations.
+**Next:** [Data Lake](/data-architecture/data-lake/)

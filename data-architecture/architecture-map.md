@@ -20,18 +20,18 @@ This page is the map — where each component lives and how data moves from sour
 
 ---
 
-## 1. The full journey (left → right)
+## 1. Full journey
 
 One line from live transactions to business insight:
 
 ```mermaid
 flowchart LR
-    OLTP["① OLTP<br/><i>live transactions</i>"]
-    ETL["② ETL / ELT<br/><i>extract · transform · load</i>"]
-    STORE["③ Storage<br/><i>warehouse / lake / lakehouse</i>"]
-    MODEL["④ Model<br/><i>facts · dims · medallion</i>"]
-    GOV["⑤ Governance<br/><i>access · lineage</i>"]
-    OUT["⑥ Output<br/><i>BI · ML · reports</i>"]
+    OLTP["① OLTP<br/>live transactions"]
+    ETL["② ETL / ELT<br/>extract · transform · load"]
+    STORE["③ Storage<br/>warehouse / lake / lakehouse"]
+    MODEL["④ Model<br/>facts · dims · medallion"]
+    GOV["⑤ Governance<br/>access · lineage"]
+    OUT["⑥ Output<br/>BI · ML · reports"]
 
     OLTP --> ETL --> STORE --> MODEL --> GOV --> OUT
 
@@ -54,7 +54,7 @@ flowchart LR
 
 ---
 
-## 2. Layer stack — where components sit
+## 2. Layer stack
 
 Vertical view: each layer has a job. Data flows **down through ingestion**, sits in **storage**, is shaped by **modeling**, controlled by **governance**, and consumed at the top.
 
@@ -68,27 +68,27 @@ flowchart TB
     end
 
     subgraph L5["⑤ GOVERNANCE — who can see what"]
-        UC["Unity Catalog / Warehouse ACLs<br/><i>permissions · lineage · audit</i>"]
+        UC["Unity Catalog / Warehouse ACLs<br/>permissions · lineage · audit"]
     end
 
     subgraph L4["④ MODELING — how data is organized"]
         direction LR
-        FACT["Fact tables<br/><i>how much</i>"]
-        DIM["Dimension tables<br/><i>who / what / when</i>"]
+        FACT["Fact tables<br/>how much"]
+        DIM["Dimension tables<br/>who / what / when"]
         STAR["Star / Snowflake schema"]
         MED["Medallion<br/>Bronze → Silver → Gold"]
     end
 
     subgraph L3["③ STORAGE — where data lives"]
         direction LR
-        WH["Data Warehouse<br/><i>OLAP · columnar</i>"]
-        LAKE["Data Lake<br/><i>S3 / ADLS / GCS</i>"]
-        LH["Lakehouse<br/><i>Delta / Iceberg on object storage</i>"]
+        WH["Data Warehouse<br/>OLAP · columnar"]
+        LAKE["Data Lake<br/>S3 / ADLS / GCS"]
+        LH["Lakehouse<br/>Delta / Iceberg on object storage"]
     end
 
     subgraph L2["② INGESTION — how data moves in"]
-        ETL["ETL / ELT pipeline<br/><i>Extract → Transform → Load</i>"]
-        STG["Staging area<br/><i>temporary landing</i>"]
+        ETL["ETL / ELT pipeline<br/>Extract → Transform → Load"]
+        STG["Staging area<br/>temporary landing"]
     end
 
     subgraph L1["① SOURCES — where data is born"]
@@ -121,23 +121,23 @@ How warehouse-specific components connect. Full detail → [Data Warehouse](/dat
 ```mermaid
 flowchart TB
     subgraph SOURCES["Sources"]
-        OLTP2["OLTP<br/><i>PostgreSQL, SAP, CRM</i>"]
+        OLTP2["OLTP<br/>PostgreSQL, SAP, CRM"]
     end
 
     subgraph INGEST2["Ingestion"]
         ETL2["ETL / ELT"]
-        STG2["Staging<br/><i>raw landing</i>"]
+        STG2["Staging<br/>raw landing"]
         ETL2 --> STG2
     end
 
     subgraph OLAP_BOX["Data Warehouse = OLAP system"]
         direction TB
-        ENGINE["OLAP engine<br/><i>columnar · MPP</i>"]
+        ENGINE["OLAP engine<br/>columnar · MPP"]
 
         subgraph SCHEMA["Dimensional model"]
             direction LR
-            FACT2["Fact tables<br/><i>amount, quantity</i>"]
-            DIM2["Dimension tables<br/><i>product, date, customer</i>"]
+            FACT2["Fact tables<br/>amount, quantity"]
+            DIM2["Dimension tables<br/>product, date, customer"]
         end
 
         subgraph MARTS["Data marts"]
@@ -201,14 +201,14 @@ flowchart TB
     end
 
     subgraph LAKE3["Data Lake — Object Storage"]
-        RAW3["/raw/<br/><i>as landed</i>"]
-        PROC3["/processed/<br/><i>optional</i>"]
-        CUR3["/curated/<br/><i>optional</i>"]
+        RAW3["/raw/<br/>as landed"]
+        PROC3["/processed/<br/>optional"]
+        CUR3["/curated/<br/>optional"]
         RAW3 --> PROC3 --> CUR3
     end
 
     subgraph COMPUTE3["Compute — on demand"]
-        SPARK3["Spark / Trino<br/><i>spin up · process · shut down</i>"]
+        SPARK3["Spark / Trino<br/>spin up · process · shut down"]
     end
 
     subgraph USE3["Consumers"]
@@ -245,24 +245,24 @@ flowchart TB
     end
 
     subgraph TABLE_FMT["Table format layer"]
-        DELTA["Delta Lake / Iceberg / Hudi<br/><i>ACID · transaction log</i>"]
+        DELTA["Delta Lake / Iceberg / Hudi<br/>ACID · transaction log"]
     end
 
     subgraph MED4["Medallion — governed layers"]
-        B["Bronze<br/><i>raw</i>"]
-        S["Silver<br/><i>cleaned</i>"]
-        G["Gold<br/><i>BI-ready · star schema</i>"]
+        B["Bronze<br/>raw"]
+        S["Silver<br/>cleaned"]
+        G["Gold<br/>BI-ready · star schema"]
         B --> S --> G
     end
 
     subgraph GOV4["Governance"]
-        UC4["Unity Catalog<br/><i>catalog.schema.table</i>"]
+        UC4["Unity Catalog<br/>catalog.schema.table"]
     end
 
     subgraph COMPUTE4["Compute — shared storage"]
         direction LR
-        SPARK4["Spark<br/><i>engineering</i>"]
-        SQLW["SQL Warehouse<br/><i>BI queries</i>"]
+        SPARK4["Spark<br/>engineering"]
+        SQLW["SQL Warehouse<br/>BI queries"]
         NB4["Notebooks"]
         SERVE4["Model serving"]
     end
@@ -353,13 +353,13 @@ Where fact and dimension tables sit inside the warehouse model:
 flowchart TD
     subgraph DIMS["Dimension tables — the context"]
         direction LR
-        DD["dim_date<br/><i>when</i>"]
-        DP["dim_product<br/><i>what</i>"]
-        DC["dim_customer<br/><i>who</i>"]
-        DS["dim_store<br/><i>where</i>"]
+        DD["dim_date<br/>when"]
+        DP["dim_product<br/>what"]
+        DC["dim_customer<br/>who"]
+        DS["dim_store<br/>where"]
     end
 
-    FACT["fact_sales — center<br/><i>amount · quantity · profit</i><br/><i>+ foreign keys to each dim</i>"]
+    FACT["fact_sales — center<br/>amount · quantity · profit<br/>+ foreign keys to each dim"]
 
     DD --> FACT
     DP --> FACT
@@ -375,7 +375,7 @@ flowchart TD
 
 ---
 
-## 8. Component index — quick lookup
+## 8. Component index
 
 | Component | Layer | Paradigm | Read more |
 |-----------|-------|----------|-----------|

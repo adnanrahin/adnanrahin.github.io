@@ -9,13 +9,10 @@ section_slug: data-architecture
 description: Object storage, schema-on-read, ingestion, informal medallion zones, and the data swamp problem.
 permalink: /data-architecture/data-lake/
 ---
-> **Scope:** This document covers **data lake** topics only — object storage, schema-on-read, ingestion, storage/compute separation, informal medallion zones, and the data swamp problem.
->
-> For **warehouse fundamentals** (OLTP, OLAP, star schema, etc.) → [Data Warehouse](/data-architecture/data-warehouse/) · For **lakehouse** → [Data Lakehouse](/data-architecture/data-lakehouse/)
 
-A **data lake** is a centralized repository that stores **raw data in its native format** at **massive scale**, typically on **cheap cloud object storage** (S3, ADLS, GCS).
+A **data lake** stores raw data in its native format at large scale, usually on cheap object storage (S3, ADLS, GCS). Structured tables, JSON logs, CSV exports, images — all land in one place without forcing a schema upfront.
 
-Think of it as a **giant shared drive for all company data** — structured tables, JSON logs, CSV exports, images, videos, and more — without forcing everything into one rigid schema upfront.
+See also: [Data Warehouse](/data-architecture/data-warehouse/) · [Data Lakehouse](/data-architecture/data-lakehouse/) · [Overview](/data-architecture/overview/)
 
 ---
 
@@ -46,13 +43,13 @@ flowchart LR
         FILES["Files & Media"]
     end
 
-    ING["Ingestion<br/><i>batch or streaming</i>"]
+    ING["Ingestion<br/>batch or streaming"]
 
     subgraph Lake["Data Lake — Object Storage"]
         RAW["/raw/orders/2024/01/"]
         EVENTS["/raw/events/json/"]
         IMG["/raw/images/"]
-        CUR["/curated/<br/><i>optional</i>"]
+        CUR["/curated/<br/>optional"]
         RAW --> CUR
         EVENTS --> CUR
     end
@@ -96,9 +93,9 @@ Structure is applied **when you query**, not when you store.
 
 ```mermaid
 flowchart LR
-    JSON["JSON file lands in lake<br/><i>no schema enforced</i>"]
-    STORE["Stored as-is<br/><i>raw bytes on S3/ADLS</i>"]
-    READ["Spark / SQL reads later<br/><i>infers structure at query time</i>"]
+    JSON["JSON file lands in lake<br/>no schema enforced"]
+    STORE["Stored as-is<br/>raw bytes on S3/ADLS"]
+    READ["Spark / SQL reads later<br/>infers structure at query time"]
     JSON --> STORE --> READ
 
     style STORE fill:#FFF3CD,stroke:#856404
@@ -117,8 +114,8 @@ Storage is cheap and always on. Compute clusters spin up only when needed, proce
 
 ```mermaid
 flowchart LR
-    OS[("Object Store<br/><b>always on</b><br/>S3 / ADLS / GCS")]
-    SC["Spark Cluster<br/><b>on demand</b><br/>spin up → process → shut down"]
+    OS[("Object Store<br/>always on<br/>S3 / ADLS / GCS")]
+    SC["Spark Cluster<br/>on demand<br/>spin up → process → shut down"]
 
     SC <-->|"read / write"| OS
 
@@ -148,9 +145,9 @@ Unlike a [data warehouse](/data-architecture/data-warehouse/), these zones are o
 
 ```mermaid
 flowchart LR
-    B["Bronze / Raw<br/><i>as landed</i>"]
-    S["Silver / Processed<br/><i>cleaned & joined</i>"]
-    G["Gold / Curated<br/><i>business-ready</i>"]
+    B["Bronze / Raw<br/>as landed"]
+    S["Silver / Processed<br/>cleaned & joined"]
+    G["Gold / Curated<br/>business-ready"]
     B --> S --> G
 
     style B fill:#CD7F32,color:#fff
@@ -215,9 +212,9 @@ This gap — lake flexibility without warehouse reliability — is what the [lak
 
 ---
 
-## How the lake differs from a warehouse
+## Lake vs warehouse (at a glance)
 
-This section covers **only the lake side**. Full warehouse depth (OLTP/OLAP, star schema, ETL, Kimball, Snowflake platform, etc.) lives in [Data Warehouse](/data-architecture/data-warehouse/).
+Warehouse depth (OLTP/OLAP, star schema, Kimball, etc.) is on the [Data Warehouse](/data-architecture/data-warehouse/) page. Here is the lake side only:
 
 | Lake trait | Warehouse trait (see other doc) |
 |------------|--------------------------------|
@@ -227,12 +224,10 @@ This section covers **only the lake side**. Full warehouse depth (OLTP/OLAP, sta
 | Weak governance by default | Strong governance natively |
 | Best for engineering & ML | Best for BI & SQL dashboards |
 
-Many enterprises ran **both** in parallel — see the two-tier problem in [Data Lakehouse](/data-architecture/data-lakehouse/).
+Many enterprises ran **both** in parallel — the two-tier problem is covered in [Data Lakehouse](/data-architecture/data-lakehouse/).
 
 ---
 
-## One-sentence summary
+**Takeaway:** A lake is cheap, flexible storage with schema-on-read. Without governance and table formats on top, it often lacks the reliability that warehouses provide out of the box.
 
-> A **data lake** is cheap, scalable storage for all data types with flexible schema-on-read — but without extra layers it often lacks the reliability, performance, and governance that [warehouses](/data-architecture/data-warehouse/) provide.
-
-**Next:** [Data Lakehouse](/data-architecture/data-lakehouse/) — how lake storage gained warehouse capabilities.
+**Next:** [Data Lakehouse](/data-architecture/data-lakehouse/) — how lake storage picked up warehouse capabilities.

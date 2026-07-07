@@ -9,15 +9,10 @@ section_slug: data-architecture
 description: Delta Lake, Iceberg, Hudi, medallion architecture, Unity Catalog, and unified BI + ML.
 permalink: /data-architecture/data-lakehouse/
 ---
-> **Scope:** This document covers **lakehouse** topics only — Delta Lake/Iceberg/Hudi, the two-tier problem, medallion architecture, Unity Catalog, and how lake storage gains warehouse capabilities.
->
-> For **warehouse fundamentals** → [Data Warehouse](/data-architecture/data-warehouse/) · For **lake fundamentals** → [Data Lake](/data-architecture/data-lake/) · For a **three-way overview** → [Overview](/data-architecture/overview/)
 
-A **data lakehouse** is an architecture that combines **data lake storage** (cheap, scalable object storage) with **data warehouse capabilities** (ACID transactions, governance, reliable SQL/BI, and structured modeling) — on **one unified platform**.
+A **data lakehouse** keeps data on lake storage (cheap, scalable object stores) but adds warehouse capabilities: ACID transactions, governance, reliable SQL/BI, and structured modeling — on one platform. Lake economics plus warehouse trust.
 
-Think of it as:
-
-> **Lake economics and flexibility + Warehouse trust and performance**
+See also: [Data Warehouse](/data-architecture/data-warehouse/) · [Data Lake](/data-architecture/data-lake/) · [Overview](/data-architecture/overview/)
 
 ---
 
@@ -28,8 +23,8 @@ By the late 2010s, many companies had **both** a [data warehouse](/data-architec
 ```mermaid
 flowchart TD
     SRC["Sources"]
-    LAKE["Data Lake<br/><i>see Data Lake</i>"]
-    DWH["Data Warehouse<br/><i>see Data Warehouse</i>"]
+    LAKE["Data Lake<br/>see Data Lake"]
+    DWH["Data Warehouse<br/>see Data Warehouse"]
     DUP["Duplicate data copies"]
     ETL["Fragile sync ETL"]
     PAIN["High cost · slow delivery · no single truth"]
@@ -90,8 +85,8 @@ Databricks published the [Lakehouse paper](https://arxiv.org/abs/2007.00000) for
 
 ```mermaid
 flowchart TD
-    S1["1990s–2000s<br/><b>Data Warehouse</b><br/><i>see Data Warehouse</i>"]
-    S2["2000s–2010s<br/><b>Big Data / Hadoop</b><br/><i>see Data Lake</i>"]
+    S1["1990s–2000s<br/><b>Data Warehouse</b><br/>see Data Warehouse"]
+    S2["2000s–2010s<br/><b>Big Data / Hadoop</b><br/>see Data Lake"]
     S3["2010s<br/><b>Cloud Object Storage</b><br/>S3, ADLS + Spark"]
     S4["Mid-2010s<br/><b>Two-Tier Problem</b><br/>Lake + Warehouse coexist"]
     S5["2019–2020<br/><b>Open Table Formats</b><br/>Delta, Iceberg, Hudi"]
@@ -113,14 +108,14 @@ flowchart TD
 flowchart TD
     SRC["Sources"]
     ING["Ingestion"]
-    OBJ[("Object Storage<br/>S3 / ADLS / GCS<br/><i>Parquet files</i>")]
-    TF["Table Format Layer<br/><b>Delta Lake / Iceberg / Hudi</b><br/><i>ACID + transaction log</i>"]
+    OBJ[("Object Storage<br/>S3 / ADLS / GCS<br/>Parquet files")]
+    TF["Table Format Layer<br/><b>Delta Lake / Iceberg / Hudi</b><br/>ACID + transaction log"]
 
-    BI["SQL / BI<br/><i>dashboards</i>"]
-    DE["Data Engineering<br/><i>pipelines, DLT</i>"]
-    ML["ML / AI<br/><i>features, models</i>"]
+    BI["SQL / BI<br/>dashboards"]
+    DE["Data Engineering<br/>pipelines, DLT"]
+    ML["ML / AI<br/>features, models"]
 
-    GOV["Unified Governance<br/><i>Unity Catalog — same tables, same access</i>"]
+    GOV["Unified Governance<br/>Unity Catalog — same tables, same access"]
 
     SRC --> ING --> OBJ --> TF
     TF --> BI
@@ -151,7 +146,7 @@ flowchart TD
 | Separate copy for ML workloads | **Feature store + MLflow** on same data |
 | Rigid ETL before any use | **ELT** on elastic compute |
 
-> Warehouse modeling concepts (star schema, OLTP/OLAP, SCD) still apply inside the lakehouse Gold layer — see [Data Warehouse](/data-architecture/data-warehouse/).
+> Warehouse modeling (star schema, OLTP/OLAP, SCD) still applies in the Gold layer — see [Data Warehouse](/data-architecture/data-warehouse/).
 
 ---
 
@@ -195,9 +190,9 @@ Structured quality layers on lake storage:
 
 ```mermaid
 flowchart LR
-    B["Bronze<br/><i>raw ingestion</i>"]
-    S["Silver<br/><i>cleaned & conformed</i>"]
-    G["Gold<br/><i>business aggregates</i>"]
+    B["Bronze<br/>raw ingestion"]
+    S["Silver<br/>cleaned & conformed"]
+    G["Gold<br/>business aggregates"]
     B -->|"DLT / Jobs"| S -->|"DLT / Jobs"| G
 
     style B fill:#CD7F32,color:#fff
@@ -240,12 +235,12 @@ Storage stays in the lake; compute scales independently.
 
 ```mermaid
 flowchart TD
-    STORAGE[("Shared Object Storage<br/><i>single copy of data</i>")]
+    STORAGE[("Shared Object Storage<br/>single copy of data")]
 
-    SPARK["Spark Clusters<br/><i>engineering</i>"]
-    SQLW["SQL Warehouses<br/><i>BI queries</i>"]
-    NB["Serverless Notebooks<br/><i>ad-hoc</i>"]
-    SERVE["Model Serving<br/><i>predictions</i>"]
+    SPARK["Spark Clusters<br/>engineering"]
+    SQLW["SQL Warehouses<br/>BI queries"]
+    NB["Serverless Notebooks<br/>ad-hoc"]
+    SERVE["Model Serving<br/>predictions"]
 
     SPARK <-->|read / write| STORAGE
     SQLW <-->|read| STORAGE
@@ -257,19 +252,17 @@ flowchart TD
 
 ---
 
-## How lakehouse compares to lake and warehouse
+## How lakehouse compares
 
-> Full warehouse topics → [Data Warehouse](/data-architecture/data-warehouse/) · Full lake topics → [Data Lake](/data-architecture/data-lake/) · This section covers **only the lakehouse lens**.
+Full warehouse notes: [Data Warehouse](/data-architecture/data-warehouse/). Full lake notes: [Data Lake](/data-architecture/data-lake/). Below is the lakehouse angle only.
 
-### Positioning map
-
-How the three patterns compare on **flexibility** (horizontal) vs **governance** (vertical):
+How the three patterns compare on flexibility (horizontal) vs governance (vertical):
 
 | Platform | Flexibility | Governance | Where to read more |
 |----------|-------------|------------|-------------------|
 | **Data Warehouse** | Low (0.25) | High (0.85) | [Data Warehouse](/data-architecture/data-warehouse/) |
 | **Data Lake** | High (0.85) | Low (0.20) | [Data Lake](/data-architecture/data-lake/) |
-| **Data Lakehouse** | High (0.75) | High (0.80) | *this document* |
+| **Data Lakehouse** | High (0.75) | High (0.80) | here |
 
 ```mermaid
 flowchart TB
@@ -277,14 +270,14 @@ flowchart TB
 
     subgraph ROW1[" "]
         direction LR
-        DW["<b>Data Warehouse</b><br/><i>→ Data Warehouse</i>"]
-        LH["<b>Data Lakehouse</b><br/><i>Ideal balance</i><br/>flex 0.75 · gov 0.80"]
+        DW["Data Warehouse"]
+        LH["Data Lakehouse<br/>flex 0.75 · gov 0.80"]
     end
 
     subgraph ROW2[" "]
         direction LR
-        Q3["<i>Quadrant 3 — Unmanaged scale</i><br/>(gap — no major platform)"]
-        DL["<b>Data Lake</b><br/><i>→ Data Lake</i>"]
+        Q3["Unmanaged scale<br/>(no major platform here)"]
+        DL["Data Lake"]
     end
 
     GOV_LO["↓ Low Governance"]
@@ -303,11 +296,7 @@ flowchart TB
     style ROW2 fill:none,stroke:#999,stroke-dasharray:4
 ```
 
-**Read the map:**
-- **Top-left** — [Data Warehouse](/data-architecture/data-warehouse/)
-- **Bottom-right** — [Data Lake](/data-architecture/data-lake/)
-- **Top-right — Data Lakehouse** — keeps lake flexibility while adding warehouse-grade governance
-- **Bottom-left** — the gap the lakehouse was built to close
+**Reading the map:** top-left is the warehouse, bottom-right is the lake, top-right is the lakehouse — flexibility without giving up governance. Bottom-left is the gap the lakehouse was meant to close.
 
 ### Lakehouse capability summary
 
@@ -323,9 +312,9 @@ flowchart TB
 
 ---
 
-## Why Databricks fits here
+## Example: Databricks
 
-Databricks was designed around the lakehouse from the start:
+Databricks built around the lakehouse model from the start:
 
 | Databricks component | Lakehouse role |
 |---------------------|----------------|
@@ -337,9 +326,9 @@ Databricks was designed around the lakehouse from the start:
 
 ---
 
-## Trade-offs and honest limitations
+## Trade-offs
 
-The lakehouse is powerful, but not magic:
+The lakehouse is not a silver bullet:
 
 - **Complexity** — table formats, cluster tuning, and governance still require skilled teams
 - **Performance tuning** — `OPTIMIZE`, Z-ordering, and file sizing matter for SQL speed
@@ -348,8 +337,6 @@ The lakehouse is powerful, but not magic:
 
 ---
 
-## One-sentence summary
+**Takeaway:** A lakehouse keeps data on cheap lake storage but adds transactional table formats and unified governance so analytics, engineering, and ML share one reliable copy.
 
-> A **data lakehouse** keeps data on cheap lake storage but adds transactional table formats and unified governance so analytics, engineering, and machine learning can share **one reliable copy** of the data.
-
-**Back to overview:** [Data Architecture README](/data-architecture/overview/)  
+**Back:** [Overview](/data-architecture/overview/)
