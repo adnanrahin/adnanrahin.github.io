@@ -11,7 +11,7 @@ permalink: /data-architecture/data-warehouse/
 ---
 > **Scope:** This document is the **only** place for data warehouse topics — OLTP/OLAP, ETL/ELT, dimensional modeling, star/snowflake schema, SCD, Kimball/Inmon, columnar/MPP, and warehouse platforms (Snowflake, BigQuery, etc.).
 >
-> For **data lakes** → [data-lake.md](/data-architecture/data-lake/) · For **lakehouse** → [data-lakehouse.md](/data-architecture/data-lakehouse/) · For a **three-way overview** → [README.md](/data-architecture/overview/)
+> For **data lakes** → [Data Lake](/data-architecture/data-lake/) · For **lakehouse** → [Data Lakehouse](/data-architecture/data-lakehouse/) · For a **three-way overview** → [Overview](/data-architecture/overview/)
 
 A **data warehouse** is a centralized system designed to store **structured, cleaned, business-ready data** and serve **fast analytics** — especially SQL queries, dashboards, and reports.
 
@@ -106,7 +106,7 @@ flowchart LR
 
 ## Component map
 
-For the **full end-to-end diagram** — all layers, all paradigms, fact/dimension seating, and lakehouse wiring — see **[architecture-map.md](/data-architecture/architecture-map/)**.
+For the **full end-to-end diagram** — all layers, all paradigms, fact/dimension seating, and lakehouse wiring — see **[Architecture Map](/data-architecture/architecture-map/)**.
 
 ```mermaid
 flowchart LR
@@ -1179,10 +1179,10 @@ A **data warehouse** is a governed analytics database for BI and SQL — fed by 
 
 | Topic | Document |
 |-------|----------|
-| Component diagrams | [architecture-map.md](/data-architecture/architecture-map/) |
-| Data lake | [data-lake.md](/data-architecture/data-lake/) |
-| Data lakehouse | [data-lakehouse.md](/data-architecture/data-lakehouse/) |
-| Three-way overview | [README.md](/data-architecture/overview/) |
+| Component diagrams | [Architecture Map](/data-architecture/architecture-map/) |
+| Data lake | [Data Lake](/data-architecture/data-lake/) |
+| Data lakehouse | [Data Lakehouse](/data-architecture/data-lakehouse/) |
+| Three-way overview | [Overview](/data-architecture/overview/) |
 
 ---
 
@@ -1204,8 +1204,8 @@ flowchart LR
 
 | Question | Read this |
 |----------|-----------|
-| Why did **data lakes** appear? | [data-lake.md](/data-architecture/data-lake/) — schema-on-read, object storage, data swamp |
-| How did **lake + warehouse** merge? | [data-lakehouse.md](/data-architecture/data-lakehouse/) — Delta Lake, Unity Catalog, medallion |
-| Quick **three-way comparison**? | [README.md](/data-architecture/overview/) — evolution timeline and comparison table |
+| Why did **data lakes** appear? | [Data Lake](/data-architecture/data-lake/) — schema-on-read, object storage, data swamp |
+| How did **lake + warehouse** merge? | [Data Lakehouse](/data-architecture/data-lakehouse/) — Delta Lake, Unity Catalog, medallion |
+| Quick **three-way comparison**? | [Overview](/data-architecture/overview/) — evolution timeline and comparison table |
 
 **Next:** [Data Lake](/data-architecture/data-lake/) — why lakes emerged as a response to warehouse limitations.

@@ -11,7 +11,7 @@ permalink: /data-architecture/data-lake/
 ---
 > **Scope:** This document covers **data lake** topics only — object storage, schema-on-read, ingestion, storage/compute separation, informal medallion zones, and the data swamp problem.
 >
-> For **warehouse fundamentals** (OLTP, OLAP, star schema, etc.) → [data-warehouse.md](/data-architecture/data-warehouse/) · For **lakehouse** → [data-lakehouse.md](/data-architecture/data-lakehouse/)
+> For **warehouse fundamentals** (OLTP, OLAP, star schema, etc.) → [Data Warehouse](/data-architecture/data-warehouse/) · For **lakehouse** → [Data Lakehouse](/data-architecture/data-lakehouse/)
 
 A **data lake** is a centralized repository that stores **raw data in its native format** at **massive scale**, typically on **cheap cloud object storage** (S3, ADLS, GCS).
 
@@ -217,7 +217,7 @@ This gap — lake flexibility without warehouse reliability — is what the [lak
 
 ## How the lake differs from a warehouse
 
-This section covers **only the lake side**. Full warehouse depth (OLTP/OLAP, star schema, ETL, Kimball, Snowflake platform, etc.) lives in [data-warehouse.md](/data-architecture/data-warehouse/).
+This section covers **only the lake side**. Full warehouse depth (OLTP/OLAP, star schema, ETL, Kimball, Snowflake platform, etc.) lives in [Data Warehouse](/data-architecture/data-warehouse/).
 
 | Lake trait | Warehouse trait (see other doc) |
 |------------|--------------------------------|
@@ -227,7 +227,7 @@ This section covers **only the lake side**. Full warehouse depth (OLTP/OLAP, sta
 | Weak governance by default | Strong governance natively |
 | Best for engineering & ML | Best for BI & SQL dashboards |
 
-Many enterprises ran **both** in parallel — see the two-tier problem in [data-lakehouse.md](/data-architecture/data-lakehouse/).
+Many enterprises ran **both** in parallel — see the two-tier problem in [Data Lakehouse](/data-architecture/data-lakehouse/).
 
 ---
 

@@ -1105,7 +1105,7 @@ a.docs-rail__link:hover {
 .docs-stage {
   min-width: 0;
   padding: 2.5rem clamp(1.5rem, 4vw, 4rem) 4rem;
-  max-width: 52rem;
+  max-width: 58rem;
 }
 
 .docs-stage__toolbar {
@@ -1179,6 +1179,133 @@ a.docs-rail__link:hover {
   margin: 1.5rem 0 0.5rem;
   font-size: 1.1rem;
   font-weight: 700;
+}
+
+.docs-content hr,
+.post-content hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+.docs-content blockquote,
+.post-content blockquote {
+  margin: 0 0 1.25rem;
+  padding: 0.85rem 1.1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--text-muted);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.docs-content blockquote p:last-child,
+.post-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.docs-table-wrap {
+  margin: 0 0 1.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.docs-content table,
+.post-content table {
+  width: 100%;
+  min-width: 480px;
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.docs-content th,
+.docs-content td,
+.post-content th,
+.post-content td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.docs-content tr:last-child td,
+.post-content tr:last-child td {
+  border-bottom: none;
+}
+
+.docs-content th,
+.post-content th {
+  background: var(--accent-soft);
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.docs-content td,
+.post-content td {
+  color: var(--text-muted);
+}
+
+.docs-content td code,
+.post-content td code {
+  font-size: 0.82rem;
+}
+
+.docs-content pre,
+.post-content pre {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  line-height: 1.45;
+  tab-size: 4;
+  white-space: pre;
+}
+
+.docs-content pre code,
+.post-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.docs-content .mermaid-wrap,
+.post-content .mermaid-wrap {
+  margin: 0 0 1.75rem;
+  padding: 1.25rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+  text-align: center;
+}
+
+.docs-content .mermaid-wrap .mermaid,
+.post-content .mermaid-wrap .mermaid {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.docs-content .mermaid svg,
+.post-content .mermaid svg {
+  max-width: 100%;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
 }
 
 /* Topic index (System Design home) */
@@ -1455,24 +1582,28 @@ a.docs-rail__link:hover {
 
 .sd-metrics-box {
   margin: 0 0 1.5rem;
-  padding: 1.25rem 1.35rem;
+  padding: 0;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
   overflow-x: auto;
 }
 .sd-metrics-box table {
   width: 100%;
+  min-width: 0;
   margin: 0;
   border-collapse: collapse;
   font-size: 0.9rem;
 }
 .sd-metrics-box th,
 .sd-metrics-box td {
-  padding: 0.6rem 0.75rem;
-  border: 1px solid var(--border);
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--border);
   text-align: left;
+}
+.sd-metrics-box tr:last-child td {
+  border-bottom: none;
 }
 .sd-metrics-box th {
   background: var(--accent-soft);
@@ -1483,12 +1614,12 @@ a.docs-rail__link:hover {
 
 .post-content .mermaid,
 .docs-content .mermaid {
-  margin: 0 0 1.5rem;
-  padding: 1.25rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  overflow-x: auto;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
   text-align: center;
 }
 

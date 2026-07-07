@@ -11,7 +11,7 @@ permalink: /data-architecture/data-lakehouse/
 ---
 > **Scope:** This document covers **lakehouse** topics only — Delta Lake/Iceberg/Hudi, the two-tier problem, medallion architecture, Unity Catalog, and how lake storage gains warehouse capabilities.
 >
-> For **warehouse fundamentals** → [data-warehouse.md](/data-architecture/data-warehouse/) · For **lake fundamentals** → [data-lake.md](/data-architecture/data-lake/) · For a **three-way overview** → [README.md](/data-architecture/overview/)
+> For **warehouse fundamentals** → [Data Warehouse](/data-architecture/data-warehouse/) · For **lake fundamentals** → [Data Lake](/data-architecture/data-lake/) · For a **three-way overview** → [Overview](/data-architecture/overview/)
 
 A **data lakehouse** is an architecture that combines **data lake storage** (cheap, scalable object storage) with **data warehouse capabilities** (ACID transactions, governance, reliable SQL/BI, and structured modeling) — on **one unified platform**.
 
@@ -28,8 +28,8 @@ By the late 2010s, many companies had **both** a [data warehouse](/data-architec
 ```mermaid
 flowchart TD
     SRC["Sources"]
-    LAKE["Data Lake<br/><i>see data-lake.md</i>"]
-    DWH["Data Warehouse<br/><i>see data-warehouse.md</i>"]
+    LAKE["Data Lake<br/><i>see Data Lake</i>"]
+    DWH["Data Warehouse<br/><i>see Data Warehouse</i>"]
     DUP["Duplicate data copies"]
     ETL["Fragile sync ETL"]
     PAIN["High cost · slow delivery · no single truth"]
@@ -60,10 +60,10 @@ The lakehouse answered:
 ## How the lakehouse came to be (evolution)
 
 ### Step 1 — Warehouse era (1990s–2000s)
-Structured BI on proprietary databases. Details → [data-warehouse.md](/data-architecture/data-warehouse/).
+Structured BI on proprietary databases. Details → [Data Warehouse](/data-architecture/data-warehouse/).
 
 ### Step 2 — Big Data & Hadoop (2000s–2010s)
-HDFS + MapReduce/Spark on commodity hardware. Details → [data-lake.md](/data-architecture/data-lake/).
+HDFS + MapReduce/Spark on commodity hardware. Details → [Data Lake](/data-architecture/data-lake/).
 
 ### Step 3 — Cloud object storage (2010s)
 S3 and ADLS made lakes cheaper and more durable than HDFS. Spark became the standard processing engine.
@@ -90,8 +90,8 @@ Databricks published the [Lakehouse paper](https://arxiv.org/abs/2007.00000) for
 
 ```mermaid
 flowchart TD
-    S1["1990s–2000s<br/><b>Data Warehouse</b><br/><i>see data-warehouse.md</i>"]
-    S2["2000s–2010s<br/><b>Big Data / Hadoop</b><br/><i>see data-lake.md</i>"]
+    S1["1990s–2000s<br/><b>Data Warehouse</b><br/><i>see Data Warehouse</i>"]
+    S2["2000s–2010s<br/><b>Big Data / Hadoop</b><br/><i>see Data Lake</i>"]
     S3["2010s<br/><b>Cloud Object Storage</b><br/>S3, ADLS + Spark"]
     S4["Mid-2010s<br/><b>Two-Tier Problem</b><br/>Lake + Warehouse coexist"]
     S5["2019–2020<br/><b>Open Table Formats</b><br/>Delta, Iceberg, Hudi"]
@@ -151,7 +151,7 @@ flowchart TD
 | Separate copy for ML workloads | **Feature store + MLflow** on same data |
 | Rigid ETL before any use | **ELT** on elastic compute |
 
-> Warehouse modeling concepts (star schema, OLTP/OLAP, SCD) still apply inside the lakehouse Gold layer — see [data-warehouse.md](/data-architecture/data-warehouse/).
+> Warehouse modeling concepts (star schema, OLTP/OLAP, SCD) still apply inside the lakehouse Gold layer — see [Data Warehouse](/data-architecture/data-warehouse/).
 
 ---
 
@@ -259,7 +259,7 @@ flowchart TD
 
 ## How lakehouse compares to lake and warehouse
 
-> Full warehouse topics → [data-warehouse.md](/data-architecture/data-warehouse/) · Full lake topics → [data-lake.md](/data-architecture/data-lake/) · This section covers **only the lakehouse lens**.
+> Full warehouse topics → [Data Warehouse](/data-architecture/data-warehouse/) · Full lake topics → [Data Lake](/data-architecture/data-lake/) · This section covers **only the lakehouse lens**.
 
 ### Positioning map
 
@@ -267,8 +267,8 @@ How the three patterns compare on **flexibility** (horizontal) vs **governance**
 
 | Platform | Flexibility | Governance | Where to read more |
 |----------|-------------|------------|-------------------|
-| **Data Warehouse** | Low (0.25) | High (0.85) | [data-warehouse.md](/data-architecture/data-warehouse/) |
-| **Data Lake** | High (0.85) | Low (0.20) | [data-lake.md](/data-architecture/data-lake/) |
+| **Data Warehouse** | Low (0.25) | High (0.85) | [Data Warehouse](/data-architecture/data-warehouse/) |
+| **Data Lake** | High (0.85) | Low (0.20) | [Data Lake](/data-architecture/data-lake/) |
 | **Data Lakehouse** | High (0.75) | High (0.80) | *this document* |
 
 ```mermaid
@@ -277,14 +277,14 @@ flowchart TB
 
     subgraph ROW1[" "]
         direction LR
-        DW["<b>Data Warehouse</b><br/><i>→ data-warehouse.md</i>"]
+        DW["<b>Data Warehouse</b><br/><i>→ Data Warehouse</i>"]
         LH["<b>Data Lakehouse</b><br/><i>Ideal balance</i><br/>flex 0.75 · gov 0.80"]
     end
 
     subgraph ROW2[" "]
         direction LR
         Q3["<i>Quadrant 3 — Unmanaged scale</i><br/>(gap — no major platform)"]
-        DL["<b>Data Lake</b><br/><i>→ data-lake.md</i>"]
+        DL["<b>Data Lake</b><br/><i>→ Data Lake</i>"]
     end
 
     GOV_LO["↓ Low Governance"]

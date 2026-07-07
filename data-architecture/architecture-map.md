@@ -9,13 +9,14 @@ section_slug: data-architecture
 description: End-to-end component diagram — where every layer sits and how they connect.
 permalink: /data-architecture/architecture-map/
 ---
-End-to-end view of **where each component sits** and **how they connect**. Use this page first, then drill into the topic-specific docs.
 
-| Document | Deep dive |
-|----------|-----------|
-| [data-warehouse.md](/data-architecture/data-warehouse/) | OLTP, OLAP, ETL, fact/dimension, star/snowflake schema |
-| [data-lake.md](/data-architecture/data-lake/) | Object storage, schema-on-read, data swamp |
-| [data-lakehouse.md](/data-architecture/data-lakehouse/) | Delta Lake, medallion, Unity Catalog |
+This page is the map — where each component lives and how data moves from source systems to dashboards. Read it once, then jump to the topic pages for depth.
+
+| Page | Topics |
+|------|--------|
+| [Data Warehouse](/data-architecture/data-warehouse/) | OLTP, OLAP, ETL, fact/dimension, star/snowflake schema |
+| [Data Lake](/data-architecture/data-lake/) | Object storage, schema-on-read, data swamp |
+| [Data Lakehouse](/data-architecture/data-lakehouse/) | Delta Lake, medallion, Unity Catalog |
 
 ---
 
@@ -115,7 +116,7 @@ flowchart TB
 
 ## 3. Data warehouse path — internal wiring
 
-How warehouse-specific components connect. Full detail → [data-warehouse.md](/data-architecture/data-warehouse/).
+How warehouse-specific components connect. Full detail → [Data Warehouse](/data-architecture/data-warehouse/).
 
 ```mermaid
 flowchart TB
@@ -165,7 +166,7 @@ flowchart TB
     style OUT2 fill:#D5F5E3,stroke:#27AE60
 ```
 
-### Warehouse component cheat sheet
+### Warehouse component reference
 
 | Component | Sits at | Connected to | Role |
 |-----------|---------|--------------|------|
@@ -183,7 +184,7 @@ flowchart TB
 
 ## 4. Data lake path — internal wiring
 
-Lake-specific components. Full detail → [data-lake.md](/data-architecture/data-lake/).
+Lake-specific components. Full detail → [Data Lake](/data-architecture/data-lake/).
 
 ```mermaid
 flowchart TB
@@ -228,7 +229,7 @@ flowchart TB
 
 ## 5. Lakehouse path — unified wiring (modern)
 
-How lake + warehouse capabilities merge on one platform. Full detail → [data-lakehouse.md](/data-architecture/data-lakehouse/).
+How lake + warehouse capabilities merge on one platform. Full detail → [Data Lakehouse](/data-architecture/data-lakehouse/).
 
 ```mermaid
 flowchart TB
@@ -378,24 +379,24 @@ flowchart TD
 
 | Component | Layer | Paradigm | Read more |
 |-----------|-------|----------|-----------|
-| OLTP | Source | All | [data-warehouse.md § OLTP](/data-architecture/data-warehouse/#oltp-vs-olap) |
-| ETL / ELT | Ingestion | Warehouse, Lakehouse | [data-warehouse.md § ETL](/data-architecture/data-warehouse/#etl-vs-elt) |
-| Staging | Ingestion | Warehouse | [data-warehouse.md § Architecture](/data-architecture/data-warehouse/#how-it-works-architecture) |
-| OLAP / Warehouse | Storage | Warehouse | [data-warehouse.md § OLAP](/data-architecture/data-warehouse/#oltp-vs-olap) |
-| Fact table | Model | Warehouse, Lakehouse Gold | [data-warehouse.md § Facts](/data-architecture/data-warehouse/#fact-tables) |
-| Dimension table | Model | Warehouse, Lakehouse Gold | [data-warehouse.md § Dimensions](/data-architecture/data-warehouse/#dimension-tables) |
-| Star schema | Model | Warehouse | [data-warehouse.md § Star](/data-architecture/data-warehouse/#star-schema) |
-| Snowflake schema | Model | Warehouse | [data-warehouse.md § Snowflake](/data-architecture/data-warehouse/#snowflake-schema) |
-| SCD | Model | Warehouse | [data-warehouse.md § SCD](/data-architecture/data-warehouse/#grain-keys--slowly-changing-dimensions) |
-| Data mart | Model | Warehouse | [data-warehouse.md § Marts](/data-architecture/data-warehouse/#data-marts--conformed-dimensions) |
-| Object storage | Storage | Lake, Lakehouse | [data-lake.md § Architecture](/data-architecture/data-lake/#how-it-works-architecture) |
-| Schema-on-read | Model | Lake | [data-lake.md § Schema-on-read](/data-architecture/data-lake/#core-characteristics) |
-| Delta / Iceberg / Hudi | Storage | Lakehouse | [data-lakehouse.md § Table format](/data-architecture/data-lakehouse/#1-open-table-format-the-technical-foundation) |
-| Medallion (Bronze/Silver/Gold) | Model | Lakehouse | [data-lakehouse.md § Medallion](/data-architecture/data-lakehouse/#2-medallion-architecture-organizational-pattern) |
-| Unity Catalog | Governance | Lakehouse | [data-lakehouse.md § Governance](/data-architecture/data-lakehouse/#3-unified-governance) |
-| SQL Warehouse | Compute | Lakehouse, Databricks | [data-lakehouse.md § Compute](/data-architecture/data-lakehouse/#4-separate-compute-shared-storage) |
-| BI / Dashboards | Consumption | All | [data-warehouse.md § Architecture](/data-architecture/data-warehouse/#how-it-works-architecture) |
+| OLTP | Source | All | [Data Warehouse — OLTP](/data-architecture/data-warehouse/#oltp-vs-olap) |
+| ETL / ELT | Ingestion | Warehouse, Lakehouse | [Data Warehouse — ETL](/data-architecture/data-warehouse/#etl-vs-elt) |
+| Staging | Ingestion | Warehouse | [Data Warehouse — Architecture](/data-architecture/data-warehouse/#how-it-works-architecture) |
+| OLAP / Warehouse | Storage | Warehouse | [Data Warehouse — OLAP](/data-architecture/data-warehouse/#oltp-vs-olap) |
+| Fact table | Model | Warehouse, Lakehouse Gold | [Data Warehouse — Facts](/data-architecture/data-warehouse/#fact-tables) |
+| Dimension table | Model | Warehouse, Lakehouse Gold | [Data Warehouse — Dimensions](/data-architecture/data-warehouse/#dimension-tables) |
+| Star schema | Model | Warehouse | [Data Warehouse — Star](/data-architecture/data-warehouse/#star-schema) |
+| Snowflake schema | Model | Warehouse | [Data Warehouse — Snowflake](/data-architecture/data-warehouse/#snowflake-schema) |
+| SCD | Model | Warehouse | [Data Warehouse — SCD](/data-architecture/data-warehouse/#grain-keys--slowly-changing-dimensions) |
+| Data mart | Model | Warehouse | [Data Warehouse — Marts](/data-architecture/data-warehouse/#data-marts--conformed-dimensions) |
+| Object storage | Storage | Lake, Lakehouse | [Data Lake — Architecture](/data-architecture/data-lake/#how-it-works-architecture) |
+| Schema-on-read | Model | Lake | [Data Lake — Schema-on-read](/data-architecture/data-lake/#core-characteristics) |
+| Delta / Iceberg / Hudi | Storage | Lakehouse | [Data Lakehouse — Table format](/data-architecture/data-lakehouse/#1-open-table-format-the-technical-foundation) |
+| Medallion (Bronze/Silver/Gold) | Model | Lakehouse | [Data Lakehouse — Medallion](/data-architecture/data-lakehouse/#2-medallion-architecture-organizational-pattern) |
+| Unity Catalog | Governance | Lakehouse | [Data Lakehouse — Governance](/data-architecture/data-lakehouse/#3-unified-governance) |
+| SQL Warehouse | Compute | Lakehouse, Databricks | [Data Lakehouse — Compute](/data-architecture/data-lakehouse/#4-separate-compute-shared-storage) |
+| BI / Dashboards | Consumption | All | [Data Warehouse — Architecture](/data-architecture/data-warehouse/#how-it-works-architecture) |
 
 ---
 
-**Back to overview:** [README.md](/data-architecture/overview/)
+**Back to overview:** [Overview](/data-architecture/overview/)
