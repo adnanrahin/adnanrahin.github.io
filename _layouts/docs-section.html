@@ -2,16 +2,16 @@
 layout: default
 ---
 <div class="docs-shell">
-  <aside class="docs-rail" id="docs-rail" aria-label="System Design">
+  <aside class="docs-rail" id="docs-rail" aria-label="{{ page.docs_title }}">
     <div class="docs-rail__top">
-      <a href="{{ '/system-design/' | relative_url }}" class="docs-rail__brand{% if page.sd_overview %} docs-rail__brand--active{% endif %}">
-        <span class="docs-rail__brand-text">System Design</span>
+      <a href="{{ page.docs_base | relative_url }}" class="docs-rail__brand{% if page.docs_overview %} docs-rail__brand--active{% endif %}">
+        <span class="docs-rail__brand-text">{{ page.docs_title }}</span>
       </a>
       <button type="button" class="docs-rail__close" aria-label="Close navigation" data-docs-close>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
-    {% include system-design-nav.html %}
+    {% include docs-nav.html nav=page.docs_nav base=page.docs_base %}
   </aside>
 
   <div class="docs-backdrop" data-docs-close aria-hidden="true"></div>
@@ -24,11 +24,11 @@ layout: default
       </button>
     </div>
 
-    <article class="docs-article{% if page.sd_overview %} docs-article--overview{% endif %}">
-      {% unless page.sd_hide_header %}
+    <article class="docs-article{% if page.docs_overview %} docs-article--overview{% endif %}">
+      {% unless page.docs_hide_header %}
       <header class="docs-article__header">
-        {% unless page.sd_overview %}
-        <p class="docs-article__eyebrow">System Design</p>
+        {% unless page.docs_overview %}
+        <p class="docs-article__eyebrow">{{ page.docs_title }}</p>
         {% endunless %}
         <h1 class="docs-article__title">{{ page.title }}</h1>
         {% if page.description %}
@@ -39,12 +39,12 @@ layout: default
       <div class="docs-content post-content">
         {{ content }}
       </div>
-      {% unless page.sd_overview %}
+      {% unless page.docs_overview %}
       <p class="docs-back-list">
-        <a href="{{ '/system-design/' | relative_url }}">← All topics</a>
+        <a href="{{ page.docs_base | relative_url }}">← All topics</a>
       </p>
       {% endunless %}
-      {% include system-design-pager.html %}
+      {% include docs-pager.html nav=page.docs_nav base=page.docs_base %}
     </article>
   </div>
 </div>

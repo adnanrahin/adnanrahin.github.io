@@ -1,11 +1,12 @@
-<nav class="docs-rail__nav" aria-label="System Design topics">
-  {% for group in site.data.system_design_nav %}
+{% assign docs_groups = site.data[include.nav] %}
+<nav class="docs-rail__nav" aria-label="{{ page.docs_title }} topics">
+  {% for group in docs_groups %}
   <div class="docs-rail__group">
     <h2 class="docs-rail__heading">{{ group.section }}</h2>
     <ul class="docs-rail__list">
       {% for item in group.items %}
-        {% assign item_href = '/system-design/' | append: item.slug | append: '/' | relative_url %}
-        <li class="docs-rail__item{% if page.sd_slug == item.slug %} docs-rail__item--active{% endif %}">
+        {% assign item_href = include.base | append: item.slug | append: '/' | relative_url %}
+        <li class="docs-rail__item{% if page.docs_slug == item.slug %} docs-rail__item--active{% endif %}">
           {% if item.published %}
           <a href="{{ item_href }}" class="docs-rail__link">{{ item.title }}</a>
           {% else %}

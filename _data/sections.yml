@@ -8,3 +8,8 @@
   path: /system-design/
   icon: "◈"
   description: Architecture study guide — scalability, availability, infrastructure, and more.
+- name: Data Architecture
+  slug: data-architecture
+  path: /data-architecture/
+  icon: "⬡"
+  description: Big-data platform patterns — warehouse, lake, lakehouse, and dimensional modeling.

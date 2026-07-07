@@ -1,0 +1,29 @@
+# Data Architecture docs navigation
+# published: true  → page exists at /data-architecture/{slug}/
+# published: false → listed as "Coming soon" (sidebar + index)
+
+- section: Get Started
+  items:
+    - title: Overview
+      slug: overview
+      description: Evolution of warehouse, lake, and lakehouse — quick comparison.
+      published: true
+    - title: Architecture Map
+      slug: architecture-map
+      description: Component diagram and how every layer connects.
+      published: true
+
+- section: Platform Patterns
+  items:
+    - title: Data Warehouse
+      slug: data-warehouse
+      description: OLTP, OLAP, ETL/ELT, star/snowflake schema, SCD, Kimball.
+      published: true
+    - title: Data Lake
+      slug: data-lake
+      description: Object storage, schema-on-read, ingestion, and the data swamp.
+      published: true
+    - title: Data Lakehouse
+      slug: data-lakehouse
+      description: Delta/Iceberg/Hudi, medallion layers, Unity Catalog, unified BI + ML.
+      published: true

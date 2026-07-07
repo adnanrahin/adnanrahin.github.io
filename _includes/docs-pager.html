@@ -1,0 +1,73 @@
+{% assign docs_groups = site.data[include.nav] %}
+{% assign docs_next = nil %}
+{% assign docs_prev = nil %}
+{% assign docs_found = false %}
+
+{% for group in docs_groups %}
+  {% for item in group.items %}
+    {% if docs_found and docs_next == nil and item.published %}
+      {% assign docs_next = item %}
+    {% endif %}
+    {% if page.docs_slug == item.slug %}
+      {% assign docs_found = true %}
+    {% elsif docs_found == false and item.published %}
+      {% assign docs_prev = item %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
+{% if page.docs_overview %}
+  {% assign docs_prev = nil %}
+  {% unless docs_next %}
+    {% for group in docs_groups %}
+      {% for item in group.items %}
+        {% if item.published and docs_next == nil %}
+          {% assign docs_next = item %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  {% endunless %}
+{% endif %}
+
+{% assign docs_show_pager = false %}
+{% if page.docs_overview and docs_next %}
+  {% assign docs_show_pager = true %}
+{% elsif page.docs_slug != 'overview' and page.docs_overview != true %}
+  {% if docs_prev or docs_next %}
+    {% assign docs_show_pager = true %}
+  {% endif %}
+{% endif %}
+
+{% if docs_show_pager %}
+<nav class="docs-pager" aria-label="Topic navigation">
+  <div class="docs-pager__item docs-pager__item--prev">
+    {% if page.docs_overview %}
+      <span class="docs-pager__placeholder"></span>
+    {% elsif docs_prev %}
+      <a href="{{ include.base | append: docs_prev.slug | append: '/' | relative_url }}" class="docs-pager__link">
+        <span class="docs-pager__label">Previous</span>
+        <span class="docs-pager__title">{{ docs_prev.title }}</span>
+      </a>
+    {% else %}
+      <a href="{{ include.base | relative_url }}" class="docs-pager__link">
+        <span class="docs-pager__label">Previous</span>
+        <span class="docs-pager__title">All topics</span>
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="docs-pager__item docs-pager__item--next">
+    {% if docs_next %}
+      <a href="{{ include.base | append: docs_next.slug | append: '/' | relative_url }}" class="docs-pager__link">
+        <span class="docs-pager__label">Next</span>
+        <span class="docs-pager__title">{{ docs_next.title }}</span>
+      </a>
+    {% else %}
+      <a href="{{ include.base | relative_url }}" class="docs-pager__link">
+        <span class="docs-pager__label">Next</span>
+        <span class="docs-pager__title">All topics</span>
+      </a>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}

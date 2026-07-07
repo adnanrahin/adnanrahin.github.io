@@ -1,13 +1,14 @@
-{% assign sd_per_page = include.per_page | default: 6 %}
-<div class="docs-index" data-docs-index data-per-page="{{ sd_per_page }}">
+{% assign docs_per_page = include.per_page | default: 6 %}
+{% assign docs_groups = site.data[include.nav] %}
+<div class="docs-index" data-docs-index data-per-page="{{ docs_per_page }}">
   <div class="docs-index__list">
     {% assign topic_index = 0 %}
-    {% for group in site.data.system_design_nav %}
+    {% for group in docs_groups %}
       {% for item in group.items %}
         {% assign topic_index = topic_index | plus: 1 %}
         {% assign zero_idx = topic_index | minus: 1 %}
-        {% assign card_page = zero_idx | divided_by: sd_per_page | plus: 1 %}
-        {% assign item_href = '/system-design/' | append: item.slug | append: '/' | relative_url %}
+        {% assign card_page = zero_idx | divided_by: docs_per_page | plus: 1 %}
+        {% assign item_href = include.base | append: item.slug | append: '/' | relative_url %}
         <article
           class="docs-index__card{% unless item.published %} docs-index__card--soon{% endunless %}"
           data-index-card
