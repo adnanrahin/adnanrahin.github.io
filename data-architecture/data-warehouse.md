@@ -16,9 +16,9 @@ A warehouse holds **cleaned, structured history** for reporting. Live apps write
 
 ---
 
-## Walkthrough: QuickPlate order analytics
+## Walkthrough: order analytics
 
-**QuickPlate** runs orders on **PostgreSQL** (OLTP). Executives ask: *revenue by city last quarter*, *repeat customers by restaurant*, *average delivery time by hour*. You do not run those aggregations on the production database during dinner rush.
+A food-delivery app runs orders on **PostgreSQL** (OLTP). Executives ask: *revenue by city last quarter*, *repeat customers by restaurant*, *average delivery time by hour*. You do not run those aggregations on the production database during dinner rush.
 
 **Nightly pipeline:**
 
@@ -41,7 +41,7 @@ flowchart LR
     style WH fill:#E8F4FD,stroke:#4A90D9
 ```
 
-| Layer | QuickPlate example |
+| Layer | Example |
 |-------|-------------------|
 | **OLTP** | `INSERT` when user checks out - milliseconds matter |
 | **ETL** | Join orders to restaurants, apply business rules, handle late-arriving facts |

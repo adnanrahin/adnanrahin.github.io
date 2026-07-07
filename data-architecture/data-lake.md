@@ -16,9 +16,9 @@ A lake is object storage (S3, ADLS, GCS) holding files as they arrive: Parquet e
 
 ---
 
-## Walkthrough: QuickPlate event data
+## Walkthrough: event data on a lake
 
-**QuickPlate** (same food-delivery example as the [Scalability](/system-design/scalability/) notes) generates data the warehouse was never built to ingest on day one:
+A growing food-delivery app generates data the warehouse was never built to ingest on day one:
 
 | Source | Format | Why not straight into the warehouse? |
 |--------|--------|--------------------------------------|
@@ -27,7 +27,7 @@ A lake is object storage (S3, ADLS, GCS) holding files as they arrive: Parquet e
 | Menu photos | JPEG on S3 | Unstructured |
 | Nightly order export | Parquet | Already structured - but mixed with the above |
 
-The lake path: dump everything under `s3://quickplate-lake/raw/...`, spin up Spark when someone needs an analysis, shut compute down when done.
+The lake path: dump everything under `s3://company-lake/raw/...`, spin up Spark when someone needs an analysis, shut compute down when done.
 
 ```mermaid
 flowchart LR

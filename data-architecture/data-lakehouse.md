@@ -16,9 +16,9 @@ A lakehouse keeps files on cheap object storage but adds **transactional table f
 
 ---
 
-## Walkthrough: QuickPlate's two-tier mess
+## Walkthrough: the two-tier problem
 
-By ~2018, QuickPlate likely runs **both**:
+Many teams end up running **both**:
 
 - **Snowflake** (or Redshift) for finance dashboards - `fact_orders`, `dim_restaurant`, nightly ETL from Postgres
 - **S3 + Spark** for data science - raw clickstreams, driver GPS, A/B test logs
@@ -105,7 +105,7 @@ flowchart TD
 
 ### Medallion layers
 
-| Layer | QuickPlate example |
+| Layer | Example |
 |-------|-------------------|
 | **Bronze** | Raw Kafka events, Postgres CDC |
 | **Silver** | Deduped orders, typed columns, PII hashed |
