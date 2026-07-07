@@ -8,7 +8,7 @@ original_url: https://pantheonmle.medium.com/deploying-a-spring-boot-and-angular
 
 > Originally published on [Medium](https://pantheonmle.medium.com/deploying-a-spring-boot-and-angular-application-with-aws-network-load-balancer-nlb-7de3e65c7490) · May 25, 2025
 
-In today's cloud-native world, deploying highly available and scalable applications is crucial. This post walks through deploying a **Spring Boot backend** and **Angular frontend** using **AWS Network Load Balancer (NLB)** with an **Auto Scaling Group** - directly on EC2, without EKS or ECS.
+In today's cloud-native deployments, highly available apps often sit behind a load balancer with an Auto Scaling Group. This post walks through deploying a **Spring Boot backend** and **Angular frontend** on **AWS NLB** with EC2 - no EKS or ECS.
 
 ## The Movie Application
 

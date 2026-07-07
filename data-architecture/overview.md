@@ -9,28 +9,28 @@ section_slug: data-architecture
 description: Warehouse, lake, and lakehouse patterns - evolution, comparison, and where to start.
 permalink: /data-architecture/overview/
 ---
+> **Goal:** Understand why warehouses, lakes, and lakehouses exist - and when to reach for each.  
+> **Rule:** Pick the pattern that matches your workload, not the vendor slide deck.
 
-These notes cover three data platform patterns that show up in almost every large company: the **warehouse**, the **lake**, and the **lakehouse**. Each has its own page so nothing gets repeated three times.
+Most teams outgrow a single Postgres instance for reporting. The question is not "warehouse or lake?" but **which problem you are solving right now**: trusted BI on structured history, cheap storage for messy data, or both on one platform.
 
-If you want the wiring diagram first, start with the [Architecture Map](/data-architecture/architecture-map/). Otherwise, pick a topic below.
+Start with the [Architecture Map](/data-architecture/architecture-map/) if you want the wiring diagram first. Otherwise jump straight to a topic:
 
-| Topic | Page | What it covers |
-|-------|------|----------------|
-| Data Warehouse | [Data Warehouse](/data-architecture/data-warehouse/) | OLTP, OLAP, ETL/ELT, star/snowflake schema, SCD, Kimball |
-| Data Lake | [Data Lake](/data-architecture/data-lake/) | Object storage, schema-on-read, ingestion, data swamp |
-| Data Lakehouse | [Data Lakehouse](/data-architecture/data-lakehouse/) | Delta/Iceberg/Hudi, medallion layers, Unity Catalog |
+| Topic | Page | Covers |
+|-------|------|--------|
+| Data Warehouse | [Data Warehouse](/data-architecture/data-warehouse/) | OLTP, OLAP, ETL, star schema, Kimball |
+| Data Lake | [Data Lake](/data-architecture/data-lake/) | S3/ADLS, schema-on-read, data swamp |
+| Data Lakehouse | [Data Lakehouse](/data-architecture/data-lakehouse/) | Delta/Iceberg, medallion, Unity Catalog |
 
 ---
 
-## Why all three exist
+## Three waves, one story
 
-Every team needs to store, process, and analyze data. No single design has nailed all three at once - the industry moved in waves, each wave fixing the last problem and creating a new one.
-
-| Era | Pattern | What it fixed | What it left open |
-|-----|---------|---------------|-------------------|
-| 1990s-2000s | [Data Warehouse](/data-architecture/data-warehouse/) | Reliable BI and SQL on structured business data | Too expensive and rigid for logs, JSON, IoT, and ML |
-| 2010s | [Data Lake](/data-architecture/data-lake/) | Cheap storage for any data type at scale | Weak governance, no ACID - often a data swamp |
-| 2020s | [Data Lakehouse](/data-architecture/data-lakehouse/) | Lake economics plus warehouse-grade trust | Still takes a skilled team to run well |
+| Era | Pattern | Fixed | Left open |
+|-----|---------|-------|-----------|
+| 1990s-2000s | [Warehouse](/data-architecture/data-warehouse/) | Reliable SQL BI on structured data | Too rigid and costly for logs, JSON, ML |
+| 2010s | [Lake](/data-architecture/data-lake/) | Cheap storage for any format at scale | Weak governance, no ACID - swamps |
+| 2020s | [Lakehouse](/data-architecture/data-lakehouse/) | Lake cost + warehouse trust | Still ops-heavy |
 
 ```mermaid
 flowchart LR
@@ -45,34 +45,31 @@ flowchart LR
     style LH fill:#9B59B6,color:#fff
 ```
 
-**Warehouse** - OLTP runs the business, but it cannot power company-wide reporting. The warehouse copies that data into an OLAP store with fact/dimension models so analysts share one view of revenue, customers, and KPIs.
+**Warehouse** - OLTP runs checkout and inventory; the warehouse copies that history into fact/dimension tables so finance and ops share one definition of revenue.
 
-**Lake** - warehouses could not keep up on volume, cost, or new data types (clickstreams, APIs, images). Lakes landed everything cheaply on object storage (S3, ADLS) with schema-on-read: store now, shape later.
+**Lake** - clickstreams, driver GPS pings, and menu JSON do not fit a star schema on day one. Land them on S3, shape them later.
 
-**Lakehouse** - many teams ran both, syncing a warehouse for BI and a lake for ML. Duplicate copies, duplicate cost, no single source of truth. Lakehouses added ACID table formats (Delta Lake, Iceberg) and unified governance (Unity Catalog) on lake storage so BI, engineering, and ML read the same data.
-
-These are stages of the same story, not competing products. Platforms like Databricks bet on the lakehouse; understanding the warehouse and lake explains why.
+**Lakehouse** - running a warehouse *and* a lake means two copies, two pipelines, two governance models. Table formats (Delta, Iceberg) plus a catalog (Unity) let BI and ML read the same Parquet.
 
 ---
 
 ## Quick comparison
 
-| | Data Warehouse | Data Lake | Data Lakehouse |
-|---|----------------|-----------|----------------|
-| **Goal** | Fast, reliable analytics on structured data | Store any data cheaply at scale | One platform for analytics, ML, and pipelines |
-| **Data types** | Mostly tables | Structured, semi-structured, unstructured | All types |
-| **Storage** | Proprietary DB storage (often expensive) | Object storage (S3, ADLS, GCS) | Object storage |
-| **Schema** | Schema-on-write | Schema-on-read | Enforced when you need it |
-| **ACID** | Yes (native) | No (by default) | Yes (Delta, Iceberg, Hudi) |
-| **Governance** | Strong | Weak (swamp risk) | Strong (Unity Catalog, etc.) |
-| **Best for** | BI, SQL dashboards | Ingestion, exploration, ML | BI + ML + engineering on one copy |
-| **Typical users** | Analysts, business teams | Engineers, data scientists | Everyone on a governed platform |
+| | Warehouse | Lake | Lakehouse |
+|---|-----------|------|-----------|
+| **Storage** | Managed columnar DB | Object storage (S3, ADLS) | Object storage |
+| **Schema** | On write | On read | Enforced when needed |
+| **ACID** | Native | No (raw files) | Via Delta/Iceberg/Hudi |
+| **Best for** | Dashboards, SQL KPIs | Ingestion, ML, exploration | All of the above, one copy |
+| **Typical pain** | Cost at PB scale | Data swamp | Cluster tuning, migration |
 
 ---
 
-## Reading order
+## Suggested reading order
 
-1. [Architecture Map](/data-architecture/architecture-map/) - where components sit and how they connect
-2. [Data Warehouse](/data-architecture/data-warehouse/) - OLTP, OLAP, ETL, dimensional modeling
-3. [Data Lake](/data-architecture/data-lake/) - object storage, schema-on-read, the swamp problem
-4. [Data Lakehouse](/data-architecture/data-lakehouse/) - Delta Lake, medallion, unified BI + ML
+1. [Architecture Map](/data-architecture/architecture-map/)
+2. [Data Warehouse](/data-architecture/data-warehouse/)
+3. [Data Lake](/data-architecture/data-lake/)
+4. [Data Lakehouse](/data-architecture/data-lakehouse/)
+
+**In interviews, say something like:** *"I start with the consumer - BI needs modeled tables, ML needs raw features. That tells me warehouse, lake, or lakehouse - not the other way around."*

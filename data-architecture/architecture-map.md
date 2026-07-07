@@ -9,18 +9,14 @@ section_slug: data-architecture
 description: End-to-end component diagram - where every layer sits and how they connect.
 permalink: /data-architecture/architecture-map/
 ---
+> **Goal:** See the full pipeline once - sources through governance to dashboards.  
+> **Rule:** Use this page as a map, not a substitute for the topic deep dives.
 
-This page is the map - where each component lives and how data moves from source systems to dashboards. Read it once, then jump to the topic pages for depth.
-
-| Page | Topics |
-|------|--------|
-| [Data Warehouse](/data-architecture/data-warehouse/) | OLTP, OLAP, ETL, fact/dimension, star/snowflake schema |
-| [Data Lake](/data-architecture/data-lake/) | Object storage, schema-on-read, data swamp |
-| [Data Lakehouse](/data-architecture/data-lakehouse/) | Delta Lake, medallion, Unity Catalog |
+One diagram for how OLTP, ETL, storage, modeling, and BI connect. Drill down on [Data Warehouse](/data-architecture/data-warehouse/), [Data Lake](/data-architecture/data-lake/), or [Data Lakehouse](/data-architecture/data-lakehouse/) when you need detail.
 
 ---
 
-## 1. Full journey
+## Full journey
 
 One line from live transactions to business insight:
 
@@ -54,7 +50,7 @@ flowchart LR
 
 ---
 
-## 2. Layer stack
+## Layer stack
 
 Vertical view: each layer has a job. Data flows **down through ingestion**, sits in **storage**, is shaped by **modeling**, controlled by **governance**, and consumed at the top.
 
@@ -114,7 +110,7 @@ flowchart TB
 
 ---
 
-## 3. Data warehouse path - internal wiring
+## Warehouse path
 
 How warehouse-specific components connect. Full detail → [Data Warehouse](/data-architecture/data-warehouse/).
 
@@ -182,7 +178,7 @@ flowchart TB
 
 ---
 
-## 4. Data lake path - internal wiring
+## Lake path
 
 Lake-specific components. Full detail → [Data Lake](/data-architecture/data-lake/).
 
@@ -227,7 +223,7 @@ flowchart TB
 
 ---
 
-## 5. Lakehouse path - unified wiring (modern)
+## Lakehouse path
 
 How lake + warehouse capabilities merge on one platform. Full detail → [Data Lakehouse](/data-architecture/data-lakehouse/).
 
@@ -300,7 +296,7 @@ flowchart TB
 
 ---
 
-## 6. All three paradigms - side by side
+## Three paradigms compared
 
 Same sources, three different architecture choices (and why lakehouse replaced the two-tier split):
 
@@ -345,7 +341,7 @@ flowchart TB
 
 ---
 
-## 7. Star schema - fact & dimension seating
+## Star schema seating
 
 Where fact and dimension tables sit inside the warehouse model:
 
@@ -375,7 +371,7 @@ flowchart TD
 
 ---
 
-## 8. Component index
+## Component index
 
 | Component | Layer | Paradigm | Read more |
 |-----------|-------|----------|-----------|

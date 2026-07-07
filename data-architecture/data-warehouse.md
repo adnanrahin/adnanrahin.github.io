@@ -9,37 +9,52 @@ section_slug: data-architecture
 description: OLTP, OLAP, ETL/ELT, dimensional modeling, star/snowflake schema, SCD, and warehouse platforms.
 permalink: /data-architecture/data-warehouse/
 ---
+> **Goal:** One governed place for historical metrics - revenue, orders, customers - that BI and SQL can trust.  
+> **Rule:** Never run heavy analytics on OLTP. Copy out, model, then query.
 
-A **data warehouse** holds structured, cleaned, business-ready data for fast analytics - SQL queries, dashboards, reports. It is usually the place the business trusts for revenue, orders, customers, and KPIs.
-
-See also: [Data Lake](/data-architecture/data-lake/) · [Data Lakehouse](/data-architecture/data-lakehouse/) · [Overview](/data-architecture/overview/)
-
----
-
-## Table of Contents
-
-1. [What problem it solved](#what-problem-it-solved)
-2. [How it works (architecture)](#how-it-works-architecture)
-3. [Component map](#component-map)
-4. [OLTP vs OLAP](#oltp-vs-olap)
-5. [ETL vs ELT](#etl-vs-elt)
-6. [Dimensional modeling](#dimensional-modeling)
-7. [Fact tables](#fact-tables)
-8. [Dimension tables](#dimension-tables)
-9. [Star schema](#star-schema)
-10. [Snowflake schema](#snowflake-schema)
-11. [Star vs Snowflake](#star-vs-snowflake)
-12. [Grain, keys & SCD](#grain-keys--slowly-changing-dimensions)
-13. [Kimball vs Inmon](#kimball-vs-inmon)
-14. [Data marts & conformed dimensions](#data-marts--conformed-dimensions)
-15. [Why warehouses are fast](#why-warehouses-are-fast)
-16. [Core characteristics](#core-characteristics)
-17. [Strengths & limitations](#strengths--limitations)
-18. [Warehouse technologies](#warehouse-technologies)
+A warehouse holds **cleaned, structured history** for reporting. Live apps write to OLTP (Postgres, SAP); the warehouse is downstream - fed by ETL/ELT, shaped as facts and dimensions, queried by Tableau, Looker, or ad-hoc SQL. Lakes and lakehouses are covered on [Data Lake](/data-architecture/data-lake/) and [Data Lakehouse](/data-architecture/data-lakehouse/).
 
 ---
 
-## What problem it solved
+## Walkthrough: QuickPlate order analytics
+
+**QuickPlate** runs orders on **PostgreSQL** (OLTP). Executives ask: *revenue by city last quarter*, *repeat customers by restaurant*, *average delivery time by hour*. You do not run those aggregations on the production database during dinner rush.
+
+**Nightly pipeline:**
+
+1. **Extract** new/changed rows from Postgres (`orders`, `order_items`, `restaurants`)
+2. **Transform** into `fact_orders` + `dim_date`, `dim_restaurant`, `dim_customer`
+3. **Load** into Snowflake (or BigQuery, Redshift)
+4. **Query** from a dashboard - `SUM(amount) GROUP BY city, month`
+
+```mermaid
+flowchart LR
+    PG[("PostgreSQL<br/>live checkout")]
+    ETL["dbt / Airflow<br/>nightly job"]
+    WH[("Snowflake<br/>fact + dims")]
+    BI["Finance dashboard"]
+
+    PG -->|"copy only"| ETL --> WH --> BI
+    PG -.-x|"never BI here"| BI
+
+    style PG fill:#FFE0E0,stroke:#C0392B
+    style WH fill:#E8F4FD,stroke:#4A90D9
+```
+
+| Layer | QuickPlate example |
+|-------|-------------------|
+| **OLTP** | `INSERT` when user checks out - milliseconds matter |
+| **ETL** | Join orders to restaurants, apply business rules, handle late-arriving facts |
+| **Warehouse** | Years of `fact_orders` - columnar, partitioned by date |
+| **BI output** | `SUM(revenue)` by metro - scans millions of rows |
+
+**First pain point at scale:** JSON clickstreams and driver GPS do not fit the star schema. That pushes raw events to a [lake](/data-architecture/data-lake/); the warehouse keeps **trusted KPIs**.
+
+**In interviews, say something like:** *"OLTP runs the business; the warehouse explains it. Facts hold numbers, dimensions hold context."*
+
+---
+
+## Why warehouses exist
 
 Before warehouses, every department had its own spreadsheets and databases. Numbers did not match. Reports were slow and inconsistent.
 
@@ -49,7 +64,7 @@ The warehouse answered:
 
 ---
 
-## How it works (architecture)
+## Architecture at a glance
 
 ```mermaid
 flowchart LR
@@ -87,9 +102,9 @@ flowchart LR
     style DW fill:#E8F4FD,stroke:#4A90D9
 ```
 
-### Key components
+### Pipeline pieces
 
-| Component | Role |
+| Piece | Role |
 |-----------|------|
 | **Source systems** | Operational databases, apps, ERP/CRM - where transactions happen |
 | **ETL / ELT** | Extract data, transform it to a standard model, load into the warehouse |
@@ -100,9 +115,7 @@ flowchart LR
 
 ---
 
-## Component map
-
-For the **full end-to-end diagram** - all layers, all paradigms, fact/dimension seating, and lakehouse wiring - see **[Architecture Map](/data-architecture/architecture-map/)**.
+Full wiring across warehouse, lake, and lakehouse: [Architecture Map](/data-architecture/architecture-map/).
 
 ```mermaid
 flowchart LR
@@ -292,7 +305,7 @@ The standard way to design a warehouse schema for BI. Created by **Ralph Kimball
 | **Fact table** | *What happened? How much?* | Numbers (metrics/measures) + foreign keys |
 | **Dimension table** | *Who? What? Where? When? Why?* | Descriptive attributes (text, categories) |
 
-### Fact vs dimension - in simple terms
+### Facts and dimensions
 
 Think of a **spreadsheet of sales**:
 
@@ -1038,15 +1051,20 @@ flowchart TD
 
 ---
 
-## Related reading
+## Summary
 
-| Topic | Page |
-|-------|------|
+| Idea | Remember |
+|------|----------|
+| **OLTP vs OLAP** | Apps write; warehouse reads history |
+| **ETL / ELT** | Copy out of production before aggregating |
+| **Facts + dims** | Numbers in facts, labels in dimensions |
+| **Star schema** | Default choice - flat dimensions around a fact |
+| **When it breaks** | PB-scale cost, JSON/logs, ML - consider lake/lakehouse |
+
+**Closing thought:** The warehouse is still the right home for **trusted business KPIs**. Lakes handle everything else until Gold catches up.
+
+| Next read | Page |
+|-----------|------|
 | Component wiring | [Architecture Map](/data-architecture/architecture-map/) |
-| Why lakes showed up | [Data Lake](/data-architecture/data-lake/) |
-| How lake + warehouse merged | [Data Lakehouse](/data-architecture/data-lakehouse/) |
-| Three-way comparison | [Overview](/data-architecture/overview/) |
-
-Warehouses handle structured BI well. They struggle on cost and flexibility once you add logs, ML workloads, and messy semi-structured data - which is what pushed the industry toward lakes, and eventually lakehouses.
-
-**Next:** [Data Lake](/data-architecture/data-lake/)
+| Raw events & ML | [Data Lake](/data-architecture/data-lake/) |
+| Unified platform | [Data Lakehouse](/data-architecture/data-lakehouse/) |
