@@ -10,7 +10,7 @@ description: Delta Lake, Iceberg, Hudi, medallion architecture, Unity Catalog, a
 permalink: /data-architecture/data-lakehouse/
 ---
 
-A **data lakehouse** keeps data on lake storage (cheap, scalable object stores) but adds warehouse capabilities: ACID transactions, governance, reliable SQL/BI, and structured modeling — on one platform. Lake economics plus warehouse trust.
+A **data lakehouse** keeps data on lake storage (cheap, scalable object stores) but adds warehouse capabilities: ACID transactions, governance, reliable SQL/BI, and structured modeling - on one platform. Lake economics plus warehouse trust.
 
 See also: [Data Warehouse](/data-architecture/data-warehouse/) · [Data Lake](/data-architecture/data-lake/) · [Overview](/data-architecture/overview/)
 
@@ -43,7 +43,7 @@ Pain points:
 
 - **Two copies** of the same data (storage cost + sync complexity)
 - **Two governance models** (who owns the truth?)
-- **Slow time-to-value** — [warehouse modeling](/data-architecture/data-warehouse/) delays science; [lake](/data-architecture/data-lake/) lacks BI trust
+- **Slow time-to-value** - [warehouse modeling](/data-architecture/data-warehouse/) delays science; [lake](/data-architecture/data-lake/) lacks BI trust
 - **Broken pipelines** (lake files without ACID → unreliable incremental loads)
 
 The lakehouse answered:
@@ -54,19 +54,19 @@ The lakehouse answered:
 
 ## How the lakehouse came to be (evolution)
 
-### Step 1 — Warehouse era (1990s–2000s)
+### Step 1 - Warehouse era (1990s-2000s)
 Structured BI on proprietary databases. Details → [Data Warehouse](/data-architecture/data-warehouse/).
 
-### Step 2 — Big Data & Hadoop (2000s–2010s)
+### Step 2 - Big Data & Hadoop (2000s-2010s)
 HDFS + MapReduce/Spark on commodity hardware. Details → [Data Lake](/data-architecture/data-lake/).
 
-### Step 3 — Cloud object storage (2010s)
+### Step 3 - Cloud object storage (2010s)
 S3 and ADLS made lakes cheaper and more durable than HDFS. Spark became the standard processing engine.
 
-### Step 4 — The "two-tier" problem (mid-2010s)
+### Step 4 - The "two-tier" problem (mid-2010s)
 Enterprises ran [lake for ingestion/ML](/data-architecture/data-lake/) and [warehouse for BI](/data-architecture/data-warehouse/), connected by fragile ETL.
 
-### Step 5 — Open table formats (late 2010s–2020s)
+### Step 5 - Open table formats (late 2010s-2020s)
 Breakthrough: add a **transaction log** on top of Parquet files in object storage.
 
 | Technology | What it added |
@@ -77,21 +77,21 @@ Breakthrough: add a **transaction log** on top of Parquet files in object storag
 
 These formats turned "a folder of files" into something that behaves like a database table.
 
-### Step 6 — Lakehouse as a named architecture (2020)
+### Step 6 - Lakehouse as a named architecture (2020)
 Databricks published the [Lakehouse paper](https://arxiv.org/abs/2007.00000) formalizing the idea: one platform for all workloads on open lake storage.
 
-### Step 7 — Governance catches up (2021+)
+### Step 7 - Governance catches up (2021+)
 **Unity Catalog**, **AWS Lake Formation**, and similar tools brought warehouse-grade access control, lineage, and discovery to lake data.
 
 ```mermaid
 flowchart TD
-    S1["1990s–2000s<br/><b>Data Warehouse</b><br/>see Data Warehouse"]
-    S2["2000s–2010s<br/><b>Big Data / Hadoop</b><br/>see Data Lake"]
-    S3["2010s<br/><b>Cloud Object Storage</b><br/>S3, ADLS + Spark"]
-    S4["Mid-2010s<br/><b>Two-Tier Problem</b><br/>Lake + Warehouse coexist"]
-    S5["2019–2020<br/><b>Open Table Formats</b><br/>Delta, Iceberg, Hudi"]
-    S6["2020<br/><b>Lakehouse Named</b><br/>Databricks paper"]
-    S7["2021+<br/><b>Unified Governance</b><br/>Unity Catalog, Lake Formation"]
+    S1["1990s-2000s<br/>Data Warehouse<br/>see Data Warehouse"]
+    S2["2000s-2010s<br/>Big Data / Hadoop<br/>see Data Lake"]
+    S3["2010s<br/>Cloud Object Storage<br/>S3, ADLS + Spark"]
+    S4["Mid-2010s<br/>Two-Tier Problem<br/>Lake + Warehouse coexist"]
+    S5["2019-2020<br/>Open Table Formats<br/>Delta, Iceberg, Hudi"]
+    S6["2020<br/>Lakehouse Named<br/>Databricks paper"]
+    S7["2021+<br/>Unified Governance<br/>Unity Catalog, Lake Formation"]
 
     S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7
 
@@ -109,13 +109,13 @@ flowchart TD
     SRC["Sources"]
     ING["Ingestion"]
     OBJ[("Object Storage<br/>S3 / ADLS / GCS<br/>Parquet files")]
-    TF["Table Format Layer<br/><b>Delta Lake / Iceberg / Hudi</b><br/>ACID + transaction log"]
+    TF["Table Format Layer<br/>Delta Lake / Iceberg / Hudi<br/>ACID + transaction log"]
 
     BI["SQL / BI<br/>dashboards"]
     DE["Data Engineering<br/>pipelines, DLT"]
     ML["ML / AI<br/>features, models"]
 
-    GOV["Unified Governance<br/>Unity Catalog — same tables, same access"]
+    GOV["Unified Governance<br/>Unity Catalog - same tables, same access"]
 
     SRC --> ING --> OBJ --> TF
     TF --> BI
@@ -137,7 +137,7 @@ flowchart TD
 | Files in folders | **Tables** with ACID guarantees |
 | Schema-on-read only | **Schema enforcement** + evolution |
 | Manual quality checks | Built-in **expectations** and monitoring |
-| Weak catalog | **Unity Catalog** — grants, lineage, discovery |
+| Weak catalog | **Unity Catalog** - grants, lineage, discovery |
 
 | Gap from [data warehouse](/data-architecture/data-warehouse/) | Lakehouse fix |
 |------------------------------------------------|---------------|
@@ -146,7 +146,7 @@ flowchart TD
 | Separate copy for ML workloads | **Feature store + MLflow** on same data |
 | Rigid ETL before any use | **ELT** on elastic compute |
 
-> Warehouse modeling (star schema, OLTP/OLAP, SCD) still applies in the Gold layer — see [Data Warehouse](/data-architecture/data-warehouse/).
+> Warehouse modeling (star schema, OLTP/OLAP, SCD) still applies in the Gold layer - see [Data Warehouse](/data-architecture/data-warehouse/).
 
 ---
 
@@ -159,12 +159,12 @@ Example with **Delta Lake**:
 flowchart TD
     ROOT["my_table/"]
 
-    subgraph Data["Data Files — Parquet"]
+    subgraph Data["Data Files - Parquet"]
         P1["part-00000.parquet"]
         P2["part-00001.parquet"]
     end
 
-    subgraph Log["_delta_log/ — Transaction Log"]
+    subgraph Log["_delta_log/ - Transaction Log"]
         J1["00000000000000000000.json"]
         J2["000000000000000001.json"]
     end
@@ -296,7 +296,7 @@ flowchart TB
     style ROW2 fill:none,stroke:#999,stroke-dasharray:4
 ```
 
-**Reading the map:** top-left is the warehouse, bottom-right is the lake, top-right is the lakehouse — flexibility without giving up governance. Bottom-left is the gap the lakehouse was meant to close.
+**Reading the map:** top-left is the warehouse, bottom-right is the lake, top-right is the lakehouse - flexibility without giving up governance. Bottom-left is the gap the lakehouse was meant to close.
 
 ### Lakehouse capability summary
 
@@ -330,10 +330,10 @@ Databricks built around the lakehouse model from the start:
 
 The lakehouse is not a silver bullet:
 
-- **Complexity** — table formats, cluster tuning, and governance still require skilled teams
-- **Performance tuning** — `OPTIMIZE`, Z-ordering, and file sizing matter for SQL speed
-- **Migration effort** — moving from legacy warehouse-only or swampy lakes takes planning
-- **Ecosystem maturity** — catching up to decades of warehouse tooling, but moving fast
+- **Complexity** - table formats, cluster tuning, and governance still require skilled teams
+- **Performance tuning** - `OPTIMIZE`, Z-ordering, and file sizing matter for SQL speed
+- **Migration effort** - moving from legacy warehouse-only or swampy lakes takes planning
+- **Ecosystem maturity** - catching up to decades of warehouse tooling, but moving fast
 
 ---
 

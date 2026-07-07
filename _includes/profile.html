@@ -52,11 +52,11 @@
 
     <div class="profile-stats" id="github-stats" data-username="{{ gh }}"{% if gs %} data-cached="true"{% endif %}>
       <div class="profile-stat">
-        <span class="profile-stat__value{% if gs.repos %} profile-stat__value--loaded{% endif %}" data-stat="repos">{% if gs.repos %}{{ gs.repos }}{% else %}—{% endif %}</span>
+        <span class="profile-stat__value{% if gs.repos %} profile-stat__value--loaded{% endif %}" data-stat="repos">{% if gs.repos %}{{ gs.repos }}{% else %}-{% endif %}</span>
         <span class="profile-stat__label">Repositories</span>
       </div>
       <div class="profile-stat">
-        <span class="profile-stat__value{% if gs.commits %} profile-stat__value--loaded{% endif %}" data-stat="commits">{% if gs.commits %}{{ gs.commits }}{% else %}—{% endif %}</span>
+        <span class="profile-stat__value{% if gs.commits %} profile-stat__value--loaded{% endif %}" data-stat="commits">{% if gs.commits %}{{ gs.commits }}{% else %}-{% endif %}</span>
         <span class="profile-stat__label">Lifetime commits{% if gs.member_since %} <span class="profile-stat__hint">since {{ gs.member_since }}</span>{% endif %}</span>
       </div>
       <div class="profile-stat">
@@ -64,7 +64,7 @@
         <span class="profile-stat__label">Languages</span>
       </div>
       <div class="profile-stat">
-        <span class="profile-stat__value{% if gs.stars %} profile-stat__value--loaded{% endif %}" data-stat="stars">{% if gs.stars %}{{ gs.stars }}{% else %}—{% endif %}</span>
+        <span class="profile-stat__value{% if gs.stars %} profile-stat__value--loaded{% endif %}" data-stat="stars">{% if gs.stars %}{{ gs.stars }}{% else %}-{% endif %}</span>
         <span class="profile-stat__label">Stars earned</span>
       </div>
     </div>

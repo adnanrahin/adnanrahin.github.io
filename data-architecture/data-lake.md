@@ -10,7 +10,7 @@ description: Object storage, schema-on-read, ingestion, informal medallion zones
 permalink: /data-architecture/data-lake/
 ---
 
-A **data lake** stores raw data in its native format at large scale, usually on cheap object storage (S3, ADLS, GCS). Structured tables, JSON logs, CSV exports, images — all land in one place without forcing a schema upfront.
+A **data lake** stores raw data in its native format at large scale, usually on cheap object storage (S3, ADLS, GCS). Structured tables, JSON logs, CSV exports, images - all land in one place without forcing a schema upfront.
 
 See also: [Data Warehouse](/data-architecture/data-warehouse/) · [Data Lakehouse](/data-architecture/data-lakehouse/) · [Overview](/data-architecture/overview/)
 
@@ -45,7 +45,7 @@ flowchart LR
 
     ING["Ingestion<br/>batch or streaming"]
 
-    subgraph Lake["Data Lake — Object Storage"]
+    subgraph Lake["Data Lake - Object Storage"]
         RAW["/raw/orders/2024/01/"]
         EVENTS["/raw/events/json/"]
         IMG["/raw/images/"]
@@ -80,9 +80,9 @@ flowchart LR
 |-----------|------|
 | **Object storage** | Durable, low-cost files (the lake itself) |
 | **Ingestion** | Batch uploads, streaming (Kafka/Kinesis), copy jobs |
-| **Processing engine** | Spark, Presto/Trino, Hive — read files and run transformations |
-| **Catalog (optional)** | Hive Metastore, AWS Glue — track what files mean |
-| **Zones / folders** | Often `raw`, `processed`, `curated` — informal layering |
+| **Processing engine** | Spark, Presto/Trino, Hive - read files and run transformations |
+| **Catalog (optional)** | Hive Metastore, AWS Glue - track what files mean |
+| **Zones / folders** | Often `raw`, `processed`, `curated` - informal layering |
 
 ---
 
@@ -124,7 +124,7 @@ flowchart LR
 ```
 
 ### 4. Scale-out by design
-Add more files and more machines — no single database server to upgrade.
+Add more files and more machines - no single database server to upgrade.
 
 ### 5. Great for exploration and ML
 Data scientists can access raw data, build features, train models, and experiment without waiting for a warehouse modeling cycle.
@@ -133,7 +133,7 @@ Data scientists can access raw data, build features, train models, and experimen
 
 ## Common layering (informal medallion)
 
-Many lakes adopt folder-based zones — not always enforced:
+Many lakes adopt folder-based zones - not always enforced:
 
 | Zone | Contents |
 |------|----------|
@@ -159,10 +159,10 @@ flowchart LR
 
 ## Strengths
 
-- **Low cost at scale** — object storage is pennies per GB
-- **Flexibility** — any format, any schema, fast ingestion
-- **One copy for many workloads** — engineering, science, and ad-hoc exploration
-- **ML-ready** — raw features and unstructured data stay accessible
+- **Low cost at scale** - object storage is pennies per GB
+- **Flexibility** - any format, any schema, fast ingestion
+- **One copy for many workloads** - engineering, science, and ad-hoc exploration
+- **ML-ready** - raw features and unstructured data stay accessible
 
 ---
 
@@ -199,7 +199,7 @@ flowchart LR
     style Reality fill:#FFE0E0,stroke:#C0392B
 ```
 
-This gap — lake flexibility without warehouse reliability — is what the [lakehouse](/data-architecture/data-lakehouse/) was built to close.
+This gap - lake flexibility without warehouse reliability - is what the [lakehouse](/data-architecture/data-lakehouse/) was built to close.
 
 ---
 
@@ -224,10 +224,10 @@ Warehouse depth (OLTP/OLAP, star schema, Kimball, etc.) is on the [Data Warehous
 | Weak governance by default | Strong governance natively |
 | Best for engineering & ML | Best for BI & SQL dashboards |
 
-Many enterprises ran **both** in parallel — the two-tier problem is covered in [Data Lakehouse](/data-architecture/data-lakehouse/).
+Many enterprises ran **both** in parallel - the two-tier problem is covered in [Data Lakehouse](/data-architecture/data-lakehouse/).
 
 ---
 
 **Takeaway:** A lake is cheap, flexible storage with schema-on-read. Without governance and table formats on top, it often lacks the reliability that warehouses provide out of the box.
 
-**Next:** [Data Lakehouse](/data-architecture/data-lakehouse/) — how lake storage picked up warehouse capabilities.
+**Next:** [Data Lakehouse](/data-architecture/data-lakehouse/) - how lake storage picked up warehouse capabilities.

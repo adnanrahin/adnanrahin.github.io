@@ -6,7 +6,7 @@
   items:
     - title: Overview
       slug: overview
-      description: Evolution of warehouse, lake, and lakehouse — quick comparison.
+      description: Evolution of warehouse, lake, and lakehouse - quick comparison.
       published: true
     - title: Architecture Map
       slug: architecture-map

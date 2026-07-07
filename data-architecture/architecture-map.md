@@ -6,11 +6,11 @@ docs_title: Data Architecture
 docs_base: /data-architecture/
 docs_nav: data_architecture_nav
 section_slug: data-architecture
-description: End-to-end component diagram — where every layer sits and how they connect.
+description: End-to-end component diagram - where every layer sits and how they connect.
 permalink: /data-architecture/architecture-map/
 ---
 
-This page is the map — where each component lives and how data moves from source systems to dashboards. Read it once, then jump to the topic pages for depth.
+This page is the map - where each component lives and how data moves from source systems to dashboards. Read it once, then jump to the topic pages for depth.
 
 | Page | Topics |
 |------|--------|
@@ -60,18 +60,18 @@ Vertical view: each layer has a job. Data flows **down through ingestion**, sits
 
 ```mermaid
 flowchart TB
-    subgraph L6["⑥ CONSUMPTION — who uses the data"]
+    subgraph L6["⑥ CONSUMPTION - who uses the data"]
         direction LR
         BI["BI & Dashboards<br/>Tableau, Power BI"]
         SQL["SQL Analysts"]
         ML["ML & Data Science"]
     end
 
-    subgraph L5["⑤ GOVERNANCE — who can see what"]
+    subgraph L5["⑤ GOVERNANCE - who can see what"]
         UC["Unity Catalog / Warehouse ACLs<br/>permissions · lineage · audit"]
     end
 
-    subgraph L4["④ MODELING — how data is organized"]
+    subgraph L4["④ MODELING - how data is organized"]
         direction LR
         FACT["Fact tables<br/>how much"]
         DIM["Dimension tables<br/>who / what / when"]
@@ -79,19 +79,19 @@ flowchart TB
         MED["Medallion<br/>Bronze → Silver → Gold"]
     end
 
-    subgraph L3["③ STORAGE — where data lives"]
+    subgraph L3["③ STORAGE - where data lives"]
         direction LR
         WH["Data Warehouse<br/>OLAP · columnar"]
         LAKE["Data Lake<br/>S3 / ADLS / GCS"]
         LH["Lakehouse<br/>Delta / Iceberg on object storage"]
     end
 
-    subgraph L2["② INGESTION — how data moves in"]
+    subgraph L2["② INGESTION - how data moves in"]
         ETL["ETL / ELT pipeline<br/>Extract → Transform → Load"]
         STG["Staging area<br/>temporary landing"]
     end
 
-    subgraph L1["① SOURCES — where data is born"]
+    subgraph L1["① SOURCES - where data is born"]
         direction LR
         OLTP["OLTP databases<br/>PostgreSQL, SAP, CRM"]
         API["APIs & SaaS"]
@@ -114,7 +114,7 @@ flowchart TB
 
 ---
 
-## 3. Data warehouse path — internal wiring
+## 3. Data warehouse path - internal wiring
 
 How warehouse-specific components connect. Full detail → [Data Warehouse](/data-architecture/data-warehouse/).
 
@@ -174,15 +174,15 @@ flowchart TB
 | **ETL / ELT** | Ingestion layer | OLTP → Staging | Extract, transform, load |
 | **Staging** | Ingestion layer | → OLAP engine | Temporary raw landing |
 | **OLAP engine** | Storage layer | Fact + Dim tables | Analytics-optimized compute + storage |
-| **Fact table** | Model layer | Dimensions via keys | Numbers — how much, how many |
-| **Dimension table** | Model layer | Facts via keys | Labels — who, what, when, where |
+| **Fact table** | Model layer | Dimensions via keys | Numbers - how much, how many |
+| **Dimension table** | Model layer | Facts via keys | Labels - who, what, when, where |
 | **Star / Snowflake schema** | Model layer | Facts + Dims | Layout of the dimensional model |
 | **Data mart** | Model layer | → BI | Department-specific subset |
 | **BI / Reports** | Consumption layer | ← Data marts | Dashboards, KPIs (output) |
 
 ---
 
-## 4. Data lake path — internal wiring
+## 4. Data lake path - internal wiring
 
 Lake-specific components. Full detail → [Data Lake](/data-architecture/data-lake/).
 
@@ -200,14 +200,14 @@ flowchart TB
         STREAM["Streaming<br/>Kafka, Kinesis"]
     end
 
-    subgraph LAKE3["Data Lake — Object Storage"]
+    subgraph LAKE3["Data Lake - Object Storage"]
         RAW3["/raw/<br/>as landed"]
         PROC3["/processed/<br/>optional"]
         CUR3["/curated/<br/>optional"]
         RAW3 --> PROC3 --> CUR3
     end
 
-    subgraph COMPUTE3["Compute — on demand"]
+    subgraph COMPUTE3["Compute - on demand"]
         SPARK3["Spark / Trino<br/>spin up · process · shut down"]
     end
 
@@ -227,7 +227,7 @@ flowchart TB
 
 ---
 
-## 5. Lakehouse path — unified wiring (modern)
+## 5. Lakehouse path - unified wiring (modern)
 
 How lake + warehouse capabilities merge on one platform. Full detail → [Data Lakehouse](/data-architecture/data-lakehouse/).
 
@@ -240,7 +240,7 @@ flowchart TB
 
     ING4["Ingestion"]
 
-    subgraph STORAGE4["Object Storage — S3 / ADLS / GCS"]
+    subgraph STORAGE4["Object Storage - S3 / ADLS / GCS"]
         PARQUET["Parquet files"]
     end
 
@@ -248,7 +248,7 @@ flowchart TB
         DELTA["Delta Lake / Iceberg / Hudi<br/>ACID · transaction log"]
     end
 
-    subgraph MED4["Medallion — governed layers"]
+    subgraph MED4["Medallion - governed layers"]
         B["Bronze<br/>raw"]
         S["Silver<br/>cleaned"]
         G["Gold<br/>BI-ready · star schema"]
@@ -259,7 +259,7 @@ flowchart TB
         UC4["Unity Catalog<br/>catalog.schema.table"]
     end
 
-    subgraph COMPUTE4["Compute — shared storage"]
+    subgraph COMPUTE4["Compute - shared storage"]
         direction LR
         SPARK4["Spark<br/>engineering"]
         SQLW["SQL Warehouse<br/>BI queries"]
@@ -291,7 +291,7 @@ flowchart TB
 
 | Warehouse concept | Lakehouse location |
 |-------------------|-------------------|
-| OLTP (source) | Same — feeds ingestion |
+| OLTP (source) | Same - feeds ingestion |
 | ETL / ELT | Pipelines, DLT, Jobs |
 | OLAP engine | SQL Warehouse + Spark |
 | Fact / Dimension tables | **Gold layer** (star schema) |
@@ -300,7 +300,7 @@ flowchart TB
 
 ---
 
-## 6. All three paradigms — side by side
+## 6. All three paradigms - side by side
 
 Same sources, three different architecture choices (and why lakehouse replaced the two-tier split):
 
@@ -308,7 +308,7 @@ Same sources, three different architecture choices (and why lakehouse replaced t
 flowchart TB
     SRC["Source Systems<br/>OLTP · APIs · Logs"]
 
-    subgraph PATH1["Path A — Data Warehouse"]
+    subgraph PATH1["Path A - Data Warehouse"]
         direction TB
         ETL_W["ETL / ELT"]
         WH_W["Warehouse / OLAP"]
@@ -317,7 +317,7 @@ flowchart TB
         SRC --> ETL_W --> WH_W --> FD --> BI_W
     end
 
-    subgraph PATH2["Path B — Data Lake"]
+    subgraph PATH2["Path B - Data Lake"]
         direction TB
         ING_L["Ingestion"]
         S3_L["Object storage"]
@@ -326,7 +326,7 @@ flowchart TB
         SRC --> ING_L --> S3_L --> SPARK_L --> ML_L
     end
 
-    subgraph PATH3["Path C — Data Lakehouse"]
+    subgraph PATH3["Path C - Data Lakehouse"]
         direction TB
         ING_H["Ingestion"]
         OBJ_H["Object storage"]
@@ -345,13 +345,13 @@ flowchart TB
 
 ---
 
-## 7. Star schema — fact & dimension seating
+## 7. Star schema - fact & dimension seating
 
 Where fact and dimension tables sit inside the warehouse model:
 
 ```mermaid
 flowchart TD
-    subgraph DIMS["Dimension tables — the context"]
+    subgraph DIMS["Dimension tables - the context"]
         direction LR
         DD["dim_date<br/>when"]
         DP["dim_product<br/>what"]
@@ -359,7 +359,7 @@ flowchart TD
         DS["dim_store<br/>where"]
     end
 
-    FACT["fact_sales — center<br/>amount · quantity · profit<br/>+ foreign keys to each dim"]
+    FACT["fact_sales - center<br/>amount · quantity · profit<br/>+ foreign keys to each dim"]
 
     DD --> FACT
     DP --> FACT
@@ -379,23 +379,23 @@ flowchart TD
 
 | Component | Layer | Paradigm | Read more |
 |-----------|-------|----------|-----------|
-| OLTP | Source | All | [Data Warehouse — OLTP](/data-architecture/data-warehouse/#oltp-vs-olap) |
-| ETL / ELT | Ingestion | Warehouse, Lakehouse | [Data Warehouse — ETL](/data-architecture/data-warehouse/#etl-vs-elt) |
-| Staging | Ingestion | Warehouse | [Data Warehouse — Architecture](/data-architecture/data-warehouse/#how-it-works-architecture) |
-| OLAP / Warehouse | Storage | Warehouse | [Data Warehouse — OLAP](/data-architecture/data-warehouse/#oltp-vs-olap) |
-| Fact table | Model | Warehouse, Lakehouse Gold | [Data Warehouse — Facts](/data-architecture/data-warehouse/#fact-tables) |
-| Dimension table | Model | Warehouse, Lakehouse Gold | [Data Warehouse — Dimensions](/data-architecture/data-warehouse/#dimension-tables) |
-| Star schema | Model | Warehouse | [Data Warehouse — Star](/data-architecture/data-warehouse/#star-schema) |
-| Snowflake schema | Model | Warehouse | [Data Warehouse — Snowflake](/data-architecture/data-warehouse/#snowflake-schema) |
-| SCD | Model | Warehouse | [Data Warehouse — SCD](/data-architecture/data-warehouse/#grain-keys--slowly-changing-dimensions) |
-| Data mart | Model | Warehouse | [Data Warehouse — Marts](/data-architecture/data-warehouse/#data-marts--conformed-dimensions) |
-| Object storage | Storage | Lake, Lakehouse | [Data Lake — Architecture](/data-architecture/data-lake/#how-it-works-architecture) |
-| Schema-on-read | Model | Lake | [Data Lake — Schema-on-read](/data-architecture/data-lake/#core-characteristics) |
-| Delta / Iceberg / Hudi | Storage | Lakehouse | [Data Lakehouse — Table format](/data-architecture/data-lakehouse/#1-open-table-format-the-technical-foundation) |
-| Medallion (Bronze/Silver/Gold) | Model | Lakehouse | [Data Lakehouse — Medallion](/data-architecture/data-lakehouse/#2-medallion-architecture-organizational-pattern) |
-| Unity Catalog | Governance | Lakehouse | [Data Lakehouse — Governance](/data-architecture/data-lakehouse/#3-unified-governance) |
-| SQL Warehouse | Compute | Lakehouse, Databricks | [Data Lakehouse — Compute](/data-architecture/data-lakehouse/#4-separate-compute-shared-storage) |
-| BI / Dashboards | Consumption | All | [Data Warehouse — Architecture](/data-architecture/data-warehouse/#how-it-works-architecture) |
+| OLTP | Source | All | [Data Warehouse - OLTP](/data-architecture/data-warehouse/#oltp-vs-olap) |
+| ETL / ELT | Ingestion | Warehouse, Lakehouse | [Data Warehouse - ETL](/data-architecture/data-warehouse/#etl-vs-elt) |
+| Staging | Ingestion | Warehouse | [Data Warehouse - Architecture](/data-architecture/data-warehouse/#how-it-works-architecture) |
+| OLAP / Warehouse | Storage | Warehouse | [Data Warehouse - OLAP](/data-architecture/data-warehouse/#oltp-vs-olap) |
+| Fact table | Model | Warehouse, Lakehouse Gold | [Data Warehouse - Facts](/data-architecture/data-warehouse/#fact-tables) |
+| Dimension table | Model | Warehouse, Lakehouse Gold | [Data Warehouse - Dimensions](/data-architecture/data-warehouse/#dimension-tables) |
+| Star schema | Model | Warehouse | [Data Warehouse - Star](/data-architecture/data-warehouse/#star-schema) |
+| Snowflake schema | Model | Warehouse | [Data Warehouse - Snowflake](/data-architecture/data-warehouse/#snowflake-schema) |
+| SCD | Model | Warehouse | [Data Warehouse - SCD](/data-architecture/data-warehouse/#grain-keys--slowly-changing-dimensions) |
+| Data mart | Model | Warehouse | [Data Warehouse - Marts](/data-architecture/data-warehouse/#data-marts--conformed-dimensions) |
+| Object storage | Storage | Lake, Lakehouse | [Data Lake - Architecture](/data-architecture/data-lake/#how-it-works-architecture) |
+| Schema-on-read | Model | Lake | [Data Lake - Schema-on-read](/data-architecture/data-lake/#core-characteristics) |
+| Delta / Iceberg / Hudi | Storage | Lakehouse | [Data Lakehouse - Table format](/data-architecture/data-lakehouse/#1-open-table-format-the-technical-foundation) |
+| Medallion (Bronze/Silver/Gold) | Model | Lakehouse | [Data Lakehouse - Medallion](/data-architecture/data-lakehouse/#2-medallion-architecture-organizational-pattern) |
+| Unity Catalog | Governance | Lakehouse | [Data Lakehouse - Governance](/data-architecture/data-lakehouse/#3-unified-governance) |
+| SQL Warehouse | Compute | Lakehouse, Databricks | [Data Lakehouse - Compute](/data-architecture/data-lakehouse/#4-separate-compute-shared-storage) |
+| BI / Dashboards | Consumption | All | [Data Warehouse - Architecture](/data-architecture/data-warehouse/#how-it-works-architecture) |
 
 ---
 

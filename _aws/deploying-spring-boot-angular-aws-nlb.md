@@ -1,23 +1,23 @@
 ---
 title: Deploying Spring Boot and Angular with AWS Network Load Balancer (NLB)
 date: 2025-05-25
-description: Full-stack Movie Application on EC2 with NLB, Auto Scaling Group, and CloudFormation — no EKS or ECS.
+description: Full-stack Movie Application on EC2 with NLB, Auto Scaling Group, and CloudFormation - no EKS or ECS.
 tags: [aws, nlb, cloudformation, ec2, docker, spring-boot, angular]
 original_url: https://pantheonmle.medium.com/deploying-a-spring-boot-and-angular-application-with-aws-network-load-balancer-nlb-7de3e65c7490
 ---
 
 > Originally published on [Medium](https://pantheonmle.medium.com/deploying-a-spring-boot-and-angular-application-with-aws-network-load-balancer-nlb-7de3e65c7490) · May 25, 2025
 
-In today's cloud-native world, deploying highly available and scalable applications is crucial. This post walks through deploying a **Spring Boot backend** and **Angular frontend** using **AWS Network Load Balancer (NLB)** with an **Auto Scaling Group** — directly on EC2, without EKS or ECS.
+In today's cloud-native world, deploying highly available and scalable applications is crucial. This post walks through deploying a **Spring Boot backend** and **Angular frontend** using **AWS Network Load Balancer (NLB)** with an **Auto Scaling Group** - directly on EC2, without EKS or ECS.
 
 ## The Movie Application
 
 The app is built with **Java**, **Spring Boot**, **Angular**, and **MySQL**:
 
-- **Backend** — Spring Boot REST APIs serving movie data from MySQL
-- **Frontend** — Angular UI consuming those APIs
+- **Backend** - Spring Boot REST APIs serving movie data from MySQL
+- **Frontend** - Angular UI consuming those APIs
 
-**Goal:** Deploy the full stack using **NLB + EC2 + Docker Compose**, learning the infrastructure by building it — not relying on managed container services.
+**Goal:** Deploy the full stack using **NLB + EC2 + Docker Compose**, learning the infrastructure by building it - not relying on managed container services.
 
 **Repository:** [Movie-Application](https://github.com/adnanrahin/Movie-Application) · branch `integrate_nlb`
 
@@ -87,7 +87,7 @@ cd cloudformation-stack
 
 ### 3. Wait for UserData to complete
 
-After the stack is up, allow **5–10 minutes** for the EC2 instance to:
+After the stack is up, allow **5-10 minutes** for the EC2 instance to:
 
 1. Run the UserData shell script
 2. Clone the repo and build with Maven
@@ -140,8 +140,8 @@ Three subnets across three AZs for HA.
 
 ### 3. Internet Gateway & NAT Gateway
 
-- **IGW** — public subnet internet access
-- **NAT Gateway** (with Elastic IPs) — private subnets reach the internet for updates
+- **IGW** - public subnet internet access
+- **NAT Gateway** (with Elastic IPs) - private subnets reach the internet for updates
 
 ### 4. Route tables
 
@@ -150,7 +150,7 @@ Three subnets across three AZs for HA.
 
 ### 5. Security groups
 
-**EC2 security group** — inbound:
+**EC2 security group** - inbound:
 
 | Port | Protocol | Purpose |
 |------|----------|---------|
@@ -160,7 +160,7 @@ Three subnets across three AZs for HA.
 | 4200 | TCP | Angular dev server |
 | 3605, 3606 | TCP | Custom services |
 
-**NLB security group** — mirrors the same public-facing ports.
+**NLB security group** - mirrors the same public-facing ports.
 
 ### 6. Launch Template
 
@@ -195,7 +195,7 @@ NetworkLoadBalancer:
     Subnets: [PublicSubnet1, PublicSubnet2, PublicSubnet3]
 ```
 
-NLB listeners forward TCP traffic to target groups — one listener per port.
+NLB listeners forward TCP traffic to target groups - one listener per port.
 
 ### 9. Scaling policies
 
@@ -207,9 +207,9 @@ NLB listeners forward TCP traffic to target groups — one listener per port.
 ## Key takeaways
 
 - **NLB vs ALB:** NLB operates at Layer 4 (TCP). Use it when you need multi-port, low-latency forwarding without HTTP-level routing.
-- **EC2 + Docker Compose** is a valid learning path before moving to ECS/EKS — you own every layer.
+- **EC2 + Docker Compose** is a valid learning path before moving to ECS/EKS - you own every layer.
 - **CloudFormation** makes the entire stack repeatable: VPC, subnets, NLB, ASG, and instance bootstrap in one deploy.
-- **UserData** is the glue — automate everything so new ASG instances are ready without manual SSH.
+- **UserData** is the glue - automate everything so new ASG instances are ready without manual SSH.
 
 ## Resources
 

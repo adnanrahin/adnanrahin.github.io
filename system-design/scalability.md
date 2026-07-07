@@ -6,13 +6,13 @@ docs_title: System Design
 docs_base: /system-design/
 docs_nav: system_design_nav
 section_slug: system-design
-description: Handle growing load without breaking — metrics, scale-up vs scale-out, and tier-by-tier tactics.
+description: Handle growing load without breaking - metrics, scale-up vs scale-out, and tier-by-tier tactics.
 permalink: /system-design/scalability/
 ---
 > **Goal:** Design systems that handle more load without falling apart.  
-> **Rule:** Measure the load first — scaling without metrics is guesswork.
+> **Rule:** Measure the load first - scaling without metrics is guesswork.
 
-Scalability is not a feature you bolt on at launch. It is a series of deliberate responses to real bottlenecks — each one visible only after you measure production behavior under stress.
+Scalability is not a feature you bolt on at launch. It is a series of deliberate responses to real bottlenecks - each one visible only after you measure production behavior under stress.
 
 ---
 
@@ -29,9 +29,9 @@ You cannot improve what you do not quantify. Baseline your system under normal t
 | **Database QPS** | Queries hitting the data tier | Product browse path: **~18,000 QPS** on reads |
 | **Event rate** | Messages through async pipelines | Order-fulfillment stream: **~40,000 events/s** |
 
-**Healthy scaling behavior:** p95 and p99 latency grow slowly relative to traffic. **Unhealthy:** response times double when load increases 30%, timeouts appear, or queue depth climbs without bound — you have found the limiting component.
+**Healthy scaling behavior:** p95 and p99 latency grow slowly relative to traffic. **Unhealthy:** response times double when load increases 30%, timeouts appear, or queue depth climbs without bound - you have found the limiting component.
 
-**In interviews, say something like:** *"I start with saturation signals — CPU, memory, connection pool usage, p99 latency, and error budget burn — before choosing scale-up or scale-out."*
+**In interviews, say something like:** *"I start with saturation signals - CPU, memory, connection pool usage, p99 latency, and error budget burn - before choosing scale-up or scale-out."*
 
 ---
 
@@ -41,7 +41,7 @@ Every layer of the stack can grow in one of two directions. Strong teams combine
 
 ### Vertical scaling (scale up)
 
-**Meaning:** Upgrade a single machine — more cores, RAM, faster disks, better NIC — instead of adding nodes.
+**Meaning:** Upgrade a single machine - more cores, RAM, faster disks, better NIC - instead of adding nodes.
 
 | Upgrade | Typical fit |
 |---------|-------------|
@@ -52,7 +52,7 @@ Every layer of the stack can grow in one of two directions. Strong teams combine
 
 **When it makes sense:**
 
-- Early products with modest traffic — avoids distributed-system overhead.
+- Early products with modest traffic - avoids distributed-system overhead.
 - Database primaries before replication or partitioning is worth the ops cost.
 - After tuning: indexes, pool sizes, and query plans often unlock headroom cheaply.
 
@@ -62,16 +62,16 @@ Every layer of the stack can grow in one of two directions. Strong teams combine
 
 ### Horizontal scaling (scale out)
 
-**Meaning:** Add more machines and spread work across them — the path from a single EC2 instance to a fleet behind a load balancer.
+**Meaning:** Add more machines and spread work across them - the path from a single EC2 instance to a fleet behind a load balancer.
 
 **Practical steps:**
 
 - Terminate TLS and route traffic through a **load balancer**.
-- Keep application nodes **interchangeable** — no hidden local state.
+- Keep application nodes **interchangeable** - no hidden local state.
 - **Auto-scale** on RPS, CPU, or custom signals (queue lag, error rate).
 - Spread across **availability zones** so one datacenter loss does not take the service offline.
 
-**Limitation:** Coordination cost rises — discovery, observability, idempotent handlers, and data placement all matter. The upside is near-unlimited compute if the data layer can follow.
+**Limitation:** Coordination cost rises - discovery, observability, idempotent handlers, and data placement all matter. The upside is near-unlimited compute if the data layer can follow.
 
 ---
 
@@ -97,7 +97,7 @@ Monolith diagrams hide reality: each tier fails differently and needs its own pl
 
 ### Application tier
 
-App servers execute business rules — auth checks, cart updates, search orchestration. They usually saturate on **CPU or thread pools** before anything else.
+App servers execute business rules - auth checks, cart updates, search orchestration. They usually saturate on **CPU or thread pools** before anything else.
 
 ```mermaid
 flowchart TB
@@ -117,13 +117,13 @@ flowchart TB
 | Auto-scaling groups | Capacity tracks diurnal or campaign spikes |
 | Multi-region active-passive | Lower latency for distant users; DR readiness |
 
-**Interview angle:** *"The compute tier is usually the cheapest to replicate — stateless APIs behind a load balancer and an autoscaler."*
+**Interview angle:** *"The compute tier is usually the cheapest to replicate - stateless APIs behind a load balancer and an autoscaler."*
 
 ---
 
 ### Database tier
 
-Databases own **durable, consistent state** — you cannot round-robin writes across unrelated primaries without a partitioning story.
+Databases own **durable, consistent state** - you cannot round-robin writes across unrelated primaries without a partitioning story.
 
 Most production workloads skew **read-heavy** (often 8:1 to 50:1 reads vs writes). Writes funnel to an authoritative primary; reads can fan out.
 
@@ -142,32 +142,32 @@ flowchart TB
 ```
 
 - **Fit:** Read pressure dominates; write volume still fits one primary.
-- **Caveat:** **Replication lag** — a user may not see their own write on a replica for milliseconds (or longer under load).
+- **Caveat:** **Replication lag** - a user may not see their own write on a replica for milliseconds (or longer under load).
 
 #### Sharding (partitioning)
 
-Split rows across multiple databases using a **shard key** — commonly `customer_id` or `tenant_id`.
+Split rows across multiple databases using a **shard key** - commonly `customer_id` or `tenant_id`.
 
 ```mermaid
 flowchart LR
     API[API tier] --> SR[Shard router]
-    SR --> P1["Partition A<br/>tenants 0—499K"]
-    SR --> P2["Partition B<br/>tenants 500K—999K"]
+    SR --> P1["Partition A<br/>tenants 0-499K"]
+    SR --> P2["Partition B<br/>tenants 500K-999K"]
     SR --> P3["Partition C<br/>tenants 1M+"]
 ```
 
 | Partition style | Idea |
 |-----------------|------|
-| Range | Keys grouped by ID bands — simple, risk of hot ranges |
-| Hash | `hash(key) mod N` — even spread, painful resharding |
-| Directory | Metadata service maps keys ? shard — flexible ops |
+| Range | Keys grouped by ID bands - simple, risk of hot ranges |
+| Hash | `hash(key) mod N` - even spread, painful resharding |
+| Directory | Metadata service maps keys ? shard - flexible ops |
 
 - **Fit:** Write QPS or disk on one primary exceeds safe limits.
 - **Caveat:** Joins across shards are expensive; celebrity tenants create **hot partitions**.
 
 #### Distributed SQL / wide-column stores
 
-**CockroachDB**, **Spanner**, **Cassandra**, **DynamoDB** — partition data by design, often trading immediate global consistency for partition tolerance.
+**CockroachDB**, **Spanner**, **Cassandra**, **DynamoDB** - partition data by design, often trading immediate global consistency for partition tolerance.
 
 **Interview angle:** *"Replicas first for read pressure; partition when the primary becomes the write or storage choke point; prefer managed sharding before a custom router."*
 
@@ -191,7 +191,7 @@ flowchart LR
     Cache -->|miss| DB
 ```
 
-**Interview angle:** *"Treat cache as acceleration, not truth — every code path must survive a cold cache or node loss."*
+**Interview angle:** *"Treat cache as acceleration, not truth - every code path must survive a cold cache or node loss."*
 
 ---
 
@@ -216,17 +216,17 @@ flowchart LR
     Q --> W3[Analytics worker]
 ```
 
-**Interview angle:** *"Push slow or spiky work off the request path — scale consumers on queue depth, not user clicks."*
+**Interview angle:** *"Push slow or spiky work off the request path - scale consumers on queue depth, not user clicks."*
 
 ---
 
 ## Walkthrough: scaling a food-delivery marketplace
 
-Imagine **QuickPlate** — users browse restaurants, place orders, and track couriers. Growth forces architectural changes in a predictable order. Numbers are illustrative, not prescriptions.
+Imagine **QuickPlate** - users browse restaurants, place orders, and track couriers. Growth forces architectural changes in a predictable order. Numbers are illustrative, not prescriptions.
 
 ---
 
-### Stage 1: Monolith on one host (0—5K daily orders)
+### Stage 1: Monolith on one host (0-5K daily orders)
 
 API, background jobs, and **PostgreSQL** share one VM. Fast to build, cheap to operate.
 
@@ -241,7 +241,7 @@ flowchart LR
 
 ---
 
-### Stage 2: Split compute and database (5K—40K daily orders)
+### Stage 2: Split compute and database (5K-40K daily orders)
 
 The API VM talks to a separate DB instance. Tune connection limits and `shared_buffers` independently.
 
@@ -257,7 +257,7 @@ flowchart LR
 
 ---
 
-### Stage 3: Cache hot reads (40K—200K daily orders)
+### Stage 3: Cache hot reads (40K-200K daily orders)
 
 Repeated catalog reads served from memory; DB sees mostly misses and writes (new orders, status updates).
 
@@ -274,7 +274,7 @@ flowchart LR
 
 ---
 
-### Stage 4: Horizontally scaled API tier (200K—1M daily orders)
+### Stage 4: Horizontally scaled API tier (200K-1M daily orders)
 
 Stateless API nodes share Redis for sessions and cart drafts. PostgreSQL still single-primary.
 
@@ -296,7 +296,7 @@ flowchart TB
 
 ---
 
-### Stage 5: Read replicas (1M—5M daily orders)
+### Stage 5: Read replicas (1M-5M daily orders)
 
 Writes (new orders, status transitions) stay on the primary; replica nodes serve driver earnings history and admin dashboards.
 
@@ -319,7 +319,7 @@ flowchart TB
 
 ### Stage 6: Partitioned data + async fulfillment (5M+ daily orders)
 
-Orders partitioned by **metro area**. Courier assignment and receipt email run through **Kafka** workers. Static assets and menu photos served from a **CDN** — bytes never touch the API.
+Orders partitioned by **metro area**. Courier assignment and receipt email run through **Kafka** workers. Static assets and menu photos served from a **CDN** - bytes never touch the API.
 
 ```mermaid
 flowchart TB
@@ -343,10 +343,10 @@ flowchart TB
 
 | Idea | Remember |
 |------|----------|
-| **Measure first** | Metrics expose the real bottleneck — not the diagram you wish you had |
+| **Measure first** | Metrics expose the real bottleneck - not the diagram you wish you had |
 | **Scale up** | Quick relief, hard ceiling, single failure domain |
 | **Scale out** | Needs stateless apps and a data strategy that can keep up |
 | **Per-tier tactics** | Compute scales easily; stateful stores need replicas, caches, partitions |
 | **Recurring tools** | Load balancers, caches, queues, replicas, and shards show up everywhere |
 
-**Closing thought:** Scalability is a **sequence of constraint removals**. Each growth phase reveals the next weakest link — scale that component, re-measure, repeat.
+**Closing thought:** Scalability is a **sequence of constraint removals**. Each growth phase reveals the next weakest link - scale that component, re-measure, repeat.

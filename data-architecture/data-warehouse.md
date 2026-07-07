@@ -10,7 +10,7 @@ description: OLTP, OLAP, ETL/ELT, dimensional modeling, star/snowflake schema, S
 permalink: /data-architecture/data-warehouse/
 ---
 
-A **data warehouse** holds structured, cleaned, business-ready data for fast analytics — SQL queries, dashboards, reports. It is usually the place the business trusts for revenue, orders, customers, and KPIs.
+A **data warehouse** holds structured, cleaned, business-ready data for fast analytics - SQL queries, dashboards, reports. It is usually the place the business trusts for revenue, orders, customers, and KPIs.
 
 See also: [Data Lake](/data-architecture/data-lake/) · [Data Lakehouse](/data-architecture/data-lakehouse/) · [Overview](/data-architecture/overview/)
 
@@ -91,10 +91,10 @@ flowchart LR
 
 | Component | Role |
 |-----------|------|
-| **Source systems** | Operational databases, apps, ERP/CRM — where transactions happen |
+| **Source systems** | Operational databases, apps, ERP/CRM - where transactions happen |
 | **ETL / ELT** | Extract data, transform it to a standard model, load into the warehouse |
 | **Staging area** | Temporary landing zone before data is cleaned |
-| **Dimensional model** | Star/snowflake schema — **facts** (metrics) and **dimensions** (context) |
+| **Dimensional model** | Star/snowflake schema - **facts** (metrics) and **dimensions** (context) |
 | **OLAP engine** | Optimized for analytical queries (aggregations, joins across large history) |
 | **BI layer** | Dashboards and reports on top |
 
@@ -102,7 +102,7 @@ flowchart LR
 
 ## Component map
 
-For the **full end-to-end diagram** — all layers, all paradigms, fact/dimension seating, and lakehouse wiring — see **[Architecture Map](/data-architecture/architecture-map/)**.
+For the **full end-to-end diagram** - all layers, all paradigms, fact/dimension seating, and lakehouse wiring - see **[Architecture Map](/data-architecture/architecture-map/)**.
 
 ```mermaid
 flowchart LR
@@ -140,27 +140,27 @@ flowchart LR
 | Role | What it is | Example |
 |------|------------|---------|
 | **OLTP = input (source)** | Where live business transactions happen | App writes `INSERT INTO orders` to PostgreSQL |
-| **Warehouse = OLAP (the store)** | The analytics database itself — **not** the output | Snowflake holds years of sales in a star schema |
+| **Warehouse = OLAP (the store)** | The analytics database itself - **not** the output | Snowflake holds years of sales in a star schema |
 | **BI / reports = output (consumers)** | What people actually read | `SUM(revenue) BY region` in Tableau or Power BI |
 
-OLAP is not the output — the **warehouse is the OLAP system**. Dashboards, reports, and analyst queries are the output; they read *from* the warehouse.
+OLAP is not the output - the **warehouse is the OLAP system**. Dashboards, reports, and analyst queries are the output; they read *from* the warehouse.
 
 Flow: `OLTP → ETL → Warehouse/OLAP → BI`
 
-### OLTP vs OLAP — day to day
+### OLTP vs OLAP - day to day
 
 | | OLTP | OLAP (the warehouse) |
 |---|------|----------------------|
-| **What it holds** | Day-to-day **transaction** data | **Informational** schema — history, trends, patterns |
+| **What it holds** | Day-to-day **transaction** data | **Informational** schema - history, trends, patterns |
 | **Purpose** | **Run** the business right now | **Understand** the business over time |
 | **Question it answers** | "Process this order." "Update this balance." | "What trend do we see?" "Which region grew?" "What pattern predicts churn?" |
-| **Time horizon** | Today — live, current state | Months and years of history |
+| **Time horizon** | Today - live, current state | Months and years of history |
 | **Who uses it** | Applications, cashiers, customers | Analysts, executives, data scientists |
 | **Data shape** | Normalized rows (one fact, no duplication) | Star/snowflake (facts + dimensions for easy slicing) |
 
-**OLTP** = the **operational engine** — every sale, login, and payment as it happens.
+**OLTP** = the **operational engine** - every sale, login, and payment as it happens.
 
-**OLAP** = the **analytical lens** — cleaned, modeled data so you can spot trends, compare periods, build forecasts, and train models on consistent history.
+**OLAP** = the **analytical lens** - cleaned, modeled data so you can spot trends, compare periods, build forecasts, and train models on consistent history.
 
 Both are essential. OLTP keeps the business running; OLAP helps you decide where to take it.
 
@@ -173,12 +173,12 @@ Both are essential. OLTP keeps the business running; OLAP helps you decide where
 | **Query pattern** | Many small, fast reads/writes | Few large, complex reads (aggregations) |
 | **Data scope** | Current state (today's orders) | Historical (all orders since 2010) |
 | **Users** | Applications, customers, staff | Analysts, executives, data teams |
-| **Schema** | Highly normalized (3NF) — reduce redundancy | Denormalized (star/snowflake) — optimize reads |
+| **Schema** | Highly normalized (3NF) - reduce redundancy | Denormalized (star/snowflake) - optimize reads |
 | **Data changes** | Constant inserts/updates/deletes | Mostly bulk loads; occasional updates |
 | **Example systems** | PostgreSQL, MySQL, SQL Server, Oracle OLTP | Snowflake, BigQuery, Redshift, Teradata |
 | **Example query** | `INSERT INTO orders ...` | `SELECT region, SUM(revenue) GROUP BY region` |
 
-### OLTP — how the business runs
+### OLTP - how the business runs
 
 ```mermaid
 flowchart LR
@@ -195,12 +195,12 @@ flowchart LR
 
 **Characteristics:**
 - Optimized for **row-based** storage (fetch one order + its line items quickly)
-- **Short transactions** — commit or rollback in milliseconds
-- **Normalized schema** — data stored once, no duplication (3rd Normal Form)
-- **High concurrency** — thousands of users hitting the DB at once
-- **Data is live** — reflects the current moment
+- **Short transactions** - commit or rollback in milliseconds
+- **Normalized schema** - data stored once, no duplication (3rd Normal Form)
+- **High concurrency** - thousands of users hitting the DB at once
+- **Data is live** - reflects the current moment
 
-### OLAP — how the business is understood
+### OLAP - how the business is understood
 
 ```mermaid
 flowchart LR
@@ -219,10 +219,10 @@ flowchart LR
 
 **Characteristics:**
 - Optimized for **columnar** storage (scan one column across millions of rows fast)
-- **Heavy reads** — `SUM`, `AVG`, `COUNT`, `GROUP BY`, window functions
-- **Denormalized schema** — star/snowflake for fewer joins at query time
-- **Historical data** — years of history kept for trend analysis
-- **Batch or micro-batch loads** — not designed for per-click inserts
+- **Heavy reads** - `SUM`, `AVG`, `COUNT`, `GROUP BY`, window functions
+- **Denormalized schema** - star/snowflake for fewer joins at query time
+- **Historical data** - years of history kept for trend analysis
+- **Batch or micro-batch loads** - not designed for per-click inserts
 
 ### Why you must keep them separate
 
@@ -256,7 +256,7 @@ Both move data from sources into the warehouse. The difference is **where transf
 
 ```mermaid
 flowchart LR
-    subgraph ETL["ETL — Transform before Load"]
+    subgraph ETL["ETL - Transform before Load"]
         direction LR
         S1["Sources"] --> E1["Extract"] --> T1["Transform<br/>outside warehouse"] --> L1["Load"] --> DW1["Warehouse"]
     end
@@ -264,7 +264,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    subgraph ELT["ELT — Load before Transform"]
+    subgraph ELT["ELT - Load before Transform"]
         direction LR
         S2["Sources"] --> E2["Extract"] --> L2["Load raw<br/>into warehouse"] --> T2["Transform<br/>inside warehouse SQL"] --> DW2["Curated tables"]
     end
@@ -277,7 +277,7 @@ flowchart LR
 | **Best when** | Limited warehouse compute; heavy cleansing needed pre-load | Warehouse has elastic compute (Snowflake, BigQuery) |
 | **Examples** | Informatica, Talend, DataStage | dbt, Spark SQL, native warehouse SQL |
 
-Cloud warehouses (Snowflake, BigQuery, Databricks SQL) strongly favor **ELT** — load raw data fast, then transform with the warehouse's own compute power.
+Cloud warehouses (Snowflake, BigQuery, Databricks SQL) strongly favor **ELT** - load raw data fast, then transform with the warehouse's own compute power.
 
 ---
 
@@ -292,7 +292,7 @@ The standard way to design a warehouse schema for BI. Created by **Ralph Kimball
 | **Fact table** | *What happened? How much?* | Numbers (metrics/measures) + foreign keys |
 | **Dimension table** | *Who? What? Where? When? Why?* | Descriptive attributes (text, categories) |
 
-### Fact vs dimension — in simple terms
+### Fact vs dimension - in simple terms
 
 Think of a **spreadsheet of sales**:
 
@@ -301,8 +301,8 @@ Think of a **spreadsheet of sales**:
 | Jan 5 | iPhone | John | NYC | **$999** | **1** |
 | Jan 5 | Case | Sarah | LA | **$29** | **2** |
 
-- **Fact table** = the **numbers** and the **event** — *how much* was sold, *how many* units. One row per sale.
-- **Dimension tables** = the **labels** you filter and group by — *when* (date), *what* (product), *who* (customer), *where* (city).
+- **Fact table** = the **numbers** and the **event** - *how much* was sold, *how many* units. One row per sale.
+- **Dimension tables** = the **labels** you filter and group by - *when* (date), *what* (product), *who* (customer), *where* (city).
 
 ```mermaid
 flowchart LR
@@ -338,9 +338,9 @@ Dimensions tell you **what you're looking at**; facts tell you **what happened a
 
 | Table | Role | iPhone example |
 |-------|------|----------------|
-| **`dim_product`** | **What** types exist | iPhone 15, iPhone 14 Pro, iPhone SE — name, storage, color |
-| **`dim_date`** | **When** | 2024, Q1, January — the time labels you group by |
-| **`fact_sales`** | **How many / how much** | 500 units, $499,500 revenue — the actual numbers |
+| **`dim_product`** | **What** types exist | iPhone 15, iPhone 14 Pro, iPhone SE - name, storage, color |
+| **`dim_date`** | **When** | 2024, Q1, January - the time labels you group by |
+| **`fact_sales`** | **How many / how much** | 500 units, $499,500 revenue - the actual numbers |
 
 **Question → which table:**
 
@@ -417,7 +417,7 @@ flowchart LR
 | **Foreign keys** | `date_key`, `product_key`, `customer_key` | Link to dimensions |
 | **Measures (additive)** | `amount`, `quantity`, `cost` | Can be summed across any dimension |
 | **Measures (semi-additive)** | `account_balance`, `inventory_level` | Can be summed across some dimensions, not time |
-| **Measures (non-additive)** | `unit_price`, `margin_pct` | Cannot be summed — use AVG or recalculate |
+| **Measures (non-additive)** | `unit_price`, `margin_pct` | Cannot be summed - use AVG or recalculate |
 | **Degenerate dimension** | `order_number`, `invoice_id` | Dimension attribute stored in fact (no separate dim table) |
 
 ---
@@ -454,14 +454,14 @@ Surrogate key: customer_key = 1042              (never changes)
 
 The simplest and most common dimensional model. One **fact table** in the center, **dimension tables** radiating out like a star.
 
-### Star schema — the idea
+### Star schema - the idea
 
 Picture a wheel: the **fact table** is the hub; each **dimension** is a spoke.
 
 ```
                     dim_date
                        |
-    dim_customer — fact_sales — dim_product
+    dim_customer - fact_sales - dim_product
                        |
                     dim_store
 ```
@@ -490,13 +490,13 @@ JOIN   dim_product p ON f.product_key = p.product_key
 GROUP BY p.category
 ```
 
-One join to `dim_product` — category is already inside it.
+One join to `dim_product` - category is already inside it.
 
 | Star schema | Meaning |
 |-------------|---------|
 | **Shape** | Fact in the center, dimensions around it ★ |
-| **Dimension tables** | Flat and wide — all attributes in one table |
-| **Joins** | Few (fact → dim) — fast and simple |
+| **Dimension tables** | Flat and wide - all attributes in one table |
+| **Joins** | Few (fact → dim) - fast and simple |
 | **Best for** | BI dashboards, analysts, most modern warehouses |
 | **Trade-off** | Some repeated text (e.g. "Electronics" on every phone row) |
 
@@ -567,9 +567,9 @@ flowchart TD
 ```
 
 **Properties:**
-- Dimensions are **denormalized** — all attributes in one flat table (category and subcategory both in `dim_product`)
-- Queries need **few joins** — fact + 2–4 dimensions = fast BI
-- Easy for analysts to understand — looks like a star, hence the name
+- Dimensions are **denormalized** - all attributes in one flat table (category and subcategory both in `dim_product`)
+- Queries need **few joins** - fact + 2-4 dimensions = fast BI
+- Easy for analysts to understand - looks like a star, hence the name
 - Most common in modern cloud warehouses and BI tools
 
 ---
@@ -578,13 +578,13 @@ flowchart TD
 
 A **normalized version of the star schema**. Dimension tables are split into **sub-dimensions** to reduce redundancy.
 
-### Snowflake schema — normalized dimensions
+### Snowflake schema - normalized dimensions
 
-The fact table is the same as in a star schema — it still holds amount, quantity, and the keys. Only the dimension layout changes: flat tables in a star, split sub-tables in a snowflake.
+The fact table is the same as in a star schema - it still holds amount, quantity, and the keys. Only the dimension layout changes: flat tables in a star, split sub-tables in a snowflake.
 
-Same fact table in the center — dimensions **branch out** like a snowflake ❄ instead of sitting flat.
+Same fact table in the center - dimensions **branch out** like a snowflake ❄ instead of sitting flat.
 
-**Star** — everything about a product in one table:
+**Star** - everything about a product in one table:
 
 ```
 dim_product
@@ -594,7 +594,7 @@ dim_product
 └── brand: Apple
 ```
 
-**Snowflake** — split into linked sub-tables so "Electronics" is stored once:
+**Snowflake** - split into linked sub-tables so "Electronics" is stored once:
 
 ```
 dim_department          dim_category           dim_product
@@ -616,7 +616,7 @@ GROUP BY c.category_name
 | Snowflake schema | Meaning |
 |------------------|---------|
 | **Shape** | Fact in center, dimensions split into hierarchies ❄ |
-| **Dimension tables** | Normalized — split into sub-tables (product → category → department) |
+| **Dimension tables** | Normalized - split into sub-tables (product → category → department) |
 | **Joins** | More (fact → dim → sub-dim → sub-sub-dim) |
 | **Best for** | Saving storage when dimensions have deep hierarchies |
 | **Trade-off** | Harder to write queries; slower joins |
@@ -689,10 +689,10 @@ flowchart TD
 ```
 
 **Properties:**
-- Dimensions are **partially normalized** — split into hierarchy levels
+- Dimensions are **partially normalized** - split into hierarchy levels
 - More joins at query time (fact → product → category → department)
 - Less storage duplication
-- More complex for analysts; less common in modern cloud warehouses (compute is cheap, storage is cheap — star wins)
+- More complex for analysts; less common in modern cloud warehouses (compute is cheap, storage is cheap - star wins)
 
 **Snowflake schema** is a dimensional modeling pattern from the 1990s. It is unrelated to **Snowflake** the cloud data platform, which supports both star and snowflake schemas.
 
@@ -704,12 +704,12 @@ Both layouts answer the same question: *how do I connect sales numbers to produc
 
 | | Star ★ | Snowflake ❄ |
 |---|--------|---------------|
-| **Fact table** | Yes — center of the model | Yes — same role, same place |
+| **Fact table** | Yes - center of the model | Yes - same role, same place |
 | **Like organizing…** | One big folder per topic | Subfolders within folders |
 | **dim_product** | One table with name + category + brand | `dim_product` → `dim_category` → `dim_department` |
 | **Query** | `fact` → `dim_product` (1 join) | `fact` → `dim_product` → `dim_category` (2+ joins) |
 | **Storage** | "Electronics" repeated on every row | "Electronics" stored once |
-| **Used today** | Default choice (~90% of warehouses) | Rare — storage is cheap; simplicity wins |
+| **Used today** | Default choice (~90% of warehouses) | Rare - storage is cheap; simplicity wins |
 
 Start with a **star**. Split into a **snowflake** only when a dimension is huge and repetition actually costs you storage.
 
@@ -718,8 +718,8 @@ flowchart LR
     subgraph STAR["Star Schema"]
         direction TD
         S_FACT["FACT"]
-        S_D1["DIM_PRODUCT<br/>flat — category inside"]
-        S_D2["DIM_CUSTOMER<br/>flat — region inside"]
+        S_D1["DIM_PRODUCT<br/>flat - category inside"]
+        S_D2["DIM_CUSTOMER<br/>flat - region inside"]
         S_D1 --> S_FACT
         S_D2 --> S_FACT
     end
@@ -754,8 +754,8 @@ flowchart LR
 | Grain statement | Meaning |
 |-----------------|---------|
 | "One row per order line item" | Each row = one product within one order |
-| "One row per customer per day" | Periodic snapshot — daily customer state |
-| "One row per web click" | Transaction fact — every click event |
+| "One row per customer per day" | Periodic snapshot - daily customer state |
+| "One row per web click" | Transaction fact - every click event |
 
 **Rule:** Once grain is set, all measures must be consistent with it. You cannot mix order-level and line-item-level metrics in the same fact table.
 
@@ -765,20 +765,20 @@ Dimension attributes change over time (customer moves cities, product changes ca
 
 | Type | Strategy | Example | History kept? |
 |------|----------|---------|---------------|
-| **SCD Type 0** | Keep original forever | Social Security number | No — never update |
+| **SCD Type 0** | Keep original forever | Social Security number | No - never update |
 | **SCD Type 1** | Overwrite old value | Fix typo in customer name | No |
-| **SCD Type 2** | Add new row with new key | Customer moves from NY → CA | Yes — full history |
-| **SCD Type 3** | Add column for previous value | Store current + previous region | Partial — one prior value |
+| **SCD Type 2** | Add new row with new key | Customer moves from NY → CA | Yes - full history |
+| **SCD Type 3** | Add column for previous value | Store current + previous region | Partial - one prior value |
 
 ```mermaid
 flowchart TD
-    subgraph SCD1["SCD Type 1 — Overwrite"]
+    subgraph SCD1["SCD Type 1 - Overwrite"]
         B1["customer_key: 42<br/>region: NY"]
         A1["customer_key: 42<br/>region: CA<br/>NY is gone"]
         B1 -->|"UPDATE"| A1
     end
 
-    subgraph SCD2["SCD Type 2 — New row"]
+    subgraph SCD2["SCD Type 2 - New row"]
         B2["customer_key: 42<br/>region: NY<br/>valid_from: 2020<br/>valid_to: 2023<br/>is_current: N"]
         A2["customer_key: 87<br/>region: CA<br/>valid_from: 2024<br/>valid_to: 9999<br/>is_current: Y"]
         B2 -->|"INSERT new row"| A2
@@ -795,13 +795,13 @@ Two competing warehouse design philosophies:
 
 ```mermaid
 flowchart TD
-    subgraph KIMBALL["Kimball — Bottom-up"]
+    subgraph KIMBALL["Kimball - Bottom-up"]
         K_SRC["Sources"] --> K_DM["Departmental Data Marts<br/>star schemas"]
         K_DM --> K_DW["Enterprise DW<br/>integrated marts"]
         K_STYLE["Denormalized · Dimensional · Business-facing"]
     end
 
-    subgraph INMON["Inmon — Top-down"]
+    subgraph INMON["Inmon - Top-down"]
         I_SRC["Sources"] --> I_STG["Staging"]
         I_STG --> I_3NF["Enterprise DW<br/>3NF normalized"]
         I_3NF --> I_DM["Data Marts<br/>derived for departments"]
@@ -811,12 +811,12 @@ flowchart TD
 
 | Dimension | Kimball | Inmon |
 |-----------|---------|-------|
-| **Approach** | Bottom-up — build marts first, integrate later | Top-down — build one normalized hub first |
+| **Approach** | Bottom-up - build marts first, integrate later | Top-down - build one normalized hub first |
 | **Schema** | Star/snowflake (dimensional) | 3rd Normal Form (normalized) |
-| **Speed to value** | Fast — first mart in weeks | Slow — enterprise model takes months |
+| **Speed to value** | Fast - first mart in weeks | Slow - enterprise model takes months |
 | **Integration** | Conformed dimensions across marts | Central EDW feeds all marts |
 | **Champion** | Ralph Kimball | Bill Inmon |
-| **Dominant today** | Yes — Kimball-style dimensional modeling is the standard | Less common for new builds |
+| **Dominant today** | Yes - Kimball-style dimensional modeling is the standard | Less common for new builds |
 
 ---
 
@@ -889,7 +889,7 @@ flowchart LR
     QUERY["SELECT SUM(amount)<br/>WHERE city = NYC"] --> COL
 ```
 
-For `SUM(amount) WHERE city = 'NYC'`, columnar storage reads **only** the `amount` and `city` columns — skipping name, id, and everything else. Massive I/O savings.
+For `SUM(amount) WHERE city = 'NYC'`, columnar storage reads **only** the `amount` and `city` columns - skipping name, id, and everything else. Massive I/O savings.
 
 ### MPP (Massively Parallel Processing)
 
@@ -899,8 +899,8 @@ Large warehouses split queries across many nodes:
 flowchart TD
     QUERY["SELECT region, SUM(revenue)<br/>GROUP BY region"]
     COORD["Coordinator<br/>query planner"]
-    N1["Node 1<br/>scans rows A–M"]
-    N2["Node 2<br/>scans rows N–Z"]
+    N1["Node 1<br/>scans rows A-M"]
+    N2["Node 2<br/>scans rows N-Z"]
     RESULT["Merged result"]
 
     QUERY --> COORD
@@ -916,9 +916,9 @@ Each node processes its slice of data in parallel. Results are merged. This is h
 
 | Technique | What it does |
 |-----------|--------------|
-| **Compression** | Columnar data compresses well (repeated values) — less disk I/O |
-| **Zone maps / sorting** | Data physically sorted by common filter columns (date, region) — skip irrelevant blocks |
-| **Materialized views** | Pre-computed aggregations — instant dashboard queries |
+| **Compression** | Columnar data compresses well (repeated values) - less disk I/O |
+| **Zone maps / sorting** | Data physically sorted by common filter columns (date, region) - skip irrelevant blocks |
+| **Materialized views** | Pre-computed aggregations - instant dashboard queries |
 | **Result caching** | Identical queries return cached results without re-scanning |
 | **Query optimizer** | Cost-based planner picks the fastest join/scan strategy |
 
@@ -949,7 +949,7 @@ Reliable inserts, updates, and deletes. Concurrent readers and writers do not co
 Unlike OLTP (which may purge old data), warehouses keep **years of history** for trend analysis and compliance.
 
 ### 5. Separation from operational systems
-The warehouse is always a **downstream copy** — never the system of record for live transactions.
+The warehouse is always a **downstream copy** - never the system of record for live transactions.
 
 ---
 
@@ -957,11 +957,11 @@ The warehouse is always a **downstream copy** — never the system of record for
 
 ### Strengths
 
-- **Trusted metrics** — one governed model for the business
-- **Fast SQL / BI** — built for dashboards and ad-hoc analysis
-- **Mature ecosystem** — decades of tooling, skills, and patterns
-- **Strong governance** — roles, row-level security, audit trails
-- **Dimensional models** — intuitive for analysts (star schema)
+- **Trusted metrics** - one governed model for the business
+- **Fast SQL / BI** - built for dashboards and ad-hoc analysis
+- **Mature ecosystem** - decades of tooling, skills, and patterns
+- **Strong governance** - roles, row-level security, audit trails
+- **Dimensional models** - intuitive for analysts (star schema)
 
 ### Limitations (why lakes appeared)
 
@@ -985,9 +985,9 @@ The warehouse is always a **downstream copy** — never the system of record for
 | **Google BigQuery** | Google | Serverless; petabyte-scale; pay-per-query; columnar |
 | **Amazon Redshift** | AWS | MPP columnar; RA3 nodes with managed storage; Spectrum for S3 |
 | **Azure Synapse** | Microsoft | Unified analytics; dedicated SQL pools + serverless SQL + Spark |
-| **Databricks SQL** | Databricks | Lakehouse — SQL warehouses query Delta tables on object storage |
+| **Databricks SQL** | Databricks | Lakehouse - SQL warehouses query Delta tables on object storage |
 
-### Snowflake (platform) — architecture
+### Snowflake (platform) - architecture
 
 ```mermaid
 flowchart TD
@@ -1010,8 +1010,8 @@ flowchart TD
 
 | Concept | Description |
 |---------|-------------|
-| **Virtual Warehouse** | Independent compute cluster — scale up/down, suspend/resume |
-| **Micro-partitions** | Automatic data partitioning (50–500 MB chunks) — no manual tuning |
+| **Virtual Warehouse** | Independent compute cluster - scale up/down, suspend/resume |
+| **Micro-partitions** | Automatic data partitioning (50-500 MB chunks) - no manual tuning |
 | **Time Travel** | Query data as it existed in the past (up to 90 days) |
 | **Zero-copy cloning** | Instant copy of database/table without duplicating storage |
 | **Data sharing** | Share live data with other Snowflake accounts without copying |
@@ -1031,7 +1031,7 @@ flowchart TD
 | Tool / Pattern | Role |
 |----------------|------|
 | **Kimball dimensional modeling** | Star/snowflake schema design methodology |
-| **Inmon CIF** | Corporate Information Factory — normalized EDW |
+| **Inmon CIF** | Corporate Information Factory - normalized EDW |
 | **dbt** | Transform data inside the warehouse with SQL + version control |
 | **Looker / LookML** | Semantic layer on top of warehouse tables |
 | **Tableau / Power BI** | Visualization and dashboard tools |
@@ -1047,6 +1047,6 @@ flowchart TD
 | How lake + warehouse merged | [Data Lakehouse](/data-architecture/data-lakehouse/) |
 | Three-way comparison | [Overview](/data-architecture/overview/) |
 
-Warehouses handle structured BI well. They struggle on cost and flexibility once you add logs, ML workloads, and messy semi-structured data — which is what pushed the industry toward lakes, and eventually lakehouses.
+Warehouses handle structured BI well. They struggle on cost and flexibility once you add logs, ML workloads, and messy semi-structured data - which is what pushed the industry toward lakes, and eventually lakehouses.
 
 **Next:** [Data Lake](/data-architecture/data-lake/)

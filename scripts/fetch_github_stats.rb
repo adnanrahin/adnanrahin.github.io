@@ -145,7 +145,7 @@ def main
   breakdown = build_breakdown(language_data["lang_totals"])
 
   if breakdown.sum { |lang| lang["pct"] }.zero?
-    warn "Warning: featured language breakdown is empty — check GITHUB_TOKEN permissions"
+    warn "Warning: featured language breakdown is empty - check GITHUB_TOKEN permissions"
   end
 
   commits = begin

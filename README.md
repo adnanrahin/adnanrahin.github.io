@@ -26,7 +26,7 @@ tags: [aws, cloudformation]
 Your content here...
 ```
 
-Commit and push to `main` — GitHub Actions builds and deploys automatically.
+Commit and push to `main` - GitHub Actions builds and deploys automatically.
 
 ## Update profile
 

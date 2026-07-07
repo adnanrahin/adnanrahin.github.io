@@ -57,7 +57,7 @@ experience:
   - role: Senior Software Engineer
     company: Epsilon Data Management
     location: New York, New York
-    period: Jan 2023 – Present
+    period: Jan 2023 - Present
     highlights:
       - Architected and migrated enterprise-scale Spark and PySpark workloads from legacy on-premises Hadoop to AWS Databricks with Delta Lake and Unity Catalog.
       - Led decomposition of a monolithic data platform into independently deployable services and pipeline repositories.
@@ -65,23 +65,23 @@ experience:
       - Built enterprise CI/CD pipelines integrating Jenkins, Maven, Python packaging, Docker, Terraform, and Databricks with automated testing and environment promotion.
       - Architected workflow orchestration using AWS MWAA, ECS Fargate, Docker, EFS, and Terraform for distributed data processing.
       - Designed reusable IaC modules for AWS workflow orchestration, container orchestration, IAM, logging, networking, and storage.
-      - Engineered CloudFormation templates for secure VPC infrastructure — public/private subnets, NAT gateways, route tables, and VPC endpoints.
+      - Engineered CloudFormation templates for secure VPC infrastructure - public/private subnets, NAT gateways, route tables, and VPC endpoints.
       - Designed large-scale audience data processing and partner distribution pipelines with compliance filtering and audit tracking.
 
   - role: Data Engineer
     company: Integral Ad Science
     location: New York, New York
-    period: Jan 2022 – Jan 2023
+    period: Jan 2022 - Jan 2023
     highlights:
       - Migrated Pig and Hive data aggregation logic to Spark, optimizing runtime and reducing AWS EMR costs.
       - Worked with Solutions Architect and Ops to migrate on-prem data pipelines to AWS-based solutions.
       - Developed REST APIs using Java and Spring Boot to load scoring data to Snowflake for BI and analytics teams.
-      - Utilized Airflow to automate end-to-end ETL — spin up EMR, load from S3, deploy artifacts, submit Spark jobs, and shut down clusters.
+      - Utilized Airflow to automate end-to-end ETL - spin up EMR, load from S3, deploy artifacts, submit Spark jobs, and shut down clusters.
 
   - role: Software Engineer I
     company: Epsilon Data Management
     location: Westminster, Colorado
-    period: Oct 2020 – Jan 2022
+    period: Oct 2020 - Jan 2022
     highlights:
       - Built a generic Spark ETL framework using RDD APIs, eliminating manual steps from the ETL process.
       - Improved deployment using Ansible, Jenkins, and CI/CD; migrated J2EE backend to Spring Boot and Hibernate.
@@ -91,7 +91,7 @@ experience:
   - role: Software Developer Intern
     company: Clear SkAI (Platinum HRM)
     location: Brooklyn, NY
-    period: Jun 2018 – Aug 2018
+    period: Jun 2018 - Aug 2018
     highlights:
       - Developed software to automate and standardize repeatable business processes using Python and SQL.
       - Utilized Airflow DAGs and RPA tools to automate business workflows.
@@ -99,7 +99,7 @@ experience:
 projects:
   - name: Genelytics-AI
     github: https://github.com/adnanrahin/genelytics-ai
-    description: Generative AI data analytics engine that connects to any database and turns natural-language prompts into SQL — built as a startup-ready product prototype.
+    description: Generative AI data analytics engine that connects to any database and turns natural-language prompts into SQL - built as a startup-ready product prototype.
     tech: Python, LangChain, Flask, LLM, SQL Generation
   - name: Movie Store Application
     github: https://github.com/adnanrahin/Movie-Application
@@ -107,11 +107,11 @@ projects:
     tech: Java, Spring Boot, Angular, MySQL, Docker, Kubernetes, Jenkins
   - name: Airflow Application Manager
     github: https://github.com/adnanrahin/airflow-application-manager
-    description: Microservices platform to manage Airflow clusters via REST and Kafka — set variables, trigger DAGs, and coordinate async workflow operations at scale.
+    description: Microservices platform to manage Airflow clusters via REST and Kafka - set variables, trigger DAGs, and coordinate async workflow operations at scale.
     tech: Java, Spring Boot, Kafka, REST API, Airflow
   - name: NFL Big Data Bowl 2022
     github: https://github.com/adnanrahin/NFL-Big-Data-Bowl-2022
-    description: Spark pipelines processing NFL Next Gen Stats player tracking, play, game, and PFF scouting data for 2018–2020 special teams analytics.
+    description: Spark pipelines processing NFL Next Gen Stats player tracking, play, game, and PFF scouting data for 2018-2020 special teams analytics.
     tech: Scala, Apache Spark, Spark SQL, Big Data, ETL
   - name: Microsoft News Recommendation System
     github: https://github.com/adnanrahin/Microsoft-News-Recommendation-System
@@ -119,24 +119,24 @@ projects:
     tech: Scala, Apache Spark, Maven, Big Data Processing
   - name: DOT Flight Delays Analysis
     github: https://github.com/adnanrahin/Spark-Flights-Data-Analysis
-    description: Spark analytics on 2015 U.S. DOT flight data — cancellations, delays by airline, airport traffic, and distance metrics with Dockerized Spark cluster support.
+    description: Spark analytics on 2015 U.S. DOT flight data - cancellations, delays by airline, airport traffic, and distance metrics with Dockerized Spark cluster support.
     tech: Scala, Apache Spark, Spark SQL, Docker, Maven
   - name: IMDB Sentiment Classifier
     github: https://github.com/adnanrahin/IMDB-Movie-Review-Naive-Bayes-Classifier
-    description: Naive Bayes classifier with bag-of-words features and add-one smoothing for IMDB movie review sentiment analysis — 79% overall accuracy.
+    description: Naive Bayes classifier with bag-of-words features and add-one smoothing for IMDB movie review sentiment analysis - 79% overall accuracy.
     tech: Python, Naive Bayes, NLP, Machine Learning
   - name: Self-Avoiding Random Walk
     github: https://github.com/adnanrahin/Self-Avoiding-Random-Walk-Data-Analysis
-    description: Multi-dimensional self-avoiding random walk simulations in 2D, 3D, and 4D — analyzing end-to-end squared distance and asymptotic behavior.
+    description: Multi-dimensional self-avoiding random walk simulations in 2D, 3D, and 4D - analyzing end-to-end squared distance and asymptotic behavior.
     tech: Java, Multi-Threading, Parallel Programming, Stochastic Processes
 
 education:
   - school: The City University of New York, Queens College
     degree: Bachelor of Science in Computer Science
-    period: Aug 2017 – May 2020
+    period: Aug 2017 - May 2020
   - school: LaGuardia Community College
     degree: Associate Degree in Computer Science
-    period: Aug 2015 – Jul 2017
+    period: Aug 2015 - Jul 2017
 
 coursework:
   - Data Structures and Algorithms
@@ -148,4 +148,4 @@ certifications:
   - Functional Programming Principles in Scala (EPFL)
   - Machine Learning with Python (IBM)
   - Python for Data Science, AI & Development (IBM)
-  - Full Stack — Angular and Java Spring Boot (Udemy)
+  - Full Stack - Angular and Java Spring Boot (Udemy)
