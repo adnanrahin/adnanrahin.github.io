@@ -45,13 +45,13 @@ skills:
   - label: Mathematics and Statistics
     items: [Linear Algebra, Calculus, Probability Distribution, Hypothesis Testing, Time Series Analysis]
   - label: Orchestration Tools
-    items: [Ansible, Jenkins, Docker, Kubernetes, AWS CloudFormation Templates, Apache Airflow]
+    items: [Ansible, Jenkins, Docker, Kubernetes, AWS CloudFormation Templates, Apache Airflow, Terraform, MWAA, Databricks Asset Bundle]
   - label: Others
     items: [Git, Maven, HTML, CSS, HDFS, JUnit, Mockito, HashiCorp Vault, Hadoop]
   - label: Cloud
-    items: [AWS, Amazon EMR, Amazon S3, Amazon EC2, Amazon Athena, EMR Notebooks, Amazon RDS, CloudFormation Stack, AWS VPC, Amazon DynamoDB, Amazon Aurora, Databricks]
+    items: [AWS, Amazon EMR, Amazon S3, Amazon EC2, Amazon Athena, EMR Notebooks, Amazon RDS, CloudFormation Stack, AWS VPC, Amazon DynamoDB, Amazon Aurora, Databricks, Amazon ECS Fargate, AWS Lambda]
   - label: Generative AI
-    items: [Amazon Bedrock, LangChain, Google AI Studio, OpenAI, Llama Index]
+    items: [Amazon Bedrock, LangChain, OpenAI, Cursor, Anthropic, Ollama, LM Studio]
 
 experience:
   - role: Senior Software Engineer
