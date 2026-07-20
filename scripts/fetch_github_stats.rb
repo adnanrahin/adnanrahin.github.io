@@ -11,13 +11,16 @@ USERNAME = ENV.fetch("GITHUB_USERNAME", "adnanrahin")
 TOKEN = ENV["GITHUB_TOKEN"]
 OUTPUT = File.expand_path("../_data/github_stats.yml", __dir__)
 
-EXCLUDED_LANGS = %w[HTML CSS TypeScript].freeze
+EXCLUDED_LANGS = %w[HTML CSS TypeScript Jupyter\ Notebook].freeze
 LANG_ALIASES = {
   "HCL" => "CloudFormation Stack",
-  "YAML" => "CloudFormation Stack",
   "CloudFormation" => "CloudFormation Stack"
 }.freeze
 FEATURED_LANGS = ["Java", "Scala", "Python", "C++", "Shell", "CloudFormation Stack"].freeze
+
+# Cap how much any single repo can contribute to byte totals (after equal-repo blend).
+# Prevents one giant notebook/dataset repo from wiping out Java/Scala history.
+MAX_REPO_SHARE = 0.08
 
 LANG_COLORS = {
   "Java" => "#b07219",
@@ -35,6 +38,7 @@ LANGUAGE_QUERY = <<~GRAPHQL.freeze
       repositories(first: 100, after: $cursor, ownerAffiliations: OWNER, isFork: false, orderBy: {field: PUSHED_AT, direction: DESC}) {
         pageInfo { hasNextPage endCursor }
         nodes {
+          name
           stargazerCount
           languages(first: 20, orderBy: {field: SIZE, direction: DESC}) {
             edges {
@@ -51,7 +55,7 @@ GRAPHQL
 def normalize_lang_totals(lang_totals)
   normalized = {}
   lang_totals.each do |name, bytes|
-    next if EXCLUDED_LANGS.include?(name)
+    next if name.nil? || EXCLUDED_LANGS.include?(name)
 
     label = LANG_ALIASES[name] || name
     normalized[label] = normalized[label].to_i + bytes.to_i
@@ -59,18 +63,67 @@ def normalize_lang_totals(lang_totals)
   normalized
 end
 
-def build_breakdown(lang_totals)
-  filtered = normalize_lang_totals(lang_totals)
-  featured_total = FEATURED_LANGS.sum { |name| filtered[name].to_i }
+# Blend two signals:
+# 1) Equal weight per repo (primary) - "how often do I use this across projects?"
+# 2) Capped byte share (secondary) - still reflect larger real codebases a bit
+def build_breakdown(repo_lang_maps)
+  equal_scores = Hash.new(0.0)
+  capped_bytes = Hash.new(0.0)
+  repos_counted = 0
 
-  FEATURED_LANGS.map do |name|
-    bytes = filtered[name].to_i
+  repo_lang_maps.each do |lang_totals|
+    filtered = normalize_lang_totals(lang_totals)
+    featured_total = FEATURED_LANGS.sum { |name| filtered[name].to_i }
+    next if featured_total.zero?
+
+    repos_counted += 1
+
+    FEATURED_LANGS.each do |name|
+      share = filtered[name].to_i.to_f / featured_total
+      equal_scores[name] += share
+      capped_bytes[name] += [share, MAX_REPO_SHARE].min * featured_total
+    end
+  end
+
+  if repos_counted.zero?
+    return FEATURED_LANGS.map { |name|
+      { "name" => name, "pct" => 0, "color" => LANG_COLORS[name] || LANG_COLORS["default"] }
+    }
+  end
+
+  equal_pct = FEATURED_LANGS.to_h do |name|
+    [name, (equal_scores[name] / repos_counted) * 100.0]
+  end
+
+  capped_total = FEATURED_LANGS.sum { |name| capped_bytes[name] }
+  byte_pct = FEATURED_LANGS.to_h do |name|
+    share = capped_total.positive? ? (capped_bytes[name] / capped_total) * 100.0 : 0.0
+    [name, share]
+  end
+
+  # 70% equal-repo, 30% capped-bytes
+  blended = FEATURED_LANGS.to_h do |name|
+    [name, equal_pct[name] * 0.7 + byte_pct[name] * 0.3]
+  end
+
+  # Round and fix drift so visible bars sum to 100
+  rounded = FEATURED_LANGS.map do |name|
     {
       "name" => name,
-      "pct" => featured_total.positive? ? (bytes * 100.0 / featured_total).round : 0,
+      "pct" => blended[name].round,
       "color" => LANG_COLORS[name] || LANG_COLORS["default"]
     }
   end
+
+  drift = 100 - rounded.sum { |lang| lang["pct"] }
+  if drift != 0
+    top = rounded.max_by { |lang| blended[lang["name"]] }
+    top["pct"] = [top["pct"] + drift, 0].max
+  end
+
+  # Drop true zeros from the chart so Shell/CloudFormation don't show empty rows
+  visible = rounded.reject { |lang| lang["pct"].zero? }
+  visible.empty? ? rounded : visible
 end
 
 def github_get(url)
@@ -105,7 +158,7 @@ def github_graphql(query, variables = {})
 end
 
 def fetch_language_stats(username)
-  lang_totals = {}
+  repo_lang_maps = []
   total_stars = 0
   cursor = nil
   pages = 0
@@ -117,20 +170,25 @@ def fetch_language_stats(username)
 
     repos["nodes"].each do |repo|
       total_stars += repo["stargazerCount"].to_i
+      lang_totals = {}
       repo.dig("languages", "edges")&.each do |edge|
         name = edge.dig("node", "name")
         size = edge["size"].to_i
+        next if name.nil?
+
         lang_totals[name] = lang_totals[name].to_i + size
       end
+      repo_lang_maps << lang_totals unless lang_totals.empty?
     end
 
     pages += 1
-    break unless repos.dig("pageInfo", "hasNextPage") && pages < 3
+    # Scan more history so older Java/Scala work still counts
+    break unless repos.dig("pageInfo", "hasNextPage") && pages < 10
 
     cursor = repos.dig("pageInfo", "endCursor")
   end
 
-  { "lang_totals" => lang_totals, "stars" => total_stars }
+  { "repo_lang_maps" => repo_lang_maps, "stars" => total_stars }
 end
 
 def fetch_lifetime_commits(username)
@@ -142,7 +200,7 @@ end
 def main
   user = github_get("https://api.github.com/users/#{USERNAME}")
   language_data = fetch_language_stats(USERNAME)
-  breakdown = build_breakdown(language_data["lang_totals"])
+  breakdown = build_breakdown(language_data["repo_lang_maps"])
 
   if breakdown.sum { |lang| lang["pct"] }.zero?
     warn "Warning: featured language breakdown is empty - check GITHUB_TOKEN permissions"
@@ -161,7 +219,7 @@ def main
     "member_since" => user["created_at"]&.slice(0, 4),
     "repos" => user["public_repos"],
     "commits" => commits,
-    "languages" => FEATURED_LANGS.length,
+    "languages" => breakdown.length,
     "stars" => language_data["stars"],
     "lang_breakdown" => breakdown
   }
@@ -171,6 +229,7 @@ def main
   puts "  commits: #{commits}"
   puts "  repos:   #{stats['repos']}"
   puts "  stars:   #{stats['stars']}"
+  puts "  method:  70% equal-per-repo + 30% capped-bytes (public owned non-forks only)"
   breakdown.each { |lang| puts "  #{lang['name']}: #{lang['pct']}%" }
 end
 
