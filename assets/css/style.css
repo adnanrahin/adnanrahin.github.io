@@ -239,7 +239,8 @@ code {
   position: relative;
   margin: -72px var(--page-gutter) 1.5rem;
   padding: 0;
-  overflow: hidden;
+  /* visible so the overlapping avatar is not clipped (esp. on mobile) */
+  overflow: visible;
 }
 .profile-card__top {
   display: flex;
@@ -277,6 +278,8 @@ code {
   flex-shrink: 0;
   margin-top: -76px;
   box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 2;
 }
 
 .profile__headline { flex: 1; min-width: 0; padding-bottom: 0.25rem; }
@@ -364,6 +367,8 @@ code {
   grid-template-columns: repeat(4, 1fr);
   border-top: 1px solid var(--border);
   background: var(--profile-stats-bg);
+  border-radius: 0 0 var(--radius) var(--radius);
+  overflow: hidden;
 }
 .profile-stats--loading [data-stat] {
   opacity: 0.4;
@@ -1762,6 +1767,7 @@ a.docs-rail__link:hover {
     align-items: center;
     text-align: center;
     padding: 0 1.25rem 1rem;
+    padding-top: 0.5rem;
   }
   .profile__avatar {
     width: 120px;
