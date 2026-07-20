@@ -36,10 +36,12 @@ skills:
     items: [Java, Scala, Python, C++, C, JavaScript, TypeScript]
   - label: Databases
     items: [Oracle PL/SQL, MySQL, SQL, HQL, PandaSQL, Microsoft SQL Server, PostgreSQL, Snowflake]
+  - label: Big Data Engineering
+    items: [Spark, PySpark, Data Warehouse, Delta Lake, Data Lake, Data Mart, Amazon EMR, Databricks]
   - label: Machine Learning
     items: [Classification, Clustering, Regression, Fraud Detection, Image Processing, Natural Language Processing]
   - label: Libraries and Frameworks
-    items: [Spring Boot, REST API, Angular, Hibernate, Scikit-Learn, Pandas, NumPy, Apache Spark, PySpark, Databricks]
+    items: [Spring Boot, REST API, Angular, Hibernate, Scikit-Learn, Pandas, NumPy]
   - label: Design Pattern and Core Java
     items: [Singleton, Builder, Collections API, Thread, Generics]
   - label: Mathematics and Statistics
