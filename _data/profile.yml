@@ -1,6 +1,6 @@
 name: Adnan Habib Rahin
 title: Senior Software Engineer
-tagline: Big Data Engineer | DevOps | Interested in GenAI | Distributed Systems | Algorithm Optimization | Cloud Computing | AWS
+tagline: Big Data Engineer | Java | Spring Boot | DevOps | Interested in GenAI | Distributed Systems | Algorithm Optimization | Cloud Computing | AWS
 location: New York, NY
 github_username: adnanrahin
 email: adnan.rahin@outlook.com
@@ -18,6 +18,8 @@ about: >
   ETL platforms that move, transform, and deliver trusted data across the enterprise.
   Experienced in optimizing data workloads, designing resilient cloud infrastructure, and
   leading migration initiatives from on-premises systems to modern cloud-native platforms.
+  Strong backend expertise in Java and Spring Boot - building REST APIs, service-oriented
+  applications, and production systems that integrate with data platforms and cloud services.
   Deep expertise in AWS, Databricks, and big-data engineering - including Spark/PySpark
   pipelines, lakehouse architectures, and production data platforms at scale. Passionate
   about Artificial Intelligence, Large Language Models (LLMs), and Generative AI, and
