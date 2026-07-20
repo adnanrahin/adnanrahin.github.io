@@ -1,6 +1,6 @@
 name: Adnan Habib Rahin
 title: Senior Software Engineer
-tagline: Data platforms · Cloud infrastructure · Generative AI · Startup builder
+tagline: Data engineering · Cloud platforms · Exploring AI
 location: New York, NY
 github_username: adnanrahin
 email: adnan.rahin@outlook.com
@@ -14,22 +14,20 @@ social:
   email: mailto:adnan.rahin@outlook.com
 
 about: >
-  Skilled in building reusable engineering frameworks, optimizing large-scale data workloads,
-  designing resilient cloud infrastructure, and leading enterprise migration initiatives from
-  on-premises systems to modern cloud-native platforms. Passionate about Artificial Intelligence,
-  Large Language Models (LLMs), Generative AI, and GPT-based systems, with hands-on experience
-  developing AI-driven applications using foundation models and orchestration frameworks including
-  OpenAI GPT, Claude, Codex, Cursor, Amazon Bedrock, and LangChain. Strong analytical and
-  problem-solving mindset with expertise in scalable architecture, system optimization, and
-  cross-functional technical leadership.
+  My core expertise is data engineering - pipelines, Spark/PySpark workloads, lakehouse
+  patterns, and moving enterprise platforms from on-prem Hadoop into AWS and Databricks.
+  I spend most of my time on reliable data systems, cloud infrastructure, and the tooling
+  that helps teams ship without constant firefighting.
+
+  Outside that day-to-day work, I'm actively exploring AI and generative tools. I'm interested
+  in how LLMs and agent workflows can plug into real data products - and I like learning by
+  building small experiments with things like Bedrock, LangChain, Cursor, and local models.
 
 startup:
   headline: Startup mindset · Open to collaborate
   text: >
-    I bring a builder's mentality - I move fast, ship end-to-end, and think in products, not just
-    tickets. I am actively looking for opportunities to join and contribute to the startup community,
-    and I am currently working on a startup application idea that combines generative AI with
-    real-world data platforms.
+    I like building end-to-end, not just tickets. I'm open to startup collaboration and currently
+    working on an application idea that connects generative AI with practical data platforms.
 
 skills:
   - label: Programming Languages
