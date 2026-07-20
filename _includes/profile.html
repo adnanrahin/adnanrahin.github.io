@@ -97,7 +97,7 @@
 
       <article class="profile-card profile-card--github" id="github-languages" data-username="{{ gh }}">
         <h2 class="profile-card__heading">Code footprint</h2>
-        <p class="profile-card__sub">Java · Scala · Python · C++ · Shell · CloudFormation Stack{% if gs.updated_at %} · updated {{ gs.updated_at | date: "%b %d, %Y" }}{% endif %}.</p>
+        <p class="profile-card__sub">Public GitHub projects · weighted by repo (not raw file size) · Java · Scala · Python · C++ · Shell · CloudFormation{% if gs.updated_at %} · updated {{ gs.updated_at | date: "%b %d, %Y" }}{% endif %}.</p>
         <div class="lang-chart" id="lang-chart">
           {% if gs.lang_breakdown.size > 0 %}
             {% for lang in gs.lang_breakdown %}
