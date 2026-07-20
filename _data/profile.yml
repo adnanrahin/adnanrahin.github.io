@@ -1,5 +1,5 @@
 name: Adnan Habib Rahin
-title: Senior Software Engineer @ Epsilon
+title: Senior Software Engineer
 tagline: Big Data Engineer | DevOps | Interested in GenAI | Distributed Systems | Algorithm Optimization | Cloud Computing | AWS
 location: New York, NY
 github_username: adnanrahin
@@ -14,12 +14,16 @@ social:
   email: mailto:adnan.rahin@outlook.com
 
 about: >
-  Big data engineer focused on Spark/PySpark, lakehouse patterns, and cloud data platforms
-  on AWS and Databricks. I work on pipelines, warehouse/lake architectures, DevOps for data
-  systems, and distributed workloads that need to stay fast and reliable at scale.
-
-  I'm interested in GenAI and keep exploring how it can fit into real data products - along
-  with algorithm optimization and cloud computing as part of how I design systems day to day.
+  Skilled in building reusable engineering frameworks and architecting large-scale Big Data
+  ETL platforms that move, transform, and deliver trusted data across the enterprise.
+  Experienced in optimizing data workloads, designing resilient cloud infrastructure, and
+  leading migration initiatives from on-premises systems to modern cloud-native platforms.
+  Deep expertise in AWS, Databricks, and big-data engineering - including Spark/PySpark
+  pipelines, lakehouse architectures, and production data platforms at scale. Passionate
+  about Artificial Intelligence, Large Language Models (LLMs), and Generative AI, and
+  actively exploring tools such as Cursor, Anthropic, Ollama, and LangChain. Strong
+  analytical and problem-solving mindset with expertise in scalable architecture, system
+  optimization, and cross-functional technical leadership.
 
 startup:
   headline: Startup mindset · Open to collaborate
