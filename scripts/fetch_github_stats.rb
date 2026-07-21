@@ -197,20 +197,39 @@ def fetch_lifetime_commits(username)
   result["total_count"] || 0
 end
 
-def main
-  user = github_get("https://api.github.com/users/#{USERNAME}")
-  language_data = fetch_language_stats(USERNAME)
-  breakdown = build_breakdown(language_data["repo_lang_maps"])
+def load_existing_stats
+  return {} unless File.exist?(OUTPUT)
 
-  if breakdown.sum { |lang| lang["pct"] }.zero?
-    warn "Warning: featured language breakdown is empty - check GITHUB_TOKEN permissions"
+  YAML.safe_load(File.read(OUTPUT), permitted_classes: [Time]) || {}
+rescue StandardError
+  {}
+end
+
+def main
+  existing = load_existing_stats
+  lock_breakdown = existing["lock_lang_breakdown"] == true
+
+  user = github_get("https://api.github.com/users/#{USERNAME}")
+
+  if lock_breakdown && existing["lang_breakdown"].is_a?(Array) && !existing["lang_breakdown"].empty?
+    breakdown = existing["lang_breakdown"]
+    stars = existing["stars"] || 0
+    puts "Keeping locked lang_breakdown from #{OUTPUT}"
+  else
+    language_data = fetch_language_stats(USERNAME)
+    breakdown = build_breakdown(language_data["repo_lang_maps"])
+    stars = language_data["stars"]
+
+    if breakdown.sum { |lang| lang["pct"] }.zero?
+      warn "Warning: featured language breakdown is empty - check GITHUB_TOKEN permissions"
+    end
   end
 
   commits = begin
     fetch_lifetime_commits(USERNAME)
   rescue StandardError => e
     warn "Commit search failed: #{e.message}"
-    0
+    existing["commits"] || 0
   end
 
   stats = {
@@ -220,7 +239,8 @@ def main
     "repos" => user["public_repos"],
     "commits" => commits,
     "languages" => breakdown.length,
-    "stars" => language_data["stars"],
+    "stars" => stars,
+    "lock_lang_breakdown" => lock_breakdown,
     "lang_breakdown" => breakdown
   }
 
@@ -229,7 +249,7 @@ def main
   puts "  commits: #{commits}"
   puts "  repos:   #{stats['repos']}"
   puts "  stars:   #{stats['stars']}"
-  puts "  method:  70% equal-per-repo + 30% capped-bytes (public owned non-forks only)"
+  puts "  locked:  #{lock_breakdown}"
   breakdown.each { |lang| puts "  #{lang['name']}: #{lang['pct']}%" }
 end
 
