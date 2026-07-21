@@ -5,8 +5,8 @@ repos: 238
 commits: 3601
 languages: 6
 stars: 14
-# Keep deploy from overwriting these curated public-repo percentages
-lock_lang_breakdown: true
+# false = regenerate lang_breakdown from GitHub API on every Pages deploy
+lock_lang_breakdown: false
 lang_breakdown:
   - name: Java
     pct: 63

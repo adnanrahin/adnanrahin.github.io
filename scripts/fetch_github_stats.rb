@@ -8,7 +8,8 @@ require "uri"
 require "yaml"
 
 USERNAME = ENV.fetch("GITHUB_USERNAME", "adnanrahin")
-TOKEN = ENV["GITHUB_TOKEN"]
+# Prefer PAT with repo scope (GH_STATS_TOKEN) so private owned repos are included.
+STATS_TOKEN = ENV["GH_STATS_TOKEN"].to_s.strip.empty? ? ENV["GITHUB_TOKEN"] : ENV["GH_STATS_TOKEN"]
 OUTPUT = File.expand_path("../_data/github_stats.yml", __dir__)
 
 EXCLUDED_LANGS = %w[HTML CSS TypeScript Jupyter\ Notebook].freeze
@@ -18,8 +19,7 @@ LANG_ALIASES = {
 }.freeze
 FEATURED_LANGS = ["Java", "Scala", "Python", "C++", "Shell", "CloudFormation Stack"].freeze
 
-# Cap how much any single repo can contribute to byte totals (after equal-repo blend).
-# Prevents one giant notebook/dataset repo from wiping out Java/Scala history.
+# Cap how much any single repo can contribute to byte totals.
 MAX_REPO_SHARE = 0.08
 
 LANG_COLORS = {
@@ -36,9 +36,11 @@ LANGUAGE_QUERY = <<~GRAPHQL.freeze
   query($login: String!, $cursor: String) {
     user(login: $login) {
       repositories(first: 100, after: $cursor, ownerAffiliations: OWNER, isFork: false, orderBy: {field: PUSHED_AT, direction: DESC}) {
+        totalCount
         pageInfo { hasNextPage endCursor }
         nodes {
           name
+          isPrivate
           stargazerCount
           languages(first: 20, orderBy: {field: SIZE, direction: DESC}) {
             edges {
@@ -63,9 +65,7 @@ def normalize_lang_totals(lang_totals)
   normalized
 end
 
-# Blend two signals:
-# 1) Equal weight per repo (primary) - "how often do I use this across projects?"
-# 2) Capped byte share (secondary) - still reflect larger real codebases a bit
+# Blend equal-per-repo (70%) with capped bytes (30%).
 def build_breakdown(repo_lang_maps)
   equal_scores = Hash.new(0.0)
   capped_bytes = Hash.new(0.0)
@@ -101,12 +101,10 @@ def build_breakdown(repo_lang_maps)
     [name, share]
   end
 
-  # 70% equal-repo, 30% capped-bytes
   blended = FEATURED_LANGS.to_h do |name|
     [name, equal_pct[name] * 0.7 + byte_pct[name] * 0.3]
   end
 
-  # Round and fix drift so visible bars sum to 100
   rounded = FEATURED_LANGS.map do |name|
     {
       "name" => name,
@@ -121,7 +119,6 @@ def build_breakdown(repo_lang_maps)
     top["pct"] = [top["pct"] + drift, 0].max
   end
 
-  # Drop true zeros from the chart so Shell/CloudFormation don't show empty rows
   visible = rounded.reject { |lang| lang["pct"].zero? }
   visible.empty? ? rounded : visible
 end
@@ -131,7 +128,7 @@ def github_get(url)
   request = Net::HTTP::Get.new(uri)
   request["Accept"] = "application/vnd.github+json"
   request["X-GitHub-Api-Version"] = "2022-11-28"
-  request["Authorization"] = "Bearer #{TOKEN}" if TOKEN && !TOKEN.empty?
+  request["Authorization"] = "Bearer #{STATS_TOKEN}" if STATS_TOKEN && !STATS_TOKEN.empty?
   request["User-Agent"] = "adnanrahin-github-stats"
 
   response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(request) }
@@ -141,11 +138,11 @@ def github_get(url)
 end
 
 def github_graphql(query, variables = {})
-  raise "GITHUB_TOKEN is required for language stats" if TOKEN.nil? || TOKEN.empty?
+  raise "GITHUB_TOKEN or GH_STATS_TOKEN is required for language stats" if STATS_TOKEN.nil? || STATS_TOKEN.empty?
 
   uri = URI("https://api.github.com/graphql")
   request = Net::HTTP::Post.new(uri)
-  request["Authorization"] = "Bearer #{TOKEN}"
+  request["Authorization"] = "Bearer #{STATS_TOKEN}"
   request["Content-Type"] = "application/json"
   request["User-Agent"] = "adnanrahin-github-stats"
   request.body = JSON.generate({ query: query, variables: variables })
@@ -160,6 +157,9 @@ end
 def fetch_language_stats(username)
   repo_lang_maps = []
   total_stars = 0
+  total_count = 0
+  private_count = 0
+  public_count = 0
   cursor = nil
   pages = 0
 
@@ -168,8 +168,16 @@ def fetch_language_stats(username)
     repos = data.dig("user", "repositories")
     raise "No repository data returned" unless repos
 
+    total_count = repos["totalCount"].to_i if pages.zero?
+
     repos["nodes"].each do |repo|
       total_stars += repo["stargazerCount"].to_i
+      if repo["isPrivate"]
+        private_count += 1
+      else
+        public_count += 1
+      end
+
       lang_totals = {}
       repo.dig("languages", "edges")&.each do |edge|
         name = edge.dig("node", "name")
@@ -182,13 +190,19 @@ def fetch_language_stats(username)
     end
 
     pages += 1
-    # Scan more history so older Java/Scala work still counts
-    break unless repos.dig("pageInfo", "hasNextPage") && pages < 10
+    break unless repos.dig("pageInfo", "hasNextPage")
 
     cursor = repos.dig("pageInfo", "endCursor")
   end
 
-  { "repo_lang_maps" => repo_lang_maps, "stars" => total_stars }
+  {
+    "repo_lang_maps" => repo_lang_maps,
+    "stars" => total_stars,
+    "repo_total" => total_count,
+    "public_scanned" => public_count,
+    "private_scanned" => private_count,
+    "pages" => pages
+  }
 end
 
 def fetch_lifetime_commits(username)
@@ -207,9 +221,11 @@ end
 
 def main
   existing = load_existing_stats
+  # Optional escape hatch: set lock_lang_breakdown: true in github_stats.yml
   lock_breakdown = existing["lock_lang_breakdown"] == true
 
   user = github_get("https://api.github.com/users/#{USERNAME}")
+  meta = {}
 
   if lock_breakdown && existing["lang_breakdown"].is_a?(Array) && !existing["lang_breakdown"].empty?
     breakdown = existing["lang_breakdown"]
@@ -219,9 +235,10 @@ def main
     language_data = fetch_language_stats(USERNAME)
     breakdown = build_breakdown(language_data["repo_lang_maps"])
     stars = language_data["stars"]
+    meta = language_data
 
     if breakdown.sum { |lang| lang["pct"] }.zero?
-      warn "Warning: featured language breakdown is empty - check GITHUB_TOKEN permissions"
+      warn "Warning: featured language breakdown is empty - check token permissions"
     end
   end
 
@@ -240,7 +257,7 @@ def main
     "commits" => commits,
     "languages" => breakdown.length,
     "stars" => stars,
-    "lock_lang_breakdown" => lock_breakdown,
+    "lock_lang_breakdown" => false,
     "lang_breakdown" => breakdown
   }
 
@@ -249,7 +266,13 @@ def main
   puts "  commits: #{commits}"
   puts "  repos:   #{stats['repos']}"
   puts "  stars:   #{stats['stars']}"
-  puts "  locked:  #{lock_breakdown}"
+  unless meta.empty?
+    puts "  scanned: #{meta['public_scanned']} public + #{meta['private_scanned']} private " \
+         "(#{meta['pages']} pages, totalCount=#{meta['repo_total']})"
+    if meta["private_scanned"].to_i.zero?
+      puts "  note:    0 private repos visible - add repo secret GH_STATS_TOKEN (PAT with repo scope) to include them"
+    end
+  end
   breakdown.each { |lang| puts "  #{lang['name']}: #{lang['pct']}%" }
 end
 
