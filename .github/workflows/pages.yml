@@ -38,7 +38,11 @@ jobs:
       - name: Fetch GitHub stats
         run: ruby scripts/fetch_github_stats.rb
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: create a classic PAT (repo scope) or fine-grained token with
+          # Contents: Read on private repos, save as repo secret GH_STATS_TOKEN.
+          # Without it, only public owned non-fork repos are counted.
+          GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           GITHUB_USERNAME: adnanrahin
 
       - name: Build with Jekyll
