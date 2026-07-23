@@ -34,6 +34,9 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
+        with:
+          # Recreate Pages config after visibility changes (private → public)
+          enablement: true
 
       - name: Fetch GitHub stats
         run: ruby scripts/fetch_github_stats.rb
