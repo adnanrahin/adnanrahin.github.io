@@ -101,6 +101,10 @@ experience:
       - Utilized Airflow DAGs and RPA tools to automate business workflows.
 
 projects:
+  - name: Sentinel Trace
+    github: https://github.com/adnanrahin/sentinel-trace
+    description: Local-first AI security guard that scans Cursor chat before send - detects secrets, redacts findings, alerts via email or Slack, and can optionally block the send.
+    tech: Python, Typer, Pydantic, MCP, Cursor Hooks, Security
   - name: Genelytics-AI
     github: https://github.com/adnanrahin/genelytics-ai
     description: Generative AI data analytics engine that connects to any database and turns natural-language prompts into SQL - built as a startup-ready product prototype.
